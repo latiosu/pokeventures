@@ -1,0 +1,167 @@
+
+emotes.png
+size: 512,32
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+frame0
+  rotate: false
+  xy: 2, 2
+  size: 15, 16
+  orig: 15, 16
+  offset: 0, 0
+  index: -1
+frame1
+  rotate: false
+  xy: 19, 2
+  size: 15, 16
+  orig: 15, 16
+  offset: 0, 0
+  index: -1
+frame10
+  rotate: false
+  xy: 172, 2
+  size: 15, 16
+  orig: 15, 16
+  offset: 0, 0
+  index: -1
+frame11
+  rotate: false
+  xy: 189, 2
+  size: 15, 16
+  orig: 15, 16
+  offset: 0, 0
+  index: -1
+frame12
+  rotate: false
+  xy: 206, 2
+  size: 15, 16
+  orig: 15, 16
+  offset: 0, 0
+  index: -1
+frame13
+  rotate: false
+  xy: 223, 2
+  size: 15, 16
+  orig: 15, 16
+  offset: 0, 0
+  index: -1
+frame14
+  rotate: false
+  xy: 240, 2
+  size: 15, 16
+  orig: 15, 16
+  offset: 0, 0
+  index: -1
+frame15
+  rotate: false
+  xy: 257, 2
+  size: 15, 16
+  orig: 15, 16
+  offset: 0, 0
+  index: -1
+frame16
+  rotate: false
+  xy: 274, 2
+  size: 15, 16
+  orig: 15, 16
+  offset: 0, 0
+  index: -1
+frame17
+  rotate: false
+  xy: 291, 2
+  size: 15, 16
+  orig: 15, 16
+  offset: 0, 0
+  index: -1
+frame18
+  rotate: false
+  xy: 308, 2
+  size: 15, 16
+  orig: 15, 16
+  offset: 0, 0
+  index: -1
+frame19
+  rotate: false
+  xy: 325, 2
+  size: 15, 16
+  orig: 15, 16
+  offset: 0, 0
+  index: -1
+frame2
+  rotate: false
+  xy: 36, 2
+  size: 15, 16
+  orig: 15, 16
+  offset: 0, 0
+  index: -1
+frame20
+  rotate: false
+  xy: 342, 2
+  size: 15, 16
+  orig: 15, 16
+  offset: 0, 0
+  index: -1
+frame21
+  rotate: false
+  xy: 359, 2
+  size: 15, 16
+  orig: 15, 16
+  offset: 0, 0
+  index: -1
+frame22
+  rotate: false
+  xy: 376, 4
+  size: 14, 14
+  orig: 14, 14
+  offset: 0, 0
+  index: -1
+frame3
+  rotate: false
+  xy: 53, 2
+  size: 15, 16
+  orig: 15, 16
+  offset: 0, 0
+  index: -1
+frame4
+  rotate: false
+  xy: 70, 2
+  size: 15, 16
+  orig: 15, 16
+  offset: 0, 0
+  index: -1
+frame5
+  rotate: false
+  xy: 87, 2
+  size: 15, 16
+  orig: 15, 16
+  offset: 0, 0
+  index: -1
+frame6
+  rotate: false
+  xy: 104, 2
+  size: 15, 16
+  orig: 15, 16
+  offset: 0, 0
+  index: -1
+frame7
+  rotate: false
+  xy: 121, 2
+  size: 15, 16
+  orig: 15, 16
+  offset: 0, 0
+  index: -1
+frame8
+  rotate: false
+  xy: 138, 2
+  size: 15, 16
+  orig: 15, 16
+  offset: 0, 0
+  index: -1
+frame9
+  rotate: false
+  xy: 155, 2
+  size: 15, 16
+  orig: 15, 16
+  offset: 0, 0
+  index: -1
