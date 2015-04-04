@@ -10,6 +10,7 @@ public class DesktopLauncher {
 		config.title = "PokeVentures";
         config.width = 480*2;
         config.height = 320*2;
+        config.resizable = false;
 
         new LwjglApplication(new Core(), config);
 	}

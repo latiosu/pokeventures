@@ -31,8 +31,8 @@ public abstract class Packet {
     public abstract byte[] getData();
 
     public String readData(byte[] data) {
-        String message = new String(data).trim();
-        return message.substring(2); // excludes packet id
+        String message = new String(data);
+        return message.substring(2).trim(); // excludes packet id
     }
 
     public static PacketType lookupPacket(String packetId) {

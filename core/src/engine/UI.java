@@ -12,7 +12,7 @@ public class UI {
     private Core core;
     private Skin skin;
     private Stage stage;
-    private String text = "";
+    private String text = ""; /* Possibly used for keyboard input */
 
     public UI(Core core) {
         this.core = core;
@@ -32,15 +32,14 @@ public class UI {
         skin.dispose();
     }
 
+    /* Contains a start networking call */
     public void runSetup(){
         // Become host dialog
         Dialog d1 = new Dialog("Setup", skin, "dialog") {
             protected void result (Object object) {
-                // Determine if hosting server
-                core.isHost = object.toString().equals("true");
-                requestUsername();
-                // Start creating connections here
-                core.startNetworking();
+                core.isHost = object.toString().equals("true");  // Determine if hosting server
+                core.startNetworking(); // Start sockets and network threads here
+                requestUsername(); // Request username
             }
         };
         d1.setMovable(false);
@@ -50,6 +49,7 @@ public class UI {
                 .key(Input.Keys.ESCAPE, false).show(stage);
     }
 
+    /* Initializes main player */
     public void requestUsername() {
         // Request username dialog
         final TextField field = new TextField("", skin);
@@ -58,8 +58,8 @@ public class UI {
 
         Dialog d2 = new Dialog("Setup", skin, "dialog") {
             protected void result (Object object) {
-                updateInput(field.getText());
-                core.setPlayMode(true);
+                updateText(field.getText());
+                core.initMainPlayer(text); // Define main player for client
             }
         };
         d2.setMovable(false);
@@ -70,9 +70,9 @@ public class UI {
         stage.setKeyboardFocus(field);
     }
 
-    private void updateInput(String input){
-        this.text = input;
-        System.out.println("Username: " + input);
+    private void updateText(String text){
+        this.text = text;
+        System.out.println("Username: " + text);
     }
 
     public String getText() {

@@ -1,5 +1,6 @@
 package networking;
 
+import engine.Config;
 import engine.Core;
 import networking.packets.Packet;
 import networking.packets.Packet00Login;
@@ -19,7 +20,7 @@ public class ServerThread extends Thread {
     public ServerThread(Core core) {
         this.core = core;
         try {
-            this.socket = new DatagramSocket(4445); // listen on port 4445
+            this.socket = new DatagramSocket(Config.PORT); // listen on port 4445
         } catch (SocketException e) {
             e.printStackTrace();
         }
@@ -31,16 +32,67 @@ public class ServerThread extends Thread {
             byte[] data = new byte[1024];
             DatagramPacket packet = new DatagramPacket(data, data.length);
             try {
+                System.out.println("Server: Awaiting packet ...");
                 socket.receive(packet); // Warning: will wait indefinitely
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
+            this.parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
         }
     }
 
-    public void sendData(byte[] data, InetAddress ip, int port) {
-        DatagramPacket packet = new DatagramPacket(data, data.length, ip, port);
+    private void parsePacket(byte[] data, InetAddress address, int port) {
+        String message = new String(data).trim();
+        Packet.PacketType type = Packet.lookupPacket(message.substring(0, 2)); // first two characters
+        Packet packet = null;
+        switch (type) {
+            default:
+            case INVALID:
+                break;
+            case LOGIN:
+                packet = new Packet00Login(data);
+                String username = ((Packet00Login)packet).getUsername();
+                System.out.printf("[%s:%d] %s has connected.\n", address.getHostAddress(), port, username);
+
+                // Add new player to world
+                PlayerMP player = new PlayerMP(Type.CHARMANDER, false, username, address, port);
+                this.addConnection(player, (Packet00Login) packet);
+
+                // Previously had init main player
+
+                break;
+            case DISCONNECT:
+
+                break;
+        }
+    }
+
+    public void addConnection(PlayerMP newPlayer, Packet00Login packet) {
+        boolean isConnected = false;
+        for(PlayerMP p : this.onlinePlayers) {
+            if(newPlayer.getUsername().equalsIgnoreCase(p.getUsername())) {
+                isConnected = true;
+                if(p.address == null) {
+                    p.address = newPlayer.address;
+                }
+                if(p.port == -1) {
+                    p.port = newPlayer.port;
+                }
+            } else {
+                // Notify selected player that a new player HAS JOINED
+                this.sendData(packet.getData(), p.address, p.port);
+                // Notify new player that selected player EXISTS
+                packet = new Packet00Login(p.getUsername());
+                this.sendData(packet.getData(), newPlayer.address, newPlayer.port);
+            }
+        }
+        if(!isConnected) {
+            this.onlinePlayers.add(newPlayer);
+        }
+    }
+
+    public void sendData(byte[] data, InetAddress address, int port) {
+        DatagramPacket packet = new DatagramPacket(data, data.length, address, port); // Send to online client
         try {
             socket.send(packet);
         } catch (IOException e) {
@@ -50,30 +102,12 @@ public class ServerThread extends Thread {
 
     public void sendDataToAllClients(byte[] data) {
         for(PlayerMP p : onlinePlayers){
-            sendData(data, p.ip, p.port);
+            sendData(data, p.address, p.port);
         }
     }
 
-    private void parsePacket(byte[] data, InetAddress ip, int port) {
-        String message = new String(data).trim();
-        Packet.PacketType type = Packet.lookupPacket(message.substring(0, 2)); // first two characters
-        switch (type) {
-            default:
-            case INVALID:
-                break;
-            case LOGIN:
-                Packet00Login packet = new Packet00Login(data);
-                System.out.printf("[%s:%d] %s has connected", ip.getHostAddress(), port, packet.getUsername());
-
-                // Add new player to world
-                PlayerMP player;
-                if(ip.getHostAddress().equals("127.0.0.1")) {
-//                    player = new PlayerMP(Type.CHARMANDER, );
-                }
-                break;
-            case DISCONNECT:
-
-                break;
-        }
+    // CUSTOM CORE COUPLER
+    public List<PlayerMP> getOnlinePlayers() {
+        return onlinePlayers;
     }
 }

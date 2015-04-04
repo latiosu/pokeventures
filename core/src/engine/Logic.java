@@ -1,4 +1,4 @@
-package editable;
+package engine;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;

@@ -8,20 +8,18 @@ import java.util.Map;
 
 public class PlayerAnimation {
 
-    private AssetManager assets;
     private Player player;
     private Animation currentAnimation;
     private boolean playing = false;
 
-    public PlayerAnimation(Player p, Type t, AssetManager assets) {
+    public PlayerAnimation(Player p, Type t) {
         player = p;
-        this.assets = assets;
-        currentAnimation = assets.getAnimation(t, Direction.DOWN);
+        currentAnimation = AssetManager.getAnimation(t, Direction.DOWN);
     }
 
     public void play(){
         playing = true;
-        currentAnimation = assets.getAnimation(player.getType(), player.getDirection());
+        currentAnimation = AssetManager.getAnimation(player.getType(), player.getDirection());
     }
 
     public void stop(){

@@ -8,9 +8,11 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import editable.Logic;
 import networking.ClientThread;
+import networking.PlayerMP;
 import networking.ServerThread;
+import networking.packets.Packet00Login;
+import objects.Entity;
 import objects.Player;
 import objects.Type;
 
@@ -27,6 +29,10 @@ public class Core extends Game {
     public boolean playMode = false;
     public boolean isHost = false;
 
+    // Object classes
+    public List<Player> players;
+    Player mainPlayer;
+
     // Engine classes
     OrthographicCamera cam;
     SpriteBatch batch;
@@ -37,26 +43,19 @@ public class Core extends Game {
     KeyboardProcessor input;
     UI ui;
 
-    // Object classes
-    List<Player> players;
-    Player mainPlayer;
-
     // Networking classes
     ServerThread server;
     ClientThread client;
 
 	@Override
 	public void create () {
-        // Engine
-        cam = new OrthographicCamera(480, 320);
-        ui = new UI(this);
-        assets = new AssetManager();
-
         // Object-related
         players = new LinkedList<Player>();
-        players.add(new Player(assets));
-        mainPlayer = players.get(0);
-        logic = new Logic(mainPlayer, cam);
+
+        // Engine
+        cam = new OrthographicCamera(480, 320);
+        ui = new UI(this); // Note: Networking commences here, playMode = true
+        assets = new AssetManager();
 
         // Input handling
         input = new KeyboardProcessor(logic);
@@ -74,9 +73,6 @@ public class Core extends Game {
         sprite =  new Sprite(tex);
 	    sprite.setOrigin(0,0);
         sprite.setPosition(-864,-550);
-
-        // Networking stuff
-        // CODE TO BE ADDED
     }
 
     @Override
@@ -92,7 +88,6 @@ public class Core extends Game {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         // Update logic 15 times per second
-
         if (delta > UPDATE_RATE) {
             if(playMode) {
                 logic.update();
@@ -108,7 +103,11 @@ public class Core extends Game {
         batch.setProjectionMatrix(cam.combined);
         batch.begin();
 		sprite.draw(batch);
-        batch.draw(mainPlayer.getFrame(animDelta), mainPlayer.getX(), mainPlayer.getY());
+        if(playMode) {
+            for(Player p : players) {
+                p.render(animDelta, batch);
+            }
+        }
 		batch.end();
 
         ui.render();
@@ -116,10 +115,6 @@ public class Core extends Game {
         delta += Gdx.graphics.getDeltaTime();
         animDelta += Gdx.graphics.getDeltaTime();
 	}
-
-    public void setPlayMode(boolean b) {
-        playMode = b;
-    }
 
     public void startNetworking() {
         if(isHost){
@@ -130,5 +125,17 @@ public class Core extends Game {
         System.out.println("Running as client.");
         client = new ClientThread(this, "localhost");
         client.start();
+    }
+
+    public void initMainPlayer(String username) {
+        mainPlayer = new PlayerMP(Type.CHARMANDER, true, username, null, -1);
+        players.add(mainPlayer);
+        Packet00Login loginPacket = new Packet00Login(mainPlayer.getUsername());
+        if(server != null) {
+            server.addConnection((PlayerMP) mainPlayer, loginPacket);
+        }
+        loginPacket.writeData(client);
+        logic = new Logic(mainPlayer, cam);
+        playMode = true;
     }
 }

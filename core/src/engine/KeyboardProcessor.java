@@ -2,7 +2,6 @@ package engine;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
-import editable.Logic;
 
 public class KeyboardProcessor implements InputProcessor {
 

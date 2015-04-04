@@ -1,22 +1,20 @@
 package networking;
 
-import engine.AssetManager;
-import engine.KeyboardProcessor;
+import engine.Config;
 import objects.Player;
 import objects.Type;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class PlayerMP extends Player {
 
-    private KeyboardProcessor input;
-    public InetAddress ip;
+    public InetAddress address;
     public int port;
 
-    public PlayerMP(Type t, AssetManager assets, boolean isMain, KeyboardProcessor input, InetAddress ip, int port) {
-        super(t, assets, isMain);
-        this.input = input; // Do I need a separate input handler??
-        this.ip = ip;
+    public PlayerMP(Type t, boolean isMain, String username, InetAddress address, int port) {
+        super(t, isMain, username);
+        this.address = address;
         this.port = port;
     }
 }

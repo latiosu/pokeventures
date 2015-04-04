@@ -1,17 +1,13 @@
 package objects;
 
-import engine.AssetManager;
-
 public abstract class Entity {
 
-    protected AssetManager assets;
     protected Type type;
     protected Direction direction;
     protected boolean isMoving;
     protected float x, y;
 
-    public Entity(Type type, Direction d, AssetManager assets) {
-        this.assets = assets;
+    public Entity(Type type, Direction d) {
         this.type = type;
         this.direction = d;
         this.isMoving = false;
