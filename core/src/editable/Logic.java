@@ -4,10 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import engine.*;
+import objects.Direction;
+import objects.Player;
+import objects.PlayerAnimation;
+import objects.Type;
 
-/**
- * Created by latios on 26/03/15.
- */
 public class Logic {
 
     InputHandler input;

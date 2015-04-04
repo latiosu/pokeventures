@@ -1,10 +1,7 @@
-package engine;
+package objects;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
-/**
- * Created by latios on 26/03/15.
- */
 public class Player {
 
     private final float WALK_DIST = 5f;

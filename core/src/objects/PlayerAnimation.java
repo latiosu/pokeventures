@@ -1,4 +1,4 @@
-package engine;
+package objects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;

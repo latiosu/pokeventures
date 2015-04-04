@@ -1,12 +1,7 @@
 package engine;
 
-import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 
-/**
- * Created by latios on 26/03/15.
- */
 public class InputHandler implements InputProcessor {
     @Override
     public boolean keyDown(int keycode) {

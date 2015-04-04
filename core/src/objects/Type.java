@@ -1,8 +1,5 @@
-package engine;
+package objects;
 
-/**
- * Created by latios on 26/03/15.
- */
 public enum Type {
     CHARMANDER,
     SQUIRTLE,
