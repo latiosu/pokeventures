@@ -1,64 +1,33 @@
 package objects;
 
-import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import engine.AssetManager;
 
-public class Player {
+public class Player extends Entity {
 
-    private final float WALK_DIST = 5f;
-
-    private float x, y;
-    private Type t;
     private PlayerAnimation anim;
-    private OrthographicCamera cam;
+    public boolean isMain;
 
-    public Player(Type t, PlayerAnimation anim, OrthographicCamera cam){
-        this.t = t;
-        this.anim = anim;
-        this.cam = cam;
-        x = 0;
-        y = 0;
+    public Player(AssetManager assets) {
+        this(Type.CHARMANDER, assets, true);
+    }
+
+    public Player(Type type, AssetManager assets, boolean isMain){
+        super(type, Direction.DOWN, assets);
+        anim = new PlayerAnimation(this, type, assets);
+        this.isMain = isMain;
     }
 
     public void move(Direction d){
-        anim.play(t,d);
-        switch (d){
-            case DOWN:
-                y-=WALK_DIST;
-                cam.translate(0, -WALK_DIST);
-                break;
-            case LEFT:
-                x-=WALK_DIST;
-                cam.translate(-WALK_DIST, 0);
-                break;
-            case UP:
-                y+=WALK_DIST;
-                cam.translate(0, WALK_DIST);
-                break;
-            case RIGHT:
-                x+=WALK_DIST;
-                cam.translate(WALK_DIST, 0);
-                break;
-        }
-        cam.update();
+        this.setMoving(true);
+        this.setDirection(d);
     }
 
-    public void changePlayer(Type t){
-        this.t = t;
+    public TextureRegion getFrame(float delta){
+        return anim.getFrame(delta);
     }
 
-    public float getX() {
-        return x;
-    }
-
-    public void setX(float x) {
-        this.x = x;
-    }
-
-    public float getY() {
-        return y;
-    }
-
-    public void setY(float y) {
-        this.y = y;
+    public PlayerAnimation getAnim() {
+        return anim;
     }
 }

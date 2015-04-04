@@ -33,7 +33,8 @@ public class ClientThread extends Thread {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println("Server > " + new String(packet.getData()));
+            String message = new String(packet.getData()).trim();
+            System.out.println("Server > " + message);
         }
     }
 

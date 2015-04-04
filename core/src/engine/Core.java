@@ -2,6 +2,7 @@ package engine;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,7 +12,6 @@ import editable.Logic;
 import networking.ClientThread;
 import networking.ServerThread;
 import objects.Player;
-import objects.PlayerAnimation;
 import objects.Type;
 
 import java.util.LinkedList;
@@ -22,22 +22,24 @@ public class Core extends Game {
     // Engine variables/constants
     private static final float UPDATE_RATE = 1/15f;
     private static final float ANIM_RATE = 1/2f;
-    private static final Type DEFAULT_TYPE = Type.CHARMANDER;
     private static float delta = 0;
     private static float animDelta = 0;
-    public static boolean playMode = false;
+    public boolean playMode = false;
+    public boolean isHost = false;
 
     // Engine classes
     OrthographicCamera cam;
     SpriteBatch batch;
-	Texture tex;
-	Sprite sprite;
+    Texture tex;
+    Sprite sprite;
+    AssetManager assets;
     Logic logic;
-    InputHandler input;
-    PlayerAnimation anim;
+    KeyboardProcessor input;
+    UI ui;
+
+    // Object classes
     List<Player> players;
     Player mainPlayer;
-    UI ui;
 
     // Networking classes
     ServerThread server;
@@ -45,14 +47,23 @@ public class Core extends Game {
 
 	@Override
 	public void create () {
+        // Engine
         cam = new OrthographicCamera(480, 320);
-        input = new InputHandler();
-        anim = new PlayerAnimation(DEFAULT_TYPE); // Charmander is default
-        players = new LinkedList<Player>();
-        players.add(new Player(DEFAULT_TYPE, anim, cam));
-        mainPlayer = players.get(0);
-        logic = new Logic(input, mainPlayer, cam, anim);
         ui = new UI(this);
+        assets = new AssetManager();
+
+        // Object-related
+        players = new LinkedList<Player>();
+        players.add(new Player(assets));
+        mainPlayer = players.get(0);
+        logic = new Logic(mainPlayer, cam);
+
+        // Input handling
+        input = new KeyboardProcessor(logic);
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(input);
+        multiplexer.addProcessor(ui.getStage());
+        Gdx.input.setInputProcessor(multiplexer);
 
         // Overworld data
         batch = new SpriteBatch();
@@ -65,10 +76,7 @@ public class Core extends Game {
         sprite.setPosition(-864,-550);
 
         // Networking stuff
-//        if(JOptionPane.showConfirmDialog(this., "Host a server?")== 0){
-//
-//        }
-        client = new ClientThread(this, "localhost");
+        // CODE TO BE ADDED
     }
 
     @Override
@@ -100,7 +108,7 @@ public class Core extends Game {
         batch.setProjectionMatrix(cam.combined);
         batch.begin();
 		sprite.draw(batch);
-        batch.draw(anim.getFrame(animDelta), mainPlayer.getX(), mainPlayer.getY());
+        batch.draw(mainPlayer.getFrame(animDelta), mainPlayer.getX(), mainPlayer.getY());
 		batch.end();
 
         ui.render();
@@ -113,4 +121,14 @@ public class Core extends Game {
         playMode = b;
     }
 
+    public void startNetworking() {
+        if(isHost){
+            System.out.println("Running as server.");
+            server = new ServerThread(this);
+            server.start();
+        }
+        System.out.println("Running as client.");
+        client = new ClientThread(this, "localhost");
+        client.start();
+    }
 }

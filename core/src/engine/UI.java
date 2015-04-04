@@ -2,32 +2,22 @@ package engine;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class UI {
 
-    Core core;
-    Skin skin;
-    Stage stage;
-
-    // Temporary input management ideas
-    String input = "";
-    boolean isHost = false;
+    private Core core;
+    private Skin skin;
+    private Stage stage;
+    private String text = "";
 
     public UI(Core core) {
         this.core = core;
         skin = new Skin(Gdx.files.internal("uiskin.json"));
         stage = new Stage(new ScreenViewport());
-
-        InputMultiplexer multiplexer = new InputMultiplexer();
-        multiplexer.addProcessor(stage);
-        Gdx.input.setInputProcessor(multiplexer);
 
         runSetup();
     }
@@ -46,13 +36,16 @@ public class UI {
         // Become host dialog
         Dialog d1 = new Dialog("Setup", skin, "dialog") {
             protected void result (Object object) {
-                isHost = object.toString().equals("true");
-                System.out.println("Is host: " + isHost);
-
+                // Determine if hosting server
+                core.isHost = object.toString().equals("true");
                 requestUsername();
+                // Start creating connections here
+                core.startNetworking();
             }
         };
         d1.setMovable(false);
+        d1.getContentTable().pad(10, 100, 0, 100);
+        d1.getButtonTable().pad(0, 0, 20, 0);
         d1.text("Host a server?").button("Yes", true).button("No", false).key(Input.Keys.ENTER, true)
                 .key(Input.Keys.ESCAPE, false).show(stage);
     }
@@ -78,7 +71,15 @@ public class UI {
     }
 
     private void updateInput(String input){
-        this.input = input;
+        this.text = input;
         System.out.println("Username: " + input);
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 }
