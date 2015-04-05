@@ -2,6 +2,8 @@ package engine;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
@@ -13,16 +15,18 @@ public class UI {
     private Skin skin;
     private Stage stage;
     private String text = ""; /* Possibly used for keyboard input */
+    private boolean hasFocus = false;
 
     public UI(Core core) {
         this.core = core;
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        skin = AssetManager.skin;
         stage = new Stage(new ScreenViewport());
 
         runSetup();
     }
 
     public void render() {
+        // Render UI elements
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
     }
@@ -37,9 +41,13 @@ public class UI {
         // Become host dialog
         Dialog d1 = new Dialog("Setup", skin, "dialog") {
             protected void result (Object object) {
-                core.isHost = object.toString().equals("true");  // Determine if hosting server
-                core.startNetworking(); // Start sockets and network threads here
-                requestUsername(); // Request username
+                // Determine if hosting server
+                if(core.isHost = object.toString().equals("true")) {
+                    core.startNetworking("localhost");
+                    requestUsername();
+                } else {
+                    requestServer();
+                }
             }
         };
         d1.setMovable(false);
@@ -47,6 +55,30 @@ public class UI {
         d1.getButtonTable().pad(0, 0, 20, 0);
         d1.text("Host a server?").button("Yes", true).button("No", false).key(Input.Keys.ENTER, true)
                 .key(Input.Keys.ESCAPE, false).show(stage);
+    }
+
+    /* Requests server IP if isHost is true */
+    public void requestServer() {
+        // Request server IP dialog
+        final TextField field = new TextField(Config.SERVER_IP, skin);
+        field.setMaxLength(15);
+        field.setAlignment(Align.center);
+        field.setCursorPosition(field.getText().length());
+
+        Dialog d2 = new Dialog("Setup", skin, "dialog") {
+            protected void result (Object object) {
+                setText(field.getText());
+                core.startNetworking(text); // Start networking connections
+                requestUsername();
+            }
+        };
+        d2.setMovable(false);
+        d2.row();
+        d2.add(field).minWidth(300);
+        d2.text("Enter Server IP:").key(Input.Keys.ENTER, null).show(stage);
+
+        this.hasFocus = true;
+        stage.setKeyboardFocus(field);
     }
 
     /* Initializes main player */
@@ -58,8 +90,9 @@ public class UI {
 
         Dialog d2 = new Dialog("Setup", skin, "dialog") {
             protected void result (Object object) {
-                updateText(field.getText());
+                setText(field.getText().toLowerCase()); // <----- Set to lowercase
                 core.initMainPlayer(text); // Define main player for client
+                hasFocus = false;
             }
         };
         d2.setMovable(false);
@@ -67,12 +100,12 @@ public class UI {
         d2.add(field).minWidth(300);
         d2.text("Choose a username!").key(Input.Keys.ENTER, null).show(stage);
 
+        this.hasFocus = true;
         stage.setKeyboardFocus(field);
     }
 
-    private void updateText(String text){
+    private void setText(String text){
         this.text = text;
-        System.out.println("Username: " + text);
     }
 
     public String getText() {
@@ -81,5 +114,9 @@ public class UI {
 
     public Stage getStage() {
         return stage;
+    }
+
+    public boolean hasFocus() {
+        return hasFocus;
     }
 }

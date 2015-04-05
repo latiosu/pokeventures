@@ -2,19 +2,23 @@ package engine;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import objects.Type;
 
 public class KeyboardProcessor implements InputProcessor {
 
     public static boolean[] directionKeys; // Down Left Up Right
-    private Logic logic;
+    private Core core;
 
-    public KeyboardProcessor(Logic logic) {
-        this.logic = logic;
+    public KeyboardProcessor(Core core) {
+        this.core = core;
         directionKeys = new boolean[4];
     }
 
     @Override
     public boolean keyDown(int keycode) {
+        if(core.ui.hasFocus()) {
+            return false;
+        }
         switch (keycode) {
             case Input.Keys.DOWN:
                 directionKeys[0] = true;
@@ -29,9 +33,13 @@ public class KeyboardProcessor implements InputProcessor {
                 directionKeys[3] = true;
                 break;
             case Input.Keys.NUM_1:
+                core.getMainPlayer().setType(Type.CHARMANDER);
+                break;
             case Input.Keys.NUM_2:
+                core.getMainPlayer().setType(Type.BULBASAUR);
+                break;
             case Input.Keys.NUM_3:
-                logic.changeType(keycode);
+                core.getMainPlayer().setType(Type.SQUIRTLE);
                 break;
         }
         return false;
@@ -39,6 +47,9 @@ public class KeyboardProcessor implements InputProcessor {
 
     @Override
     public boolean keyUp(int keycode) {
+        if(core.ui.hasFocus()) {
+            return false;
+        }
         switch (keycode) {
             case Input.Keys.DOWN:
                 directionKeys[0] = false;
@@ -56,12 +67,11 @@ public class KeyboardProcessor implements InputProcessor {
         return false;
     }
 
+    // Not used
     @Override
     public boolean keyTyped(char character) {
         return false;
     }
-
-    // Not used
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
         return false;

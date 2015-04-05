@@ -8,14 +8,13 @@ public abstract class Packet {
     public static enum PacketType {
         INVALID(-1),
         LOGIN(00),
-        DISCONNECT(01);
+        DISCONNECT(01),
+        MOVE(02);
 
         private int packetId;
-
         private PacketType(int packetId) {
             this.packetId = packetId;
         }
-
         public int getId() {
             return packetId;
         }
