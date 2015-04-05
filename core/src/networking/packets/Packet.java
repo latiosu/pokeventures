@@ -1,7 +1,5 @@
 package networking.packets;
 
-import networking.ClientThread;
-import networking.ServerThread;
 
 public abstract class Packet {
 
@@ -9,7 +7,8 @@ public abstract class Packet {
         INVALID(-1),
         LOGIN(00),
         DISCONNECT(01),
-        MOVE(02);
+        MOVE(02),
+        CHAT(03);
 
         private int packetId;
         private PacketType(int packetId) {
@@ -25,8 +24,7 @@ public abstract class Packet {
         this.packetId = (byte) packetId;
     }
 
-    public abstract void writeData(ClientThread client);
-    public abstract void writeData(ServerThread server);
+    public abstract void writeDataFrom(Thread thread);
     public abstract byte[] getData();
 
     public String readData(byte[] data) {

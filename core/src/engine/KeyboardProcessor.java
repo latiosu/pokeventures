@@ -2,15 +2,20 @@ package engine;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
-import objects.Type;
+import objects.Entity;
+import objects.Player;
 
 public class KeyboardProcessor implements InputProcessor {
 
+    /* Note: These values must be read another class
+     * to update the values for the main player. */
     public static boolean[] directionKeys; // Down Left Up Right
+    public static Player.Type selectedType;
     private Core core;
 
     public KeyboardProcessor(Core core) {
         this.core = core;
+        this.selectedType = Entity.Type.CHARMANDER; // <-------- HARDCODED
         directionKeys = new boolean[4];
     }
 
@@ -33,13 +38,13 @@ public class KeyboardProcessor implements InputProcessor {
                 directionKeys[3] = true;
                 break;
             case Input.Keys.NUM_1:
-                core.getMainPlayer().setType(Type.CHARMANDER);
+                selectedType = Entity.Type.CHARMANDER;
                 break;
             case Input.Keys.NUM_2:
-                core.getMainPlayer().setType(Type.BULBASAUR);
+                selectedType = Entity.Type.BULBASAUR;
                 break;
             case Input.Keys.NUM_3:
-                core.getMainPlayer().setType(Type.SQUIRTLE);
+                selectedType = Entity.Type.SQUIRTLE;
                 break;
         }
         return false;

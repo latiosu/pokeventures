@@ -4,52 +4,67 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-public class UserList<E> implements List<E> {
+public class UserList<Player> implements List<Player> {
 
-    private Map<String, E> map;
-    private java.util.List<E> list;
+    private Map<Long, Player> map;
+    private java.util.List<Player> list;
+    private Player mainPlayer;
 
     public UserList() {
-        map = new HashMap<String, E>();
-        list = new ArrayList<E>();
+        map = new HashMap<Long, Player>();
+        list = new CopyOnWriteArrayList<Player>(); /* <-- Works well for small array lists */
+    }
+
+    public Player getMainPlayer() {
+        if(mainPlayer == null){
+            System.err.println("Error: Main player has not been set.");
+        }
+        return mainPlayer;
+    }
+
+    public void setMainPlayer(Player p) {
+        mainPlayer = p;
     }
 
     @Override
-    public E remove(int i) {
+    public Player remove(int i) {
         return map.remove(list.remove(i));
     }
 
     @Override
-    public E remove(String s) {
-        E result = get(s);
+    public Player remove(long uid) {
+        Player result = get(uid);
         list.remove(result);
         return result;
     }
 
     @Override
     public void clear() {
-        map = new HashMap<String, E>();
-        list = new ArrayList<E>();
+        map = new HashMap<Long, Player>();
+        list = new ArrayList<Player>();
     }
 
     @Override
-    public E get(int i) {
+    public Player get(int i) {
         return list.get(i);
     }
 
     @Override
-    public E get(String s) {
-        return map.get(s);
+    public Player get(long uid) {
+        return map.get(uid);
     }
 
     @Override
-    public boolean add(String s, E e) {
-        if(!contains(s)){
-            map.put(s, e);
-            list.add(e);
+    /* Can consider making non-parametric UserList
+     * to get better error info. */
+    public boolean add(long uid, Player player) {
+        if(!contains(uid)){
+            map.put(uid, player);
+            list.add(player);
         } else {
-            System.err.print("Error: User already exists");
+            System.err.println("Error: User already exists - " + uid);
             return false;
         }
         return true;
@@ -66,12 +81,12 @@ public class UserList<E> implements List<E> {
     }
 
     @Override
-    public boolean contains(String s) {
-        return map.get(s) != null;
+    public boolean contains(long uid) {
+        return map.get(uid) != null;
     }
 
     @Override
-    public Iterator<E> iterator() {
+    public Iterator<Player> iterator() {
         return list.iterator();
     }
 

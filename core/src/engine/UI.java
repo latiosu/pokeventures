@@ -90,8 +90,8 @@ public class UI {
 
         Dialog d2 = new Dialog("Setup", skin, "dialog") {
             protected void result (Object object) {
-                setText(field.getText().toLowerCase()); // <----- Set to lowercase
-                core.initMainPlayer(text); // Define main player for client
+                setText(field.getText()); // <----- Set to lowercase
+                core.initMainPlayer(sanitizeText(text)); // Define main player for client
                 hasFocus = false;
             }
         };
@@ -102,6 +102,11 @@ public class UI {
 
         this.hasFocus = true;
         stage.setKeyboardFocus(field);
+    }
+
+    private String sanitizeText(String input) {
+        String regex = "[^a-z]+";
+        return input.toLowerCase().replaceAll(regex, "");
     }
 
     private void setText(String text){

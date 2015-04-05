@@ -2,29 +2,34 @@ package networking;
 
 import engine.Config;
 import engine.Core;
-import networking.packets.Packet;
-import networking.packets.Packet00Login;
-import networking.packets.Packet01Disconnect;
-import networking.packets.Packet02Move;
-import objects.Direction;
+import engine.structs.Message;
+import engine.structs.TimeComparator;
+import engine.structs.UserList;
+import networking.packets.*;
+import objects.Entity;
 import objects.PlayerOnline;
-import objects.Type;
 
 import java.io.IOException;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 public class ServerThread extends Thread {
 
     private DatagramSocket socket;
     private Core core;
-    private List<PlayerOnline> onlinePlayers = new ArrayList<PlayerOnline>();
+    private engine.structs.List<PlayerOnline> onlinePlayers = new UserList<PlayerOnline>();
+    private Queue<Message> messages;
+    private SimpleDateFormat sdf;
 
     public ServerThread(Core core) {
         this.core = core;
+        messages = new PriorityQueue<Message>(Config.MESSAGES_INIT, new TimeComparator());
+        sdf = new SimpleDateFormat(Config.DATE_FORMAT);
         try {
-            this.socket = new DatagramSocket(Config.PORT); // listen on port 4445
+            this.socket = new DatagramSocket(Config.GAME_PORT);
         } catch (SocketException e) {
             e.printStackTrace();
         }
@@ -51,82 +56,93 @@ public class ServerThread extends Thread {
             default:
             case INVALID:
                 break;
-            case LOGIN:
-                Packet00Login loginPacket = new Packet00Login(data);
-                System.out.printf("[%s:%d] %s has connected. Online: %d\n",
-                        address.getHostAddress(), port, loginPacket.getUsername(), onlinePlayers.size());
 
-                // Add new player to world
-                PlayerOnline player = new PlayerOnline(loginPacket.getX(), loginPacket.getY(),
-                        Direction.getDir(loginPacket.getDir()), Type.getType(loginPacket.getType()),
-                        false, loginPacket.getUsername(), address, port);
-                this.addConnection(player, loginPacket);
+            case LOGIN:
+                Packet00Login lp = new Packet00Login(data);
+                PlayerOnline p = new PlayerOnline(lp.getUID(), lp.getX(), lp.getY(),
+                        Entity.Direction.getDir(lp.getDir()), Entity.Type.getType(lp.getType()),
+                        false, lp.getUsername(), address, port);
+                this.addConnection(p, lp);
+                System.out.printf("[%s:%d] %s has connected. Online: %d\n",
+                        address.getHostAddress(), port,
+                        p.getUsername(), onlinePlayers.size());
                 break;
+
             case DISCONNECT:
-                Packet01Disconnect packet = new Packet01Disconnect(data);
+                Packet01Disconnect dp = new Packet01Disconnect(data);
+                this.removeConnection(dp);
                 System.out.printf("[%s:%d] %s has disconnected. Online: %d\n",
-                        address.getHostAddress(), port, packet.getUsername(), onlinePlayers.size());
-                this.removeConnection(packet);
+                        address.getHostAddress(), port,
+                        onlinePlayers.get(dp.getUID()).getUsername(), onlinePlayers.size());
                 break;
+
             case MOVE:
-                Packet02Move movePacket = new Packet02Move(data);
-                this.handleMove(movePacket);
+                this.handleMove(new Packet02Move(data));
                 break;
+
+            case CHAT:
+                this.handleChat(new Packet03Chat(data));
+                break;
+
         }
     }
 
     public void addConnection(PlayerOnline newPlayer, Packet00Login packet) {
         boolean isConnected = false;
         for(PlayerOnline p : this.onlinePlayers) {
-            if(newPlayer.getUsername().equalsIgnoreCase(p.getUsername())) {
+            if(newPlayer.getUID() == p.getUID()) {
+                // Already connected and registered with server
                 isConnected = true;
-                if(p.address == null) {
-                    p.address = newPlayer.address;
-                }
-                if(p.port == -1) {
-                    p.port = newPlayer.port;
+                if(p.getAddress() == null && p.getPort() == -1) {
+                    p.setAddress(newPlayer.getAddress());
+                    p.setPort(newPlayer.getPort());
+                } else {
+                    System.err.println("Error: Duplicate user login");
                 }
             } else {
                 // Notify selected player that a new player HAS JOINED
-                this.sendData(packet.getData(), p.address, p.port);
+                this.sendData(packet.getData(), p.getAddress(), p.getPort());
                 // Notify new player that selected player EXISTS
-                packet = new Packet00Login(p.getUsername(), p.getX(), p.getY(),
+                packet = new Packet00Login(p.getUID(), p.getUsername(), p.getX(), p.getY(),
                         p.getDirection().getNum(), p.getType().getNum());
-                this.sendData(packet.getData(), newPlayer.address, newPlayer.port);
+                this.sendData(packet.getData(), newPlayer.getAddress(), newPlayer.getPort());
             }
         }
         if(!isConnected) {
-            this.onlinePlayers.add(newPlayer);
+            // Add new player to online list
+            this.onlinePlayers.add(newPlayer.getUID(), newPlayer);
         }
     }
 
     public void removeConnection(Packet01Disconnect packet) {
-        this.onlinePlayers.remove(getPlayerIndex(packet.getUsername()));
-        packet.writeData(this);
+        onlinePlayers.remove(packet.getUID());
+        packet.writeDataFrom(this);
     }
 
+    /**
+     * Note: Notifies all online players of a specific player's position data and direction.
+     */
     private void handleMove(Packet02Move packet) {
-        int index = getPlayerIndex(packet.getUsername());
-        if(index != -1) {
-            PlayerOnline p = this.onlinePlayers.get(index);
+        PlayerOnline p;
+        if((p = onlinePlayers.get(packet.getUID())) != null) {
             // Update data stored on server
             p.setX(packet.getX());
             p.setY(packet.getY());
             p.setMoving(packet.isMoving());
-            p.setDirection(Direction.getDir(packet.getDir()));
-            packet.writeData(this); // Notify all users of new positions
+            p.setDirection(Entity.Direction.getDir(packet.getDir()));
+            packet.writeDataFrom(this); // Notify all users of new positions
         }
     }
 
-    public int getPlayerIndex(String username) {
-        int index = -1;
-        for(PlayerOnline p : this.onlinePlayers) {
-            index++;
-            if(p.getUsername().equalsIgnoreCase(username)) {
-                break;
-            }
-        }
-        return index;
+    /**
+     * Note: Notifies all online players of new message.
+     */
+    private void handleChat(Packet03Chat packet) {
+        messages.add(new Message(packet.getTime(), packet.getUsername(), packet.getMessage()));
+        packet.writeDataFrom(this); // Notify all users of new MESSAGE
+
+        // Log message to console
+        System.out.printf("SERVER=[%s] %s: %s\n", getDate(packet.getTime()), packet.getUsername(), packet.getMessage());
     }
 
     public void sendData(byte[] data, InetAddress address, int port) {
@@ -140,7 +156,11 @@ public class ServerThread extends Thread {
 
     public void sendDataToAllClients(byte[] data) {
         for(PlayerOnline p : onlinePlayers){
-            sendData(data, p.address, p.port);
+            sendData(data, p.getAddress(), p.getPort());
         }
+    }
+
+    private String getDate(long time) {
+        return sdf.format(new Date(time));
     }
 }

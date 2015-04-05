@@ -2,8 +2,10 @@ package engine;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import networking.packets.Packet02Move;
-import objects.Direction;
+import networking.packets.Packet03Chat;
+import objects.Entity;
 import objects.Player;
+import objects.PlayerOnline;
 
 public class Logic {
 
@@ -22,60 +24,65 @@ public class Logic {
         maxCamY = (mapHeight/2f - cam.viewportHeight);
     }
 
-    public void update(){
-        updateMainPlayer(); // Client-side rendering update
-        updateCamera();     // Same as above
+    /**
+     * Note: These are client-sided rendering updates
+     */
+    public void update(Player mp){
+        updateMainPlayer(mp);
+        updateCamera(mp);
     }
 
-    private void updateMainPlayer() {
+    /*
+     * Note: updateMainPlayer or updateCamera could be the culprit
+     * for ConcurrentModificationExceptions.
+     */
+    private void updateMainPlayer(Player mp) {
         // Input logic
         boolean[] keys = KeyboardProcessor.directionKeys;
+        mp.setType(KeyboardProcessor.selectedType);
         if(!keys[0] && !keys[1] && !keys[2] && !keys[3]) {
-            core.getMainPlayer().setMoving(false);
+            mp.setMoving(false);
         } else if (keys[0]) {
-            core.getMainPlayer().move(Direction.DOWN);
+            mp.move(Entity.Direction.DOWN);
         } else if (keys[1]) {
-            core.getMainPlayer().move(Direction.LEFT);
+            mp.move(Entity.Direction.LEFT);
         } else if (keys[2]) {
-            core.getMainPlayer().move(Direction.UP);
+            mp.move(Entity.Direction.UP);
         } else if (keys[3]) {
-            core.getMainPlayer().move(Direction.RIGHT);
+            mp.move(Entity.Direction.RIGHT);
         }
 
         // Position logic
-        if(core.getMainPlayer().isMoving()) {
-            switch (core.getMainPlayer().getDirection()) {
+        if(mp.isMoving()) {
+            switch (mp.getDirection()) {
                 case DOWN:
-                    core.getMainPlayer().setY(core.getMainPlayer().getY() - Config.WALK_DIST);
+                    mp.setY(mp.getY() - Config.WALK_DIST);
                     break;
                 case LEFT:
-                    core.getMainPlayer().setX(core.getMainPlayer().getX() - Config.WALK_DIST);
+                    mp.setX(mp.getX() - Config.WALK_DIST);
                     break;
                 case UP:
-                    core.getMainPlayer().setY(core.getMainPlayer().getY() + Config.WALK_DIST);
+                    mp.setY(mp.getY() + Config.WALK_DIST);
                     break;
                 case RIGHT:
-                    core.getMainPlayer().setX(core.getMainPlayer().getX() + Config.WALK_DIST);
+                    mp.setX(mp.getX() + Config.WALK_DIST);
                     break;
             }
         }
 
         // Send movement packet to server with integer substitutions
-        Packet02Move packet = new Packet02Move(core.getMainPlayer().getUsername(), core.getMainPlayer().getX(),
-                core.getMainPlayer().getY(), core.getMainPlayer().isMovingInt(),
-                core.getMainPlayer().getDirection().getNum(), core.getMainPlayer().getType().getNum());
-        packet.writeData(core.client);
+        sendUpdatePacket(mp);
     }
 
-    private void updateCamera() {
+    private void updateCamera(Player mp) {
 
         /*
          * Add code which updates camera position based
          * on half-screen threshold.
          */
 
-        if(core.getMainPlayer().isMoving()) {
-            switch (core.getMainPlayer().getDirection()) {
+        if(mp.isMoving()) {
+            switch (mp.getDirection()) {
                 case DOWN:
                     cam.translate(0, -Config.WALK_DIST);
                     break;
@@ -91,6 +98,17 @@ public class Logic {
             }
             cam.update();
         }
+    }
+
+    private void sendUpdatePacket(Player mp) {
+        Packet02Move packet = new Packet02Move(mp.getUID(), mp.getUsername(),
+                mp.getX(), mp.getY(), mp.isMovingInt(),
+                mp.getDirection().getNum(), mp.getType().getNum());
+        packet.writeDataFrom(core.client);
+
+        // ============= FOR TESTING PURPOSES ONLY ======================
+        Packet03Chat p = new Packet03Chat(mp.getUsername(), "Hello!");
+        p.writeDataFrom(core.client);
     }
 
 }

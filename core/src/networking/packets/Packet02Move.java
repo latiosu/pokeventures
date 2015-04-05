@@ -5,23 +5,26 @@ import networking.ServerThread;
 
 public class Packet02Move extends Packet {
 
+    private long uid;
     private String username;
     private float x, y;
     private int isMoving, dir, type;
 
     public Packet02Move(byte[] data) {
         super(02);
-        String[] dataArray = readData(data).split(","); // <----- forbidden in usernames
-        this.username = dataArray[0];
-        this.x = Float.parseFloat(dataArray[1]);
-        this.y = Float.parseFloat(dataArray[2]);
-        this.isMoving = Integer.parseInt(dataArray[3]);
-        this.dir = Integer.parseInt(dataArray[4]);
-        this.type = Integer.parseInt(dataArray[5]);
+        String[] dataArray = readData(data).split(",");
+        this.uid = Long.parseLong(dataArray[0]);
+        this.username = dataArray[1];
+        this.x = Float.parseFloat(dataArray[2]);
+        this.y = Float.parseFloat(dataArray[3]);
+        this.isMoving = Integer.parseInt(dataArray[4]);
+        this.dir = Integer.parseInt(dataArray[5]);
+        this.type = Integer.parseInt(dataArray[6]);
     }
 
-    public Packet02Move(String username, float x, float y, int isMoving, int dir, int type) {
+    public Packet02Move(long uid, String username, float x, float y, int isMoving, int dir, int type) {
         super(02);
+        this.uid = uid;
         this.username = username;
         this.x = x;
         this.y = y;
@@ -31,23 +34,21 @@ public class Packet02Move extends Packet {
     }
 
     @Override
-    public void writeData(ClientThread client) {
-        client.sendData(getData());
-    }
-
-    @Override
-    public void writeData(ServerThread server) {
-        server.sendDataToAllClients(getData());
+    public void writeDataFrom(Thread thread) {
+        if(thread instanceof ClientThread)
+            ((ClientThread) thread).sendData(getData());
+        else if (thread instanceof ServerThread)
+            ((ServerThread) thread).sendDataToAllClients(getData());
     }
 
     @Override
     /* Reminder: Update this when changing packet structure */
     public byte[] getData() {
-        return ("02" + this.username + "," + this.x + "," + this.y +
+        return ("02" + this.uid + "," + this.username + "," + this.x + "," + this.y +
                 "," + isMoving + "," + dir + "," + type).getBytes();
     }
-    public String getUsername() {
-        return this.username;
+    public long getUID() {
+        return uid;
     }
     public float getX() {
         return x;
@@ -63,5 +64,8 @@ public class Packet02Move extends Packet {
     }
     public int getType() {
         return type;
+    }
+    public String getUsername() {
+        return username;
     }
 }

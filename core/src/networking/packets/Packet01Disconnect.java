@@ -5,34 +5,32 @@ import networking.ServerThread;
 
 public class Packet01Disconnect extends Packet {
 
-    private String username;
+    private long uid;
 
     public Packet01Disconnect(byte[] data) {
         super(01);
-        this.username = readData(data);
+        this.uid = Long.parseLong(readData(data));
     }
 
-    public Packet01Disconnect(String username) {
+    public Packet01Disconnect(long uid) {
         super(01);
-        this.username = username;
+        this.uid = uid;
     }
 
     @Override
-    public void writeData(ClientThread client) {
-        client.sendData(getData());
-    }
-
-    @Override
-    public void writeData(ServerThread server) {
-        server.sendDataToAllClients(getData());
+    public void writeDataFrom(Thread thread) {
+        if(thread instanceof ClientThread)
+            ((ClientThread) thread).sendData(getData());
+        else if (thread instanceof ServerThread)
+            ((ServerThread) thread).sendDataToAllClients(getData());
     }
 
     @Override
     public byte[] getData() {
-        return ("01" + this.username).getBytes();
+        return ("01" + this.uid).getBytes();
     }
 
-    public String getUsername() {
-        return this.username;
+    public long getUID() {
+        return this.uid;
     }
 }

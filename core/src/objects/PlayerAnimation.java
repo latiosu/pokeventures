@@ -4,17 +4,15 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import engine.AssetManager;
 
-import java.util.Map;
-
 public class PlayerAnimation {
 
     private Player player;
     private Animation currentAnimation;
     private boolean playing = false;
 
-    public PlayerAnimation(Player p, Type t) {
+    public PlayerAnimation(Player p, Player.Type t) {
         player = p;
-        currentAnimation = AssetManager.getAnimation(t, Direction.DOWN);
+        currentAnimation = AssetManager.getAnimation(t, Entity.Direction.DOWN);
     }
 
     public void play(){

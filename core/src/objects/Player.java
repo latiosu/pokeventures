@@ -5,30 +5,32 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import engine.AssetManager;
 import engine.Config;
 
+import java.util.Date;
+
 public class Player extends Entity {
 
+    private long uid;
     private PlayerAnimation anim;
     private String username;
     private float usernameWidth;
     public boolean isMain;
 
-    public Player() {
-        this(Type.CHARMANDER, true, "Explorer");
+    public Player(String username) {
+        this(new Date().getTime(), Entity.Type.CHARMANDER, true, username);
     }
 
-    public Player(Type type, boolean isMain, String username){
+    public Player(long uid, Entity.Type type, boolean isMain, String username){
         super(type, Direction.DOWN);
         anim = new PlayerAnimation(this, type);
         this.isMain = isMain;
         this.username = username;
         usernameWidth = AssetManager.font.getBounds(username).width;
+        this.uid = uid;
     }
 
-    /* Using a player list for rendering */
+    /* Note: Using a player list for rendering */
     public void render(float delta, SpriteBatch batch) {
         batch.draw(getFrame(delta), getRenderX(), getRenderY());
-//        System.out.printf("%s, %s || %s, %s\n", AssetManager.font.getBounds(username).width,
-//                AssetManager.font.getBounds(username).height, getNameX(), getNameY());
         AssetManager.font.draw(batch, username, getNameX(), getNameY());
     }
 
@@ -104,5 +106,8 @@ public class Player extends Entity {
     }
     public int isMovingInt() {
         return (isMoving)? 1:0;
+    }
+    public long getUID() {
+        return uid;
     }
 }

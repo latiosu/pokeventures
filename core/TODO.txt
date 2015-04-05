@@ -7,11 +7,7 @@ CRITICAL - Implement chat system and text transfer
 
 MED - Implement collision system
 
-MED/LOW - Fix ConcurrentModificationException issue
-
-LOW - Update ServerThread to use UserList data structure for storing Players
 LOW - Add documentation to majority of code
-
 
 
 
@@ -27,5 +23,9 @@ MED - Show username above player characters
 MED - Implement character change
 MED - Implement player direction and animation in packets
 MED - Add focus system for input handling via UI and game
+MED - Fix username clashes
 
+LOW - Update ServerThread to use UserList data structure for storing Players
 LOW - Standardise packet transfer types to integer
+LOW - Add readme.md to git repository
+LOW - Sanitize username input

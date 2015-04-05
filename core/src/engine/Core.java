@@ -3,25 +3,19 @@ package engine;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import engine.structs.List;
 import engine.structs.UserList;
 import networking.ClientThread;
+import objects.Entity;
 import objects.PlayerOnline;
 import networking.ServerThread;
 import networking.packets.Packet00Login;
 import networking.packets.Packet01Disconnect;
-import objects.Direction;
 import objects.Player;
-import objects.Type;
-
-import java.net.InetAddress;
 
 
 public class Core extends Game {
@@ -35,8 +29,7 @@ public class Core extends Game {
     public boolean isHost = false;
 
     // Object classes
-    private List<Player> players; // <------ Make this static
-    private Player mainPlayer;
+    private UserList<Player> players; // <------ Make this static ?
 
     // Engine classes
     private OrthographicCamera cam;
@@ -98,7 +91,7 @@ public class Core extends Game {
         // Update logic 15 times per second
         if (delta > UPDATE_RATE) {
             if(playMode) {
-                logic.update();
+                logic.update(players.getMainPlayer());
             }
             delta -= UPDATE_RATE;
         }
@@ -138,12 +131,8 @@ public class Core extends Game {
         animDelta += Gdx.graphics.getDeltaTime();
 	}
 
-    public synchronized List<Player> getPlayers() {
+    public synchronized UserList<Player> getPlayers() {
         return this.players;
-    }
-
-    public synchronized Player getMainPlayer() {
-        return this.mainPlayer;
     }
 
     public void startNetworking(String ip) {
@@ -158,22 +147,23 @@ public class Core extends Game {
     }
 
     public void initMainPlayer(String username) {
-        mainPlayer = new PlayerOnline(username);
-        getPlayers().add(username, getMainPlayer());
-        Packet00Login loginPacket = new Packet00Login(getMainPlayer().getUsername(), getMainPlayer().getX(),
-                getMainPlayer().getY(), getMainPlayer().getDirection().getNum(), getMainPlayer().getType().getNum());
+        PlayerOnline p = new PlayerOnline(username);
+        players.setMainPlayer(p); // <----- forced addition
+        players.add(p.getUID(), p); // <----------------- Add to BOTH
+        Packet00Login loginPacket = new Packet00Login(p.getUID(), p.getUsername(),
+                p.getX(), p.getY(), p.getDirection().getNum(), p.getType().getNum());
         if(server != null) {
-            server.addConnection((PlayerOnline) getMainPlayer(), loginPacket);
+            server.addConnection(p, loginPacket);
         }
-        loginPacket.writeData(client);
+        loginPacket.writeDataFrom(client);
         logic = new Logic(this, cam);
         playMode = true;
     }
 
     /* Update values and animation frame */
-    public void updatePlayer(String username, float x, float y, boolean isMoving, Direction dir, Type type) {
+    public void updatePlayer(long uid, String username, float x, float y, boolean isMoving, Entity.Direction dir, Player.Type type) {
         /* Player is not always added to players list ??? */
-        Player p = getPlayers().get(username);
+        Player p = getPlayers().get(uid);
         if(p != null) {
             p.setX(x);
             p.setY(y);
@@ -184,14 +174,17 @@ public class Core extends Game {
                 p.getAnim().play();
             }
         } else {
-            System.err.println("Error: User not found - " + username);
+            System.err.println("Error: User not found - " + p.getUsername());
             /* Attempt to add to players list again */
-            getPlayers().add(username, new PlayerOnline(x, y, dir, type, false, username, null, -1));
+            getPlayers().add(uid, new PlayerOnline(uid, x, y, dir, type, false, username, null, -1));
         }
     }
 
+    /**
+     * Attempts to send a packet to server indicating this
+     * client wants to disconnect.
+     */
     private void closeNetworking() {
-        Packet01Disconnect packet = new Packet01Disconnect(getMainPlayer().getUsername());
-        packet.writeData(client);
+        new Packet01Disconnect(getPlayers().getMainPlayer().getUID()).writeDataFrom(client);
     }
 }

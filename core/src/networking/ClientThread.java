@@ -2,26 +2,32 @@ package networking;
 
 import engine.Config;
 import engine.Core;
-import networking.packets.Packet;
-import networking.packets.Packet00Login;
-import networking.packets.Packet01Disconnect;
-import networking.packets.Packet02Move;
-import objects.Direction;
+import engine.structs.Message;
+import engine.structs.TimeComparator;
+import networking.packets.*;
+import objects.Entity;
 import objects.Player;
 import objects.PlayerOnline;
-import objects.Type;
 
 import java.io.IOException;
 import java.net.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 public class ClientThread extends Thread {
 
     private InetAddress address;
     private DatagramSocket socket;
     private Core core;
+    private Queue<Message> messages;
+    private SimpleDateFormat sdf;
 
     public ClientThread(Core core, String ip) {
         this.core = core;
+        messages = new PriorityQueue<Message>(Config.MESSAGES_INIT, new TimeComparator());
+        sdf = new SimpleDateFormat(Config.DATE_FORMAT);
         try {
             this.socket = new DatagramSocket();
             this.address = InetAddress.getByName(ip);
@@ -62,20 +68,23 @@ public class ClientThread extends Thread {
             case MOVE:
                 handleMove(new Packet02Move(data));
                 break;
+            case CHAT:
+                handleChat(new Packet03Chat(data));
+                break;
         }
     }
 
     private void handleLogin(Packet00Login packet, InetAddress address, int port) {
-        PlayerOnline player = new PlayerOnline(packet.getX(), packet.getY(), Direction.getDir(packet.getDir()),
-                Type.getType(packet.getType()), false, packet.getUsername(), address, port);
-         core.getPlayers().add(packet.getUsername(), player); // <------- Attempt to add player to world
+        PlayerOnline player = new PlayerOnline(packet.getUID(), packet.getX(), packet.getY(), Entity.Direction.getDir(packet.getDir()),
+                Entity.Type.getType(packet.getType()), false, packet.getUsername(), address, port);
+         core.getPlayers().add(packet.getUID(), player); // <------- Attempt to add player to world
     }
 
     /* Assumes player exists in Core.players list */
     private void handleDisconnect(Packet01Disconnect packet) {
         int index = 0;
         for(Player p : core.getPlayers()){
-            if(p.getUsername().equalsIgnoreCase(packet.getUsername())) {
+            if(p.getUID()==packet.getUID()) {
                 break;
             }
             index++;
@@ -85,12 +94,22 @@ public class ClientThread extends Thread {
 
     private void handleMove(Packet02Move packet) {
         // Converts integer values from packet to standard types
-        core.updatePlayer(packet.getUsername(), packet.getX(), packet.getY(), packet.isMoving()==1,
-                Direction.getDir(packet.getDir()), Type.getType(packet.getType()));
+        core.updatePlayer(packet.getUID(), packet.getUsername(), packet.getX(), packet.getY(), packet.isMoving()==1,
+                Entity.Direction.getDir(packet.getDir()), Entity.Type.getType(packet.getType()));
+    }
+
+    /**
+     * Note: DOES NOT REPLY TO SERVER
+     */
+    private void handleChat(Packet03Chat packet) {
+        messages.add(new Message(packet.getTime(), packet.getUsername(), packet.getMessage()));
+
+        // <-------------- RENDER CHAT HERE
+        System.out.printf("CLIENT=[%s] %s: %s\n", getDate(packet.getTime()), packet.getUsername(), packet.getMessage());
     }
 
     public void sendData(byte[] data) {
-        DatagramPacket packet = new DatagramPacket(data, data.length, address, Config.PORT); // Send data to server
+        DatagramPacket packet = new DatagramPacket(data, data.length, address, Config.GAME_PORT); // Send data to server
         try {
             socket.send(packet);
         } catch (IOException e) {
@@ -98,5 +117,7 @@ public class ClientThread extends Thread {
         }
     }
 
-
+    private String getDate(long time) {
+        return sdf.format(new Date(time));
+    }
 }
