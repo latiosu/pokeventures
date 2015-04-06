@@ -1,62 +1,61 @@
 
 charmander.png
-size: 32,128
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-1
-  rotate: false
-  xy: 15, 22
-  size: 11, 16
-  orig: 11, 16
-  offset: 0, 0
-  index: -1
-2
-  rotate: false
-  xy: 15, 4
-  size: 11, 16
-  orig: 11, 16
-  offset: 0, 0
-  index: -1
-3
+left1
   rotate: false
   xy: 2, 94
   size: 19, 16
   orig: 19, 16
   offset: 0, 0
   index: -1
-4
+right2
+  rotate: false
+  xy: 2, 76
+  size: 19, 16
+  orig: 19, 16
+  offset: 0, 0
+  index: -1
+left2
   rotate: false
   xy: 2, 58
   size: 18, 16
   orig: 18, 16
   offset: 0, 0
   index: -1
-5
-  rotate: false
-  xy: 2, 21
-  size: 11, 17
-  orig: 11, 17
-  offset: 0, 0
-  index: -1
-6
-  rotate: false
-  xy: 2, 2
-  size: 11, 17
-  orig: 11, 17
-  offset: 0, 0
-  index: -1
-7
+right1
   rotate: false
   xy: 2, 40
   size: 18, 16
   orig: 18, 16
   offset: 0, 0
   index: -1
-8
+up1
   rotate: false
-  xy: 2, 76
-  size: 19, 16
-  orig: 19, 16
+  xy: 2, 21
+  size: 11, 17
+  orig: 11, 17
+  offset: 0, 0
+  index: -1
+up2
+  rotate: false
+  xy: 2, 2
+  size: 11, 17
+  orig: 11, 17
+  offset: 0, 0
+  index: -1
+down1
+  rotate: false
+  xy: 15, 22
+  size: 11, 16
+  orig: 11, 16
+  offset: 0, 0
+  index: -1
+down2
+  rotate: false
+  xy: 15, 4
+  size: 11, 16
+  orig: 11, 16
   offset: 0, 0
   index: -1

@@ -1,0 +1,382 @@
+
+uiskin.png
+size: 1023,127
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+check-off
+  rotate: false
+  xy: 321, 26
+  size: 14, 14
+  orig: 14, 14
+  offset: 0, 0
+  index: -1
+textfield
+  rotate: false
+  xy: 321, 26
+  size: 14, 14
+  split: 3, 3, 3, 3
+  orig: 14, 14
+  offset: 0, 0
+  index: -1
+check-on
+  rotate: false
+  xy: 848, 34
+  size: 14, 14
+  orig: 14, 14
+  offset: 0, 0
+  index: -1
+cursor
+  rotate: false
+  xy: 1020, 114
+  size: 3, 3
+  split: 1, 1, 1, 1
+  orig: 3, 3
+  offset: 0, 0
+  index: -1
+cursor-black
+  rotate: false
+  xy: 1020, 118
+  size: 3, 3
+  split: 1, 1, 1, 1
+  orig: 3, 3
+  offset: 0, 0
+  index: -1
+default
+  rotate: false
+  xy: 1, 12
+  size: 254, 77
+  orig: 254, 77
+  offset: 0, 0
+  index: -1
+default-pane
+  rotate: false
+  xy: 256, 21
+  size: 5, 3
+  split: 1, 1, 1, 1
+  orig: 5, 3
+  offset: 0, 0
+  index: -1
+default-rect-pad
+  rotate: false
+  xy: 256, 21
+  size: 5, 3
+  split: 1, 1, 1, 1
+  orig: 5, 3
+  offset: 0, 0
+  index: -1
+default-pane-noborder
+  rotate: false
+  xy: 1, 1
+  size: 1, 1
+  split: 0, 0, 0, 0
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+default-rect
+  rotate: false
+  xy: 1020, 106
+  size: 3, 3
+  split: 1, 1, 1, 1
+  orig: 3, 3
+  offset: 0, 0
+  index: -1
+default-rect-down
+  rotate: false
+  xy: 1020, 110
+  size: 3, 3
+  split: 1, 1, 1, 1
+  orig: 3, 3
+  offset: 0, 0
+  index: -1
+default-round
+  rotate: false
+  xy: 974, 58
+  size: 12, 20
+  split: 5, 5, 5, 4
+  pad: 4, 4, 1, 1
+  orig: 12, 20
+  offset: 0, 0
+  index: -1
+default-round-down
+  rotate: false
+  xy: 1007, 107
+  size: 12, 20
+  split: 5, 5, 5, 4
+  orig: 12, 20
+  offset: 0, 0
+  index: -1
+default-round-large
+  rotate: false
+  xy: 932, 58
+  size: 20, 20
+  split: 5, 5, 5, 4
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
+default-scroll
+  rotate: false
+  xy: 953, 58
+  size: 20, 20
+  split: 2, 2, 2, 2
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
+default-select
+  rotate: false
+  xy: 904, 58
+  size: 27, 20
+  split: 4, 14, 4, 4
+  orig: 27, 20
+  offset: 0, 0
+  index: -1
+default-select-selection
+  rotate: false
+  xy: 904, 54
+  size: 3, 3
+  split: 1, 1, 1, 1
+  orig: 3, 3
+  offset: 0, 0
+  index: -1
+default-slider
+  rotate: false
+  xy: 1, 3
+  size: 8, 8
+  split: 2, 2, 2, 2
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+default-slider-knob
+  rotate: false
+  xy: 1007, 88
+  size: 9, 18
+  orig: 9, 18
+  offset: 0, 0
+  index: -1
+default-splitpane
+  rotate: false
+  xy: 876, 49
+  size: 5, 3
+  split: 0, 5, 0, 0
+  orig: 5, 3
+  offset: 0, 0
+  index: -1
+default-splitpane-vertical
+  rotate: false
+  xy: 1020, 122
+  size: 3, 5
+  split: 0, 0, 0, 5
+  orig: 3, 5
+  offset: 0, 0
+  index: -1
+default-window
+  rotate: false
+  xy: 848, 49
+  size: 27, 29
+  split: 4, 3, 20, 3
+  orig: 27, 29
+  offset: 0, 0
+  index: -1
+font_pokemon__dppt_16pt
+  rotate: false
+  xy: 1, 90
+  size: 512, 37
+  orig: 512, 37
+  offset: 0, 0
+  index: -1
+paint_brush
+  rotate: false
+  xy: 256, 25
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+selection
+  rotate: false
+  xy: 3, 1
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+textbox
+  rotate: false
+  xy: 613, 32
+  size: 46, 46
+  split: 15, 11, 11, 11
+  orig: 46, 46
+  offset: 0, 0
+  index: 3
+textbox2
+  rotate: false
+  xy: 566, 32
+  size: 46, 46
+  split: 15, 11, 11, 11
+  orig: 46, 46
+  offset: 0, 0
+  index: -1
+textbox_alpha
+  rotate: false
+  xy: 660, 32
+  size: 46, 46
+  split: 15, 11, 11, 11
+  orig: 46, 46
+  offset: 0, 0
+  index: -1
+textbox_faded
+  rotate: false
+  xy: 707, 32
+  size: 46, 46
+  split: 15, 11, 11, 11
+  orig: 46, 46
+  offset: 0, 0
+  index: -1
+textbox_plain
+  rotate: false
+  xy: 754, 32
+  size: 46, 46
+  split: 15, 11, 11, 11
+  orig: 46, 46
+  offset: 0, 0
+  index: -1
+textbox_very_faded
+  rotate: false
+  xy: 801, 32
+  size: 46, 46
+  split: 15, 11, 11, 11
+  orig: 46, 46
+  offset: 0, 0
+  index: -1
+tree-minus
+  rotate: false
+  xy: 987, 64
+  size: 14, 14
+  orig: 14, 14
+  offset: 0, 0
+  index: -1
+tree-plus
+  rotate: false
+  xy: 336, 26
+  size: 14, 14
+  orig: 14, 14
+  offset: 0, 0
+  index: -1
+white
+  rotate: false
+  xy: 5, 1
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+widgets/Button
+  rotate: false
+  xy: 321, 41
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+widgets/CheckBox
+  rotate: false
+  xy: 370, 41
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+widgets/ImageButton
+  rotate: false
+  xy: 419, 41
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+widgets/Label
+  rotate: false
+  xy: 468, 41
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+widgets/List
+  rotate: false
+  xy: 517, 79
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+widgets/ProgressBar
+  rotate: false
+  xy: 566, 79
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+widgets/ScrollPane
+  rotate: false
+  xy: 615, 79
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+widgets/SelectBox
+  rotate: false
+  xy: 664, 79
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+widgets/Slider
+  rotate: false
+  xy: 713, 79
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+widgets/SplitPane
+  rotate: false
+  xy: 762, 79
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+widgets/TextButton
+  rotate: false
+  xy: 811, 79
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+widgets/TextField
+  rotate: false
+  xy: 860, 79
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+widgets/Touchpad
+  rotate: false
+  xy: 909, 79
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+widgets/Tree
+  rotate: false
+  xy: 958, 79
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+widgets/Window
+  rotate: false
+  xy: 517, 30
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+window-plain
+  rotate: false
+  xy: 876, 53
+  size: 27, 25
+  split: 4, 3, 14, 3
+  orig: 27, 25
+  offset: 0, 0
+  index: -1
