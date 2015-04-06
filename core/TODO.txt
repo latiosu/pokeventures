@@ -3,8 +3,6 @@
              GOALS
     ========================
 
-CRITICAL - Add camera bounds
-
 HIGH - Add map bounds
 HIGH - Implement collision system
 
@@ -20,6 +18,7 @@ LOW - Add documentation to majority of code
               DONE
     ========================
 
+CRITICAL - Add camera bounds
 CRITICAL - Fix focus transfer with chat system
 CRITICAL - Implement chat system and text transfer
 CRITICAL - Fix multiplayer login issue (Third user causes disconnects/client to malfunction)

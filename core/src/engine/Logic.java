@@ -7,19 +7,23 @@ import objects.Player;
 
 public class Logic {
 
-    Core core;
-    OrthographicCamera cam;
+    private Core core;
+    private OrthographicCamera cam;
 
-    float mapWidth, mapHeight, maxCamX, maxCamY;
+    private float mapWidth, mapHeight, minCamX, minCamY, maxCamX, maxCamY, spawnX, spawnY;
 
     public Logic(Core core, OrthographicCamera cam){
         this.core = core;
         this.cam = cam;
 
-//        mapWidth = 1280f;
-//        mapHeight = 1310f;
-//        maxCamX = (mapWidth/2f - cam.viewportWidth);
-//        maxCamY = (mapHeight/2f - cam.viewportHeight);
+        mapWidth = AssetManager.level.getWidth();
+        mapHeight = AssetManager.level.getHeight();
+        spawnX = Config.SPAWN_X;
+        spawnY = Config.SPAWN_Y;
+        minCamX = spawnX + (Config.VIEWPORT_WIDTH/2f);
+        minCamY = spawnY + (Config.VIEWPORT_HEIGHT/2f);
+        maxCamX = mapWidth + spawnX - (Config.VIEWPORT_WIDTH/2f);
+        maxCamY = mapHeight + spawnY - (Config.VIEWPORT_HEIGHT/2f);
     }
 
     /**
@@ -68,29 +72,51 @@ public class Logic {
         sendUpdatePacket(mp);
     }
 
+    /**
+     * Camera algorithm only follows player if camera can be centered.
+     */
     private void updateCamera(Player mp) {
-
-        /*
-         * Add code which updates camera position based
-         * on half-screen threshold.
-         */
-
         if(mp.isMoving()) {
             switch (mp.getDirection()) {
                 case DOWN:
-                    cam.translate(0, -Config.WALK_DIST);
+                    if(mp.getY() < maxCamY) {
+                        cam.translate(0, -Config.WALK_DIST);
+                    }
                     break;
                 case LEFT:
-                    cam.translate(-Config.WALK_DIST, 0);
+                    if(mp.getX() < maxCamX) {
+                        cam.translate(-Config.WALK_DIST, 0);
+                    }
                     break;
                 case UP:
-                    cam.translate(0, Config.WALK_DIST);
+                    if(mp.getY() > minCamY) {
+                        cam.translate(0, Config.WALK_DIST);
+                    }
                     break;
                 case RIGHT:
-                    cam.translate(Config.WALK_DIST, 0);
+                    if(mp.getX() > minCamX) {
+                        cam.translate(Config.WALK_DIST, 0);
+                    }
                     break;
             }
+            updateCameraBounds();
             cam.update();
+        }
+    }
+
+    private void updateCameraBounds() {
+        // Map boundaries
+        if(cam.position.x > maxCamX) {
+            cam.position.x = maxCamX;
+        }
+        if(cam.position.y > maxCamY) {
+            cam.position.y = maxCamY;
+        }
+        if(cam.position.x < minCamX) {
+            cam.position.x = minCamX;
+        }
+        if(cam.position.y < minCamY) {
+            cam.position.y = minCamY;
         }
     }
 

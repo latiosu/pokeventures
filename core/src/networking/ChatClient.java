@@ -1,7 +1,6 @@
 package networking;
 
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -142,8 +141,7 @@ public class ChatClient {
 
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                System.out.printf("%.1f %.1f\n", x, y);
-                ui.showChat(chatField.hit(x - Config.GAME_RES_WIDTH/2f, y, true) != null);
+                ui.showChat(chatField.hit(x - Config.VIEWPORT_WIDTH /2f, y, true) != null);
                 return false;
             }
         });

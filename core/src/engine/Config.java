@@ -16,8 +16,8 @@ public class Config {
 
     /* ====== Sensitive ====== */
     // Engine
-    public static final float GAME_RES_WIDTH = 480;
-    public static final float GAME_RES_HEIGHT = 320;
+    public static final float VIEWPORT_WIDTH = 480;
+    public static final float VIEWPORT_HEIGHT = 320;
     public static final float GAME_WIDTH = 480*2f;
     public static final float GAME_HEIGHT = 320*2f;
     public static final float UPDATE_RATE = 1/15f;

@@ -58,7 +58,7 @@ public class Core extends Game {
 
         // Engine
         assets = new AssetManager();
-        cam = new OrthographicCamera(Config.GAME_RES_WIDTH, Config.GAME_RES_HEIGHT);
+        cam = new OrthographicCamera(Config.VIEWPORT_WIDTH, Config.VIEWPORT_HEIGHT);
         ui = new UI(this);
 
         // Input handling
