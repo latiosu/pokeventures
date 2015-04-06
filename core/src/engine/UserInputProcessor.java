@@ -2,10 +2,11 @@ package engine;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import objects.Entity;
 import objects.Player;
 
-public class KeyboardProcessor implements InputProcessor {
+public class UserInputProcessor implements InputProcessor {
 
     /* Note: These values must be read another class
      * to update the values for the main player. */
@@ -13,15 +14,16 @@ public class KeyboardProcessor implements InputProcessor {
     public static Player.Type selectedType;
     private Core core;
 
-    public KeyboardProcessor(Core core) {
+    public UserInputProcessor(Core core) {
         this.core = core;
-        this.selectedType = Entity.Type.CHARMANDER; // <-------- HARDCODED
+        selectedType = Config.DEFAULT_TYPE;
         directionKeys = new boolean[4];
     }
 
     @Override
     public boolean keyDown(int keycode) {
-        if(core.ui.hasFocus()) {
+        System.out.println(Input.Keys.toString(keycode));
+        if(core.getUI().hasFocus()) {
             return false;
         }
         switch (keycode) {
@@ -46,13 +48,17 @@ public class KeyboardProcessor implements InputProcessor {
             case Input.Keys.NUM_3:
                 selectedType = Entity.Type.SQUIRTLE;
                 break;
+            case Input.Keys.ENTER:
+                System.out.println("SHOWING CHAT");
+                core.getUI().showChat(true);
+                break;
         }
         return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        if(core.ui.hasFocus()) {
+        if(core.getUI().hasFocus()) {
             return false;
         }
         switch (keycode) {
@@ -72,6 +78,12 @@ public class KeyboardProcessor implements InputProcessor {
         return false;
     }
 
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        // Add chat window control?
+        return false;
+    }
+
     // Not used
     @Override
     public boolean keyTyped(char character) {
@@ -79,10 +91,6 @@ public class KeyboardProcessor implements InputProcessor {
     }
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         return false;
     }
     @Override

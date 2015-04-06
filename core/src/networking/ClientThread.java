@@ -3,7 +3,6 @@ package networking;
 import engine.Config;
 import engine.Core;
 import engine.structs.Message;
-import engine.structs.TimeComparator;
 import networking.packets.*;
 import objects.Entity;
 import objects.Player;
@@ -12,22 +11,15 @@ import objects.PlayerOnline;
 import java.io.IOException;
 import java.net.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.PriorityQueue;
-import java.util.Queue;
 
 public class ClientThread extends Thread {
 
     private InetAddress address;
     private DatagramSocket socket;
     private Core core;
-    private Queue<Message> messages;
-    private SimpleDateFormat sdf;
 
     public ClientThread(Core core, String ip) {
         this.core = core;
-        messages = new PriorityQueue<Message>(Config.MESSAGES_INIT, new TimeComparator());
-        sdf = new SimpleDateFormat(Config.DATE_FORMAT);
         try {
             this.socket = new DatagramSocket();
             this.address = InetAddress.getByName(ip);
@@ -54,7 +46,7 @@ public class ClientThread extends Thread {
 
     private void parsePacket(byte[] data, InetAddress address, int port) {
         String message = new String(data).trim();
-        Packet.PacketType type = Packet.lookupPacket(message.substring(0, 2)); // first two characters
+        Packet.PacketType type = Packet.lookupPacket(message.substring(0, 2));
         switch (type) {
             default:
             case INVALID:
@@ -74,10 +66,12 @@ public class ClientThread extends Thread {
         }
     }
 
-    private void handleLogin(Packet00Login packet, InetAddress address, int port) {
-        PlayerOnline player = new PlayerOnline(packet.getUID(), packet.getX(), packet.getY(), Entity.Direction.getDir(packet.getDir()),
-                Entity.Type.getType(packet.getType()), false, packet.getUsername(), address, port);
-         core.getPlayers().add(packet.getUID(), player); // <------- Attempt to add player to world
+    private void handleLogin(Packet00Login p, InetAddress address, int port) {
+        PlayerOnline player = new PlayerOnline(p.getUID(), p.getX(), p.getY(),
+                Entity.Direction.getDir(p.getDir()), Entity.Type.getType(p.getType()),
+                false, p.getUsername(), address, port);
+        // Warning: Attempts to add player to world
+        core.getPlayers().add(p.getUID(), player);
     }
 
     /* Assumes player exists in Core.players list */
@@ -102,10 +96,7 @@ public class ClientThread extends Thread {
      * Note: DOES NOT REPLY TO SERVER
      */
     private void handleChat(Packet03Chat packet) {
-        messages.add(new Message(packet.getTime(), packet.getUsername(), packet.getMessage()));
-
-        // <-------------- RENDER CHAT HERE
-        System.out.printf("CLIENT=[%s] %s: %s\n", getDate(packet.getTime()), packet.getUsername(), packet.getMessage());
+        core.storeMsg(new Message(packet.getTime(), packet.getUsername(), packet.getMessage()));
     }
 
     public void sendData(byte[] data) {
@@ -115,9 +106,5 @@ public class ClientThread extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private String getDate(long time) {
-        return sdf.format(new Date(time));
     }
 }

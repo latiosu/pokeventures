@@ -8,8 +8,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import engine.structs.Message;
 import engine.structs.UserList;
 import networking.ClientThread;
+import networking.packets.Packet03Chat;
 import objects.Entity;
 import objects.PlayerOnline;
 import networking.ServerThread;
@@ -21,44 +23,47 @@ import objects.Player;
 public class Core extends Game {
 
     // Engine variables/constants
-    private static final float UPDATE_RATE = 1/15f;
-    private static final float ANIM_RATE = 1/2f;
+    private static final float UPDATE_RATE = Config.UPDATE_RATE;
+    private static final float ANIM_RATE = Config.ANIM_RATE;
     private static float delta = 0;
     private static float animDelta = 0;
+
     public boolean playMode = false;
     public boolean isHost = false;
 
     // Object classes
-    private UserList<Player> players; // <------ Make this static ?
+    private UserList<Player> players;
 
-    // Engine classes
+    // Rendering classes
     private OrthographicCamera cam;
     private SpriteBatch batch;
     private Texture tex;
-    Sprite sprite;
-    AssetManager assets;
-    Logic logic;
-    KeyboardProcessor input;
-    UI ui;
-    InputMultiplexer multiplexer;
+    private Sprite sprite;
+    private AssetManager assets;
+
+    // Engine classes
+    private Logic logic;
+    private UserInputProcessor input;
+    private UI ui;
+    private InputMultiplexer multiplexer;
 
     // Networking classes
-    ServerThread server;
-    ClientThread client;
+    private ServerThread server;
+    private ClientThread client;
 
-	@Override
+    @Override
 	public void create () {
         // Object-related
         players = new UserList<Player>();
 
         // Engine
         assets = new AssetManager();
-        cam = new OrthographicCamera(480, 320);
-        ui = new UI(this); // Note: Networking commences here, playMode = true
+        cam = new OrthographicCamera(Config.GAME_RES_WIDTH, Config.GAME_RES_HEIGHT);
+        ui = new UI(this);
 
         // Input handling
         multiplexer = new InputMultiplexer();
-        input = new KeyboardProcessor(this);
+        input = new UserInputProcessor(this);
         multiplexer.addProcessor(ui.getStage());
         multiplexer.addProcessor(input);
         Gdx.input.setInputProcessor(multiplexer);
@@ -69,9 +74,9 @@ public class Core extends Game {
         tex.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
 
         // Player spawn position
-        sprite =  new Sprite(tex);
+        sprite = new Sprite(tex);
 	    sprite.setOrigin(0,0);
-        sprite.setPosition(-864,-550);
+        sprite.setPosition(Config.SPAWN_X, Config.SPAWN_Y);
     }
 
     @Override
@@ -155,6 +160,7 @@ public class Core extends Game {
         if(server != null) {
             server.addConnection(p, loginPacket);
         }
+        // Send packet to server to sync main player
         loginPacket.writeDataFrom(client);
         logic = new Logic(this, cam);
         playMode = true;
@@ -181,10 +187,33 @@ public class Core extends Game {
     }
 
     /**
-     * Attempts to send a packet to server indicating this
+     * Attempts to send a packet to server indicating the
      * client wants to disconnect.
      */
     private void closeNetworking() {
         new Packet01Disconnect(getPlayers().getMainPlayer().getUID()).writeDataFrom(client);
+    }
+
+    /**
+     * Attempts to send a packet to server to synchronize
+     * new chat message.
+     */
+    public void registerMsg(Packet03Chat packet) {
+        packet.writeDataFrom(client);
+    }
+
+    /**
+     * Stores message inside chat client and updates ui components.
+     * Note: DOES NOT COMMUNICATE WITH SERVER.
+     */
+    public void storeMsg(Message msg) {
+        ui.getChatClient().storeMsg(msg);
+    }
+
+    public UI getUI() {
+        return ui;
+    }
+    public ClientThread getClientThread() {
+        return client;
     }
 }

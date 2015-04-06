@@ -2,10 +2,8 @@ package engine;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import networking.packets.Packet02Move;
-import networking.packets.Packet03Chat;
 import objects.Entity;
 import objects.Player;
-import objects.PlayerOnline;
 
 public class Logic {
 
@@ -18,10 +16,10 @@ public class Logic {
         this.core = core;
         this.cam = cam;
 
-        mapWidth = 1280f;
-        mapHeight = 1310f;
-        maxCamX = (mapWidth/2f - cam.viewportWidth);
-        maxCamY = (mapHeight/2f - cam.viewportHeight);
+//        mapWidth = 1280f;
+//        mapHeight = 1310f;
+//        maxCamX = (mapWidth/2f - cam.viewportWidth);
+//        maxCamY = (mapHeight/2f - cam.viewportHeight);
     }
 
     /**
@@ -32,14 +30,10 @@ public class Logic {
         updateCamera(mp);
     }
 
-    /*
-     * Note: updateMainPlayer or updateCamera could be the culprit
-     * for ConcurrentModificationExceptions.
-     */
     private void updateMainPlayer(Player mp) {
         // Input logic
-        boolean[] keys = KeyboardProcessor.directionKeys;
-        mp.setType(KeyboardProcessor.selectedType);
+        boolean[] keys = UserInputProcessor.directionKeys;
+        mp.setType(UserInputProcessor.selectedType);
         if(!keys[0] && !keys[1] && !keys[2] && !keys[3]) {
             mp.setMoving(false);
         } else if (keys[0]) {
@@ -104,11 +98,7 @@ public class Logic {
         Packet02Move packet = new Packet02Move(mp.getUID(), mp.getUsername(),
                 mp.getX(), mp.getY(), mp.isMovingInt(),
                 mp.getDirection().getNum(), mp.getType().getNum());
-        packet.writeDataFrom(core.client);
-
-        // ============= FOR TESTING PURPOSES ONLY ======================
-        Packet03Chat p = new Packet03Chat(mp.getUsername(), "Hello!");
-        p.writeDataFrom(core.client);
+        packet.writeDataFrom(core.getClientThread());
     }
 
 }

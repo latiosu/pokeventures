@@ -1,5 +1,6 @@
 package networking.packets;
 
+import engine.structs.Message;
 import networking.ClientThread;
 import networking.ServerThread;
 
@@ -17,6 +18,10 @@ public class Packet03Chat extends Packet {
         this.time = Long.parseLong(dataArray[0]);
         this.username = dataArray[1];
         this.message = dataArray[2];
+    }
+
+    public Packet03Chat(Message msg) {
+        this(msg.time, msg.username, msg.message);
     }
 
     public Packet03Chat(String username, String message) {

@@ -20,7 +20,6 @@ public class AssetManager {
     public static Texture level;
     public static BitmapFont font;
 
-
     public AssetManager() {
         animations = new HashMap<Player.Type, Map<Entity.Direction, Animation>>();
         loadAssets();
@@ -47,10 +46,10 @@ public class AssetManager {
         Map<Entity.Direction, Animation> map = new HashMap<Entity.Direction, Animation>();
 
         // Generate animations types (down, left, up, right)
-        map.put(Entity.Direction.DOWN, new Animation(Config.ANIM_RATE, atlas.findRegion("down1"), atlas.findRegion("down2")));
-        map.put(Entity.Direction.LEFT, new Animation(Config.ANIM_RATE, atlas.findRegion("left1"), atlas.findRegion("left2")));
-        map.put(Entity.Direction.UP, new Animation(Config.ANIM_RATE, atlas.findRegion("up1"), atlas.findRegion("up2")));
-        map.put(Entity.Direction.RIGHT, new Animation(Config.ANIM_RATE, atlas.findRegion("right1"), atlas.findRegion("right2")));
+        map.put(Entity.Direction.DOWN, new Animation(Config.ANIM_DURATION, atlas.findRegion("down1"), atlas.findRegion("down2")));
+        map.put(Entity.Direction.LEFT, new Animation(Config.ANIM_DURATION, atlas.findRegion("left1"), atlas.findRegion("left2")));
+        map.put(Entity.Direction.UP, new Animation(Config.ANIM_DURATION, atlas.findRegion("up1"), atlas.findRegion("up2")));
+        map.put(Entity.Direction.RIGHT, new Animation(Config.ANIM_DURATION, atlas.findRegion("right1"), atlas.findRegion("right2")));
 
         return map;
     }
