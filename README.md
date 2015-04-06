@@ -4,7 +4,7 @@ A small game being developed with [libGDX](http://libgdx.badlogicgames.com) to e
 
 ### Requirements 
 * [Gradle](http://gradle.org/)
-* TCP/UDP port 4444 to be open for multiplayer
+* TCP/UDP port 5284 to be open for multiplayer
 
 ### How to play
 1. Download and extract source code
