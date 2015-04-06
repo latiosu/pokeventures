@@ -1,93 +1,82 @@
 package engine;
 
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import engine.*;
-import objects.Direction;
+import networking.packets.Packet02Move;
+import objects.Entity;
 import objects.Player;
-import objects.Type;
 
 public class Logic {
 
-    Player player;
+    Core core;
     OrthographicCamera cam;
 
     float mapWidth, mapHeight, maxCamX, maxCamY;
 
-    public Logic(Player p, OrthographicCamera cam){
-        player = p;
+    public Logic(Core core, OrthographicCamera cam){
+        this.core = core;
         this.cam = cam;
 
-        mapWidth = 1280f;
-        mapHeight = 1310f;
-        maxCamX = (mapWidth/2f - cam.viewportWidth);
-        maxCamY = (mapHeight/2f - cam.viewportHeight);
+//        mapWidth = 1280f;
+//        mapHeight = 1310f;
+//        maxCamX = (mapWidth/2f - cam.viewportWidth);
+//        maxCamY = (mapHeight/2f - cam.viewportHeight);
     }
 
-    // Add any game logic you'd like here
-    public void update(){
-        updatePlayer();
-        updateCamera();
+    /**
+     * Note: These are client-sided rendering updates
+     */
+    public void update(Player mp){
+        updateMainPlayer(mp);
+        updateCamera(mp);
     }
 
-    public void changeType(int keycode) {
-        switch (keycode) {
-            case Input.Keys.NUM_1:
-                player.setType(Type.CHARMANDER);
-                break;
-            case Input.Keys.NUM_2:
-                player.setType(Type.BULBASAUR);
-                break;
-            case Input.Keys.NUM_3:
-                player.setType(Type.SQUIRTLE);
-                break;
-        }
-    }
-
-    private void updatePlayer() {
+    private void updateMainPlayer(Player mp) {
         // Input logic
-        boolean[] keys = KeyboardProcessor.directionKeys;
+        boolean[] keys = UserInputProcessor.directionKeys;
+        mp.setType(UserInputProcessor.selectedType);
         if(!keys[0] && !keys[1] && !keys[2] && !keys[3]) {
-            player.setMoving(false);
+            mp.setMoving(false);
         } else if (keys[0]) {
-            player.move(Direction.DOWN);
+            mp.move(Entity.Direction.DOWN);
         } else if (keys[1]) {
-            player.move(Direction.LEFT);
+            mp.move(Entity.Direction.LEFT);
         } else if (keys[2]) {
-            player.move(Direction.UP);
+            mp.move(Entity.Direction.UP);
         } else if (keys[3]) {
-            player.move(Direction.RIGHT);
+            mp.move(Entity.Direction.RIGHT);
         }
 
         // Position logic
-        if(player.isMoving()) {
-            player.getAnim().play();
-            switch (player.getDirection()) {
+        if(mp.isMoving()) {
+            switch (mp.getDirection()) {
                 case DOWN:
-                    player.setY(player.getY() - Config.WALK_DIST);
+                    mp.setY(mp.getY() - Config.WALK_DIST);
                     break;
                 case LEFT:
-                    player.setX(player.getX() - Config.WALK_DIST);
+                    mp.setX(mp.getX() - Config.WALK_DIST);
                     break;
                 case UP:
-                    player.setY(player.getY() + Config.WALK_DIST);
+                    mp.setY(mp.getY() + Config.WALK_DIST);
                     break;
                 case RIGHT:
-                    player.setX(player.getX() + Config.WALK_DIST);
+                    mp.setX(mp.getX() + Config.WALK_DIST);
                     break;
             }
         }
+
+        // Send movement packet to server with integer substitutions
+        sendUpdatePacket(mp);
     }
 
-    private void updateCamera() {
+    private void updateCamera(Player mp) {
 
         /*
          * Add code which updates camera position based
          * on half-screen threshold.
          */
 
-        if(player.isMoving()) {
-            switch (player.getDirection()) {
+        if(mp.isMoving()) {
+            switch (mp.getDirection()) {
                 case DOWN:
                     cam.translate(0, -Config.WALK_DIST);
                     break;
@@ -103,6 +92,13 @@ public class Logic {
             }
             cam.update();
         }
+    }
+
+    private void sendUpdatePacket(Player mp) {
+        Packet02Move packet = new Packet02Move(mp.getUID(), mp.getUsername(),
+                mp.getX(), mp.getY(), mp.isMovingInt(),
+                mp.getDirection().getNum(), mp.getType().getNum());
+        packet.writeDataFrom(core.getClientThread());
     }
 
 }

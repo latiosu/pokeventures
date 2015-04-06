@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component inheritJdk="true">
+	<output-test url="file://$MODULE_DIR$/build"/>
+	<contentEntry url="file://$MODULE_DIR$">
+		<excludeFolder url="file://$MODULE_DIR$/.gradle"/>
+		<excludeFolder url="file://$MODULE_DIR$/build"/>
+	</contentEntry>
+	<levels>
+		<level name="Gradle: com.badlogicgames.gdx:gdx-freetype-platform:1.5.5:natives-desktop" value="project"/>
+		<level name="Gradle: com.badlogicgames.gdx:gdx-freetype:1.5.5" value="project"/>
+	</levels>
+</component>

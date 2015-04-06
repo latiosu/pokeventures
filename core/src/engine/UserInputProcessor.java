@@ -2,19 +2,29 @@ package engine;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import objects.Entity;
+import objects.Player;
 
-public class KeyboardProcessor implements InputProcessor {
+public class UserInputProcessor implements InputProcessor {
 
+    /* Note: These values must be read another class
+     * to update the values for the main player. */
     public static boolean[] directionKeys; // Down Left Up Right
-    private Logic logic;
+    public static Player.Type selectedType;
+    private Core core;
 
-    public KeyboardProcessor(Logic logic) {
-        this.logic = logic;
+    public UserInputProcessor(Core core) {
+        this.core = core;
+        selectedType = Config.DEFAULT_TYPE;
         directionKeys = new boolean[4];
     }
 
     @Override
     public boolean keyDown(int keycode) {
+        if(core.getUI().hasFocus()) {
+            return false;
+        }
         switch (keycode) {
             case Input.Keys.DOWN:
                 directionKeys[0] = true;
@@ -29,9 +39,16 @@ public class KeyboardProcessor implements InputProcessor {
                 directionKeys[3] = true;
                 break;
             case Input.Keys.NUM_1:
+                selectedType = Entity.Type.CHARMANDER;
+                break;
             case Input.Keys.NUM_2:
+                selectedType = Entity.Type.BULBASAUR;
+                break;
             case Input.Keys.NUM_3:
-                logic.changeType(keycode);
+                selectedType = Entity.Type.SQUIRTLE;
+                break;
+            case Input.Keys.ENTER:
+                core.getUI().showChat(true);
                 break;
         }
         return false;
@@ -39,6 +56,9 @@ public class KeyboardProcessor implements InputProcessor {
 
     @Override
     public boolean keyUp(int keycode) {
+        if(core.getUI().hasFocus()) {
+            return false;
+        }
         switch (keycode) {
             case Input.Keys.DOWN:
                 directionKeys[0] = false;
@@ -57,17 +77,17 @@ public class KeyboardProcessor implements InputProcessor {
     }
 
     @Override
-    public boolean keyTyped(char character) {
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         return false;
     }
 
     // Not used
     @Override
-    public boolean mouseMoved(int screenX, int screenY) {
+    public boolean keyTyped(char character) {
         return false;
     }
     @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+    public boolean mouseMoved(int screenX, int screenY) {
         return false;
     }
     @Override
