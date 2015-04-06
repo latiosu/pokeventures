@@ -10,7 +10,8 @@ public class Logic {
     private Core core;
     private OrthographicCamera cam;
 
-    private float mapWidth, mapHeight, minCamX, minCamY, maxCamX, maxCamY, spawnX, spawnY;
+    private float mapWidth, mapHeight, minCamX, minCamY, maxCamX, maxCamY,
+            spawnX, spawnY, minX, minY, maxX, maxY;
 
     public Logic(Core core, OrthographicCamera cam){
         this.core = core;
@@ -20,8 +21,14 @@ public class Logic {
         mapHeight = AssetManager.level.getHeight();
         spawnX = Config.SPAWN_X;
         spawnY = Config.SPAWN_Y;
-        minCamX = spawnX + (Config.VIEWPORT_WIDTH/2f);
-        minCamY = spawnY + (Config.VIEWPORT_HEIGHT/2f);
+        minCamX = Config.CAM_MIN_X;
+        minCamY = Config.CAM_MIN_Y;
+
+        // Not in config
+        minX = spawnX;
+        minY = spawnY;
+        maxX = mapWidth + spawnX - Config.CHAR_WIDTH;
+        maxY = mapHeight + spawnY - Config.CHAR_HEIGHT;
         maxCamX = mapWidth + spawnX - (Config.VIEWPORT_WIDTH/2f);
         maxCamY = mapHeight + spawnY - (Config.VIEWPORT_HEIGHT/2f);
     }
@@ -54,16 +61,24 @@ public class Logic {
         if(mp.isMoving()) {
             switch (mp.getDirection()) {
                 case DOWN:
-                    mp.setY(mp.getY() - Config.WALK_DIST);
+                    if(mp.getY() > minY) {
+                        mp.setY(mp.getY() - Config.WALK_DIST);
+                    }
                     break;
                 case LEFT:
-                    mp.setX(mp.getX() - Config.WALK_DIST);
+                    if(mp.getX() > minX) {
+                        mp.setX(mp.getX() - Config.WALK_DIST);
+                    }
                     break;
                 case UP:
-                    mp.setY(mp.getY() + Config.WALK_DIST);
+                    if(mp.getY() < maxY) {
+                        mp.setY(mp.getY() + Config.WALK_DIST);
+                    }
                     break;
                 case RIGHT:
-                    mp.setX(mp.getX() + Config.WALK_DIST);
+                    if(mp.getX() < maxX) {
+                        mp.setX(mp.getX() + Config.WALK_DIST);
+                    }
                     break;
             }
         }
@@ -118,6 +133,12 @@ public class Logic {
         if(cam.position.y < minCamY) {
             cam.position.y = minCamY;
         }
+//        System.out.printf("XY(%.0f,%.0f) MIN(%.0f,%.0f) MAX(%.0f,%.0f)\n", mp.getX(), mp.getY(), minCamX, minCamY, maxCamX, maxCamY);
+//        System.out.printf("XY=(%.1f,%.1f) Cam=(%.1f,%.1f) Map=(%.1f,%.1f)) Spawn=(%.1f,%.1f) VP=(%.1f,%.1f)\n",
+//                core.getPlayers().getMainPlayer().getX(), core.getPlayers().getMainPlayer().getY(),
+//                cam.position.x, cam.position.y, mapWidth, mapHeight,
+//                Config.SPAWN_X, Config.SPAWN_Y, Config.VIEWPORT_WIDTH, Config.VIEWPORT_HEIGHT);
+//        System.out.printf("%.1f, %.1f %.1f\n", cam.position.x, maxCamX, mapWidth+Config.SPAWN_X-(Config.VIEWPORT_WIDTH/2f));
     }
 
     private void sendUpdatePacket(Player mp) {

@@ -32,6 +32,12 @@ public class Config {
     public static final float USERNAME_PADDING_Y = 10f;
     public static final float FONT_HEIGHT = 8f;
 
+    // Camera
+    public static final float CAM_MIN_X = SPAWN_X + (VIEWPORT_WIDTH/2f);
+    public static final float CAM_MIN_Y = SPAWN_Y + (VIEWPORT_HEIGHT/2f);
+//    public static final float CAM_MAX_X = MAP_WIDTH + SPAWN_X - (VIEWPORT_WIDTH/2f);
+//    public static final float CAM_MAX_Y = MAP_HEIGHT + SPAWN_Y - (VIEWPORT_HEIGHT/2f);
+
     // Chat System
     public static final int MAX_CHAT_ROWS = 6;
     public static final int MESSAGES_INIT = 200;
