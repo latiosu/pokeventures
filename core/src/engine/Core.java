@@ -13,11 +13,11 @@ import engine.structs.UserList;
 import networking.ClientThread;
 import networking.packets.Packet03Chat;
 import objects.Entity;
-import objects.PlayerOnline;
 import networking.ServerThread;
 import networking.packets.Packet00Login;
 import networking.packets.Packet01Disconnect;
 import objects.Player;
+import objects.PlayerOnline;
 
 
 public class Core extends Game {
@@ -32,7 +32,7 @@ public class Core extends Game {
     public boolean isHost = false;
 
     // Object classes
-    private UserList<Player> players;
+    private UserList players;
 
     // Rendering classes
     private OrthographicCamera cam;
@@ -54,7 +54,7 @@ public class Core extends Game {
     @Override
 	public void create () {
         // Object-related
-        players = new UserList<Player>();
+        players = new UserList();
 
         // Engine
         assets = new AssetManager();
@@ -136,7 +136,7 @@ public class Core extends Game {
         animDelta += Gdx.graphics.getDeltaTime();
 	}
 
-    public synchronized UserList<Player> getPlayers() {
+    public synchronized UserList getPlayers() {
         return this.players;
     }
 
@@ -180,9 +180,9 @@ public class Core extends Game {
                 p.getAnim().play();
             }
         } else {
-            System.err.println("Error: User not found - " + p.getUsername());
+            System.err.println("Error: User not found - " + username);
             /* Attempt to add to players list again */
-            getPlayers().add(uid, new PlayerOnline(uid, x, y, dir, type, false, username, null, -1));
+//            getPlayers().add(uid, new PlayerOnline(uid, x, y, dir, type, false, username, null, -1));
         }
     }
 

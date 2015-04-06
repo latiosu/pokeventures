@@ -5,6 +5,7 @@ com.badlogic.gdx.graphics.Color: {
 	white: { r: 1, g: 1, b: 1, a: 1 },
 	red: { r: 1, a: 1 },
 	grey: { r: 0.7, g: 0.7, b: 0.7, a: 1 },
+	light_yellow: { r: 1, g: 1, b: 0.6, a: 1 },
 	black: { a: 1 }
 },
 com.badlogic.gdx.graphics.g2d.BitmapFont: {
@@ -78,10 +79,24 @@ com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 		cursor: cursor,
 		selection: selection
 	},
+	chat-very-faded: {
+		font: font_pokemon__dppt_16pt,
+		fontColor: { a: 1, b: 1, g: 1, r: 1 },
+		background: textbox_very_faded,
+		cursor: cursor,
+		selection: selection
+	},
 	plain: {
 		font: font_pokemon__dppt_16pt,
 		fontColor: { a: 1, b: 1, g: 1, r: 1 },
 		background: textbox_plain,
+		cursor: cursor,
+		selection: selection
+	},
+	chat-faded: {
+		font: font_pokemon__dppt_16pt,
+		fontColor: { a: 1, b: 1, g: 1, r: 1 },
+		background: textbox_faded,
 		cursor: cursor,
 		selection: selection
 	},

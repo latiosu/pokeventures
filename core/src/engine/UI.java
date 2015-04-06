@@ -64,8 +64,9 @@ public class UI {
     /* Requests server IP if isHost is true */
     public void requestServer() {
         // Request server IP dialog
-        final TextField field = new TextField(Config.SERVER_IP, skin);
+        final TextField field = new TextField(Config.SERVER_IP, skin, "plain");
         field.setMaxLength(15);
+        field.setWidth(150);
         field.setAlignment(Align.center);
         field.setSelection(0, field.getText().length());
 
@@ -78,7 +79,8 @@ public class UI {
         };
         d2.setMovable(false);
         d2.row();
-        d2.add(field).minWidth(300);
+        d2.pad(10, 60, 10, 60);
+        d2.add(field);
         d2.text("Enter Server IP:").key(Input.Keys.ENTER, null).show(stage);
 
         setFocus(true);
@@ -88,8 +90,9 @@ public class UI {
     /* Initializes main player and game UI */
     public void requestUsername() {
         // Request username dialog
-        final TextField field = new TextField("", skin);
+        final TextField field = new TextField("", skin, "plain");
         field.setMaxLength(15);
+        field.setWidth(150);
         field.setAlignment(Align.center);
 
         Dialog d2 = new Dialog("", skin, "dialog") {
@@ -102,8 +105,9 @@ public class UI {
         };
         d2.setMovable(false);
         d2.row();
-        d2.add(field).minWidth(300);
-        d2.text("What's your name?").key(Input.Keys.ENTER, null).show(stage);
+        d2.pad(10, 60, 10, 60);
+        d2.add(field);
+        d2.text("Choose a name!").key(Input.Keys.ENTER, null).show(stage);
 
         setFocus(true);
         stage.setKeyboardFocus(field);

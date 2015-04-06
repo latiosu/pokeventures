@@ -3,13 +3,13 @@
              GOALS
     ========================
 
-CRITICAL - Fix focus transfer with chat system
 CRITICAL - Add camera bounds
 
 HIGH - Add map bounds
-HIGH - Add Mouse input to remove chat window
+HIGH - Implement collision system
 
-MED - Implement collision system
+MED - Add projectiles (fireball/watergun/razorleaf)
+MED - Add combat system
 
 LOW - Add documentation to majority of code
 
@@ -20,10 +20,13 @@ LOW - Add documentation to majority of code
               DONE
     ========================
 
+CRITICAL - Fix focus transfer with chat system
 CRITICAL - Implement chat system and text transfer
+CRITICAL - Fix multiplayer login issue (Third user causes disconnects/client to malfunction)
 
 HIGH - Allow for Server IP entry via dialog box if 'becoming host' is declined
 HIGH - Integrate initial position and type with login packet
+HIGH - Add Mouse input to remove chat window
 
 MED - Show username above player characters
 MED - Implement character change

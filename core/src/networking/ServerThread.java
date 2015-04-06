@@ -20,7 +20,7 @@ public class ServerThread extends Thread {
 
     private DatagramSocket socket;
     private Core core;
-    private engine.structs.List<PlayerOnline> onlinePlayers = new UserList<PlayerOnline>();
+    private engine.structs.List onlinePlayers = new UserList();
     private Queue<Message> messages;
     private SimpleDateFormat sdf;
 
@@ -103,11 +103,12 @@ public class ServerThread extends Thread {
                 // Notify selected player that a new player HAS JOINED
                 this.sendData(packet.getData(), p.getAddress(), p.getPort());
                 // Notify new player that selected player EXISTS
-                packet = new Packet00Login(p.getUID(), p.getUsername(), p.getX(), p.getY(),
+                Packet00Login lp = new Packet00Login(p.getUID(), p.getUsername(), p.getX(), p.getY(),
                         p.getDirection().getNum(), p.getType().getNum());
-                this.sendData(packet.getData(), newPlayer.getAddress(), newPlayer.getPort());
+                this.sendData(lp.getData(), newPlayer.getAddress(), newPlayer.getPort());
             }
         }
+
         if(!isConnected) {
             // Add new player to online list
             this.onlinePlayers.add(newPlayer.getUID(), newPlayer);
@@ -130,7 +131,7 @@ public class ServerThread extends Thread {
             p.setY(packet.getY());
             p.setMoving(packet.isMoving());
             p.setDirection(Entity.Direction.getDir(packet.getDir()));
-            packet.writeDataFrom(this); // Notify all users of new positions
+            packet.writeDataFrom(this); // Notify all users of new POSITION DATA
         }
     }
 

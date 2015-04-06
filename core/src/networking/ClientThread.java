@@ -10,7 +10,6 @@ import objects.PlayerOnline;
 
 import java.io.IOException;
 import java.net.*;
-import java.text.SimpleDateFormat;
 
 public class ClientThread extends Thread {
 

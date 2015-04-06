@@ -37,5 +37,5 @@ public class Config {
     public static final int MESSAGES_INIT = 200;
     public static final int MAX_MSG_LENGTH = 100;
     public static final String DATE_FORMAT = "h:mm:ss a";
-    public static final String DATE_FORMATE_CHAT = "h:mm a";
+    public static final String DATE_FORMAT_CHAT = "h:mm a";
 }

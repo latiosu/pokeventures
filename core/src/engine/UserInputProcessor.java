@@ -22,7 +22,6 @@ public class UserInputProcessor implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        System.out.println(Input.Keys.toString(keycode));
         if(core.getUI().hasFocus()) {
             return false;
         }
@@ -49,7 +48,6 @@ public class UserInputProcessor implements InputProcessor {
                 selectedType = Entity.Type.SQUIRTLE;
                 break;
             case Input.Keys.ENTER:
-                System.out.println("SHOWING CHAT");
                 core.getUI().showChat(true);
                 break;
         }
@@ -80,7 +78,6 @@ public class UserInputProcessor implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        // Add chat window control?
         return false;
     }
 

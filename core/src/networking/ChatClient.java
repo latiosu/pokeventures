@@ -1,9 +1,10 @@
 package networking;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import engine.Config;
@@ -60,11 +61,12 @@ public class ChatClient {
     // Part of UI
     private TextField chatField;
     private TextArea chatArea;
+    private TextArea chatAreaHL;
 
     public ChatClient(Core core) {
         this.core = core;
         this.ui = core.getUI();
-        this.dateFormat = new SimpleDateFormat(Config.DATE_FORMATE_CHAT);
+        this.dateFormat = new SimpleDateFormat(Config.DATE_FORMAT_CHAT);
         messages = new PriorityQueue<Message>(Config.MESSAGES_INIT, new TimeComparator());
         buffer = new MessageBuffer();
 
@@ -75,12 +77,15 @@ public class ChatClient {
     private void initUI() {
         // Text Field
         chatField = new TextField("", ui.getSkin(), "chat");
-        float width = (Config.GAME_WIDTH / 2f);
+        float x = Config.GAME_WIDTH / 4f;
+        float y = 0;
+        final float width = (Config.GAME_WIDTH / 2f);
         float height = 30;
-        chatField.setX(Config.GAME_WIDTH / 4f);
-        chatField.setY(0);
+        chatField.setX(x);
+        chatField.setY(y);
         chatField.setWidth(width);
         chatField.setHeight(height);
+        chatField.setBounds(x, y, width, height);
         chatField.setVisible(true);
         chatField.setMaxLength(Config.MAX_MSG_LENGTH);
         chatField.setTextFieldListener(new TextField.TextFieldListener() {
@@ -101,16 +106,28 @@ public class ChatClient {
         });
         ui.getStage().addActor(chatField);
 
-        // Text Area
-        chatArea = new TextArea("", ui.getSkin(), "chat");
+        // Text Area Highlight (On when chatting)
+        chatAreaHL = new TextArea("", ui.getSkin(), "chat-faded");
+        chatAreaHL.setX(Config.GAME_WIDTH / 4f);
+        chatAreaHL.setY(30);
         height = 130;
+        chatAreaHL.setWidth(width);
+        chatAreaHL.setHeight(height);
+        chatAreaHL.setDisabled(true);
+        chatAreaHL.setVisible(false);
+        chatAreaHL.setTouchable(Touchable.disabled);
+        ui.getStage().addActor(chatAreaHL);
+
+        // Text Area (Always on)
+        chatArea = new TextArea("", ui.getSkin(), "chat-very-faded");
         chatArea.setX(Config.GAME_WIDTH / 4f);
         chatArea.setY(30);
         chatArea.setWidth(width);
         chatArea.setHeight(height);
         chatArea.setPrefRows(Config.MAX_CHAT_ROWS);
         chatArea.setDisabled(true);
-        chatArea.setVisible(false);
+        chatArea.setVisible(true);
+        chatArea.setTouchable(Touchable.disabled); // Should this really by untouchable??
         ui.getStage().addActor(chatArea);
 
         // Chat control listener
@@ -122,11 +139,18 @@ public class ChatClient {
                 }
                 return false;
             }
+
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                System.out.printf("%.1f %.1f\n", x, y);
+                ui.showChat(chatField.hit(x - Config.GAME_RES_WIDTH/2f, y, true) != null);
+                return false;
+            }
         });
     }
 
     private void updateChatUI(Message msg) {
-        String formatted = String.format("%s %s: %s\n", getDate(msg.time), msg.username, msg.message);
+        String formatted = String.format("(%s) %s: %s\n", getDate(msg.time), msg.username, msg.message);
         chatArea.setText(buffer.handle(formatted));
     }
 
@@ -163,7 +187,7 @@ public class ChatClient {
      */
     public void showChat(boolean b) {
         ui.setFocus(b);
-        chatArea.setVisible(b);
+        chatAreaHL.setVisible(b); // Highlight chat area
         if(b){
             ui.getStage().setKeyboardFocus(chatField);
         } else {
