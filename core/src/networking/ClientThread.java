@@ -87,8 +87,8 @@ public class ClientThread extends Thread {
 
     private void handleMove(Packet02Move packet) {
         // Converts integer values from packet to standard types
-        core.updatePlayer(packet.getUID(), packet.getUsername(), packet.getX(), packet.getY(), packet.isMoving()==1,
-                Entity.Direction.getDir(packet.getDir()), Entity.Type.getType(packet.getType()));
+        core.updatePlayer(packet.getUID(), packet.getUsername(), packet.getX(), packet.getY(),
+                packet.isMoving(), packet.getDir(), packet.getType());
     }
 
     /**

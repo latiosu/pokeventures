@@ -2,7 +2,6 @@ package engine;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import objects.Entity;
 import objects.Player;
 
@@ -40,12 +39,15 @@ public class UserInputProcessor implements InputProcessor {
                 break;
             case Input.Keys.NUM_1:
                 selectedType = Entity.Type.CHARMANDER;
+                core.getPlayers().getMainPlayer().getAnim().changeAnim();
                 break;
             case Input.Keys.NUM_2:
                 selectedType = Entity.Type.BULBASAUR;
+                core.getPlayers().getMainPlayer().getAnim().changeAnim();
                 break;
             case Input.Keys.NUM_3:
                 selectedType = Entity.Type.SQUIRTLE;
+                core.getPlayers().getMainPlayer().getAnim().changeAnim();
                 break;
             case Input.Keys.ENTER:
                 core.getUI().showChat(true);

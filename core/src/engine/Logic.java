@@ -25,12 +25,12 @@ public class Logic {
         minCamY = Config.CAM_MIN_Y;
 
         // Not in config
-        minX = spawnX;
-        minY = spawnY;
-        maxX = mapWidth + spawnX - Config.CHAR_WIDTH;
-        maxY = mapHeight + spawnY - Config.CHAR_HEIGHT;
-        maxCamX = mapWidth + spawnX - (Config.VIEWPORT_WIDTH/2f);
-        maxCamY = mapHeight + spawnY - (Config.VIEWPORT_HEIGHT/2f);
+        minX = 0;
+        minY = 0;
+        maxX = mapWidth - Config.CHAR_WIDTH;
+        maxY = mapHeight - Config.CHAR_HEIGHT;
+        maxCamX = mapWidth - (Config.VIEWPORT_WIDTH/2f);
+        maxCamY = mapHeight - (Config.VIEWPORT_HEIGHT/2f);
     }
 
     /**
@@ -45,6 +45,7 @@ public class Logic {
         // Input logic
         boolean[] keys = UserInputProcessor.directionKeys;
         mp.setType(UserInputProcessor.selectedType);
+        mp.setMoving(true);
         if(!keys[0] && !keys[1] && !keys[2] && !keys[3]) {
             mp.setMoving(false);
         } else if (keys[0]) {
@@ -83,7 +84,7 @@ public class Logic {
             }
         }
 
-        // Send movement packet to server with integer substitutions
+        // Send movement packet with freshly updated main player data
         sendUpdatePacket(mp);
     }
 
@@ -91,32 +92,13 @@ public class Logic {
      * Camera algorithm only follows player if camera can be centered.
      */
     private void updateCamera(Player mp) {
-        if(mp.isMoving()) {
-            switch (mp.getDirection()) {
-                case DOWN:
-                    if(mp.getY() < maxCamY) {
-                        cam.translate(0, -Config.WALK_DIST);
-                    }
-                    break;
-                case LEFT:
-                    if(mp.getX() < maxCamX) {
-                        cam.translate(-Config.WALK_DIST, 0);
-                    }
-                    break;
-                case UP:
-                    if(mp.getY() > minCamY) {
-                        cam.translate(0, Config.WALK_DIST);
-                    }
-                    break;
-                case RIGHT:
-                    if(mp.getX() > minCamX) {
-                        cam.translate(Config.WALK_DIST, 0);
-                    }
-                    break;
-            }
-            updateCameraBounds();
-            cam.update();
-        }
+//        System.out.printf("%.0f, %.0f\n", mp.getX(), mp.getY());
+//        if(mp.isMoving()) {
+        cam.position.x = mp.getX();
+        cam.position.y = mp.getY();
+        cam.update();
+        updateCameraBounds();
+//        }
     }
 
     private void updateCameraBounds() {
@@ -133,18 +115,12 @@ public class Logic {
         if(cam.position.y < minCamY) {
             cam.position.y = minCamY;
         }
-//        System.out.printf("XY(%.0f,%.0f) MIN(%.0f,%.0f) MAX(%.0f,%.0f)\n", mp.getX(), mp.getY(), minCamX, minCamY, maxCamX, maxCamY);
-//        System.out.printf("XY=(%.1f,%.1f) Cam=(%.1f,%.1f) Map=(%.1f,%.1f)) Spawn=(%.1f,%.1f) VP=(%.1f,%.1f)\n",
-//                core.getPlayers().getMainPlayer().getX(), core.getPlayers().getMainPlayer().getY(),
-//                cam.position.x, cam.position.y, mapWidth, mapHeight,
-//                Config.SPAWN_X, Config.SPAWN_Y, Config.VIEWPORT_WIDTH, Config.VIEWPORT_HEIGHT);
-//        System.out.printf("%.1f, %.1f %.1f\n", cam.position.x, maxCamX, mapWidth+Config.SPAWN_X-(Config.VIEWPORT_WIDTH/2f));
+        cam.update();
     }
 
     private void sendUpdatePacket(Player mp) {
         Packet02Move packet = new Packet02Move(mp.getUID(), mp.getUsername(),
-                mp.getX(), mp.getY(), mp.isMovingInt(),
-                mp.getDirection().getNum(), mp.getType().getNum());
+                mp.getX(), mp.getY(), mp.isMovingNum(), mp.getDirection().getNum(), mp.getType().getNum());
         packet.writeDataFrom(core.getClientThread());
     }
 

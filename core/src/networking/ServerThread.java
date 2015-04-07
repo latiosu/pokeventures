@@ -1,7 +1,9 @@
 package networking;
 
+import engine.AssetManager;
 import engine.Config;
 import engine.Core;
+import engine.WorldManager;
 import engine.structs.Message;
 import engine.structs.TimeComparator;
 import engine.structs.UserList;
@@ -20,12 +22,13 @@ public class ServerThread extends Thread {
 
     private DatagramSocket socket;
     private Core core;
-    private engine.structs.List onlinePlayers = new UserList();
+    private engine.structs.List onlinePlayers;
     private Queue<Message> messages;
     private SimpleDateFormat sdf;
 
     public ServerThread(Core core) {
         this.core = core;
+        onlinePlayers = new UserList();
         messages = new PriorityQueue<Message>(Config.MESSAGES_INIT, new TimeComparator());
         sdf = new SimpleDateFormat(Config.DATE_FORMAT);
         try {
@@ -126,12 +129,14 @@ public class ServerThread extends Thread {
     private void handleMove(Packet02Move packet) {
         PlayerOnline p;
         if((p = onlinePlayers.get(packet.getUID())) != null) {
-            // Update data stored on server
+            // Sync new data from player with other players
             p.setX(packet.getX());
             p.setY(packet.getY());
+            p.setDirection(packet.getDir());
             p.setMoving(packet.isMoving());
-            p.setDirection(Entity.Direction.getDir(packet.getDir()));
-            packet.writeDataFrom(this); // Notify all users of new POSITION DATA
+            Packet02Move newPacket = new Packet02Move(p.getUID(), p.getUsername(), p.getX(), p.getY(),
+                    p.isMovingNum(), p.getDirection().getNum(), p.getType().getNum());
+            newPacket.writeDataFrom(this); // Notify all users of new POSITION DATA
         }
     }
 

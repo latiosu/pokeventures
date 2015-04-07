@@ -31,6 +31,7 @@ public abstract class Entity {
                 case 4:
                     return RIGHT;
                 default:
+                    System.err.println("Error: Direction not found.");
                     return null;
             }
         }

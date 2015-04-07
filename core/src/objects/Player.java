@@ -2,6 +2,7 @@ package objects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import engine.AssetManager;
 import engine.Config;
 
@@ -44,15 +45,19 @@ public class Player extends Entity {
      * is the user's sensation of the character's physical shape.
      */
     public float getCollisionX() {
-        return x + Config.RENDER_OFFSET_X;
+        return x;
     }
 
     /**
      * Returns y-coordinate of collision box origin. Note: The collision box
      * is the user's sensation of the character's physical shape.
      */
-    public float getCollsionY() {
+    public float getCollisionY() {
         return y;
+    }
+
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, Config.CHAR_WIDTH, Config.CHAR_HEIGHT);
     }
 
     /**
@@ -61,9 +66,9 @@ public class Player extends Entity {
      */
     public float getRenderX() {
         if(direction == Direction.DOWN || direction == Direction.UP){
-            return x + Config.RENDER_OFFSET_X;
+            return x;
         }
-        return x;
+        return x - Config.RENDER_OFFSET_X;
     }
 
     /**
@@ -79,7 +84,7 @@ public class Player extends Entity {
      * automatically adjusted based on username length to appear center-justified.
      */
     public float getNameX() {
-        return x - (usernameWidth/2f - (Config.CHAR_WIDTH/2f)) + Config.RENDER_OFFSET_X;
+        return x - (usernameWidth/2f - (Config.CHAR_WIDTH/2f));
     }
 
     /**
@@ -101,10 +106,10 @@ public class Player extends Entity {
     public String getUsername() {
         return username;
     }
-    public void setMoving(int bool) {
-        isMoving = bool==1;
+    public void setMoving(boolean b) {
+        isMoving = b;
     }
-    public int isMovingInt() {
+    public int isMovingNum() {
         return (isMoving)? 1:0;
     }
     public long getUID() {

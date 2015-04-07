@@ -57,8 +57,8 @@ public class UI {
         d1.setMovable(false);
         d1.getContentTable().pad(10, 100, 0, 100);
         d1.getButtonTable().pad(0, 0, 20, 0);
-        d1.text("Host a server?").button(" Yes ", true).button(" No ", false).key(Input.Keys.ENTER, true)
-                .key(Input.Keys.ESCAPE, false).show(stage).key(Input.Keys.N, false).key(Input.Keys.Y, true);
+        d1.text("Hosting a game or joining?").button("Host", true).button("Join", false).key(Input.Keys.ENTER, true)
+                .key(Input.Keys.ESCAPE, false).show(stage);
     }
 
     /* Requests server IP if isHost is true */

@@ -2,6 +2,7 @@ package networking.packets;
 
 import networking.ClientThread;
 import networking.ServerThread;
+import objects.Entity;
 
 public class Packet02Move extends Packet {
 
@@ -56,14 +57,14 @@ public class Packet02Move extends Packet {
     public float getY() {
         return y;
     }
-    public int isMoving() {
-        return isMoving;
+    public boolean isMoving() {
+        return isMoving==1;
     }
-    public int getDir() {
-        return dir;
+    public Entity.Direction getDir() {
+        return Entity.Direction.getDir(dir);
     }
-    public int getType() {
-        return type;
+    public Entity.Type getType() {
+        return Entity.Type.getType(type);
     }
     public String getUsername() {
         return username;

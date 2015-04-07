@@ -35,7 +35,7 @@ public class AssetManager {
         font = generator.generateFont(parameter);
         generator.dispose();
         // Load overworld
-        level = new Texture(Gdx.files.internal("assets/overworld.png"));
+        level = new Texture(Gdx.files.internal("assets/" + Config.MAP));
         // Load character animations
         animations.put(Entity.Type.CHARMANDER, generate(new TextureAtlas(Gdx.files.internal("assets/charmander.atlas"))));
         animations.put(Entity.Type.BULBASAUR, generate(new TextureAtlas(Gdx.files.internal("assets/bulbasaur.atlas"))));

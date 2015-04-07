@@ -42,6 +42,7 @@ public class Core extends Game {
     private AssetManager assets;
 
     // Engine classes
+    private WorldManager world;
     private Logic logic;
     private UserInputProcessor input;
     private UI ui;
@@ -60,6 +61,8 @@ public class Core extends Game {
         assets = new AssetManager();
         cam = new OrthographicCamera(Config.VIEWPORT_WIDTH, Config.VIEWPORT_HEIGHT);
         ui = new UI(this);
+        world = new WorldManager();
+
 
         // Input handling
         multiplexer = new InputMultiplexer();
@@ -70,13 +73,15 @@ public class Core extends Game {
 
         // Overworld data
         batch = new SpriteBatch();
-		tex = AssetManager.level;
+		tex = world.loadWorld(Config.MAP);
         tex.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
 
-        // Player spawn position
         sprite = new Sprite(tex);
-	    sprite.setOrigin(0,0);
-        sprite.setPosition(Config.SPAWN_X, Config.SPAWN_Y);
+        sprite.setOrigin(0, 0);
+        // Player spawn position
+        cam.position.x = Config.SPAWN_X;
+        cam.position.y = Config.SPAWN_Y;
+        cam.update();
     }
 
     @Override
@@ -121,14 +126,14 @@ public class Core extends Game {
         // DEBUG STUFF
 //        if(playMode) {
 //            ShapeRenderer sr = new ShapeRenderer();
+//            PlayerOnline mp = players.getMainPlayer();
 //            sr.begin(ShapeRenderer.ShapeType.Line);
 //            sr.setProjectionMatrix(cam.combined);
+//            sr.setColor(Color.YELLOW);
+//            sr.rect(mp.getX(), mp.getY(), Config.CHAR_WIDTH, Config.CHAR_HEIGHT);
+//            Tile a = world.getTile(mp.getX(), mp.getY());
 //            sr.setColor(Color.BLACK);
-//            sr.rect(mainPlayer.getCollisionX(), mainPlayer.getCollisionY(), Config.CHAR_WIDTH, Config.CHAR_HEIGHT);
-//            sr.rect(mainPlayer.getNameX(),
-//                    mainPlayer.getNameY(),
-//                    AssetManager.font.getBounds(mainPlayer.getUsername()).width,
-//                    AssetManager.font.getBounds(mainPlayer.getUsername()).height);
+//            sr.rect(a.getX(), a.getY(), 16, 16); // render current tile
 //            sr.end();
 //        }
 
@@ -153,8 +158,8 @@ public class Core extends Game {
 
     public void initMainPlayer(String username) {
         PlayerOnline p = new PlayerOnline(username);
-        players.setMainPlayer(p); // <----- forced addition
-        players.add(p.getUID(), p); // <----------------- Add to BOTH
+        players.setMainPlayer(p);
+        players.add(p.getUID(), p);
         Packet00Login loginPacket = new Packet00Login(p.getUID(), p.getUsername(),
                 p.getX(), p.getY(), p.getDirection().getNum(), p.getType().getNum());
         if(server != null) {
@@ -167,8 +172,8 @@ public class Core extends Game {
     }
 
     /* Update values and animation frame */
-    public void updatePlayer(long uid, String username, float x, float y, boolean isMoving, Entity.Direction dir, Player.Type type) {
-        /* Player is not always added to players list ??? */
+    public void updatePlayer(long uid, String username, float x, float y, boolean isMoving,
+                             Entity.Direction dir, Player.Type type) {
         Player p = getPlayers().get(uid);
         if(p != null) {
             p.setX(x);
@@ -177,12 +182,10 @@ public class Core extends Game {
             p.setDirection(dir);
             p.setType(type);
             if (isMoving) {
-                p.getAnim().play();
+                p.getAnim().changeAnim();
             }
         } else {
             System.err.println("Error: User not found - " + username);
-            /* Attempt to add to players list again */
-//            getPlayers().add(uid, new PlayerOnline(uid, x, y, dir, type, false, username, null, -1));
         }
     }
 
@@ -215,5 +218,8 @@ public class Core extends Game {
     }
     public ClientThread getClientThread() {
         return client;
+    }
+    public WorldManager getWorldManager() {
+        return world;
     }
 }

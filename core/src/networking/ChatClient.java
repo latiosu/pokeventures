@@ -76,16 +76,16 @@ public class ChatClient {
     private void initUI() {
         // Text Field
         chatField = new TextField("", ui.getSkin(), "chat");
-        float x = Config.GAME_WIDTH / 4f;
+        float x = 0; // (Centered)=Config.GAME_WIDTH / 4f
         float y = 0;
-        final float width = (Config.GAME_WIDTH / 2f);
+        final float width = Config.VIEWPORT_WIDTH;
         float height = 30;
         chatField.setX(x);
         chatField.setY(y);
         chatField.setWidth(width);
         chatField.setHeight(height);
         chatField.setBounds(x, y, width, height);
-        chatField.setVisible(true);
+        chatField.setVisible(false);
         chatField.setMaxLength(Config.MAX_MSG_LENGTH);
         chatField.setTextFieldListener(new TextField.TextFieldListener() {
             @Override
@@ -107,7 +107,7 @@ public class ChatClient {
 
         // Text Area Highlight (On when chatting)
         chatAreaHL = new TextArea("", ui.getSkin(), "chat-faded");
-        chatAreaHL.setX(Config.GAME_WIDTH / 4f);
+        chatAreaHL.setX(x);
         chatAreaHL.setY(30);
         height = 130;
         chatAreaHL.setWidth(width);
@@ -119,7 +119,7 @@ public class ChatClient {
 
         // Text Area (Always on)
         chatArea = new TextArea("", ui.getSkin(), "chat-very-faded");
-        chatArea.setX(Config.GAME_WIDTH / 4f);
+        chatArea.setX(x);
         chatArea.setY(30);
         chatArea.setWidth(width);
         chatArea.setHeight(height);
@@ -185,6 +185,7 @@ public class ChatClient {
      */
     public void showChat(boolean b) {
         ui.setFocus(b);
+        chatField.setVisible(b); // Show input area
         chatAreaHL.setVisible(b); // Highlight chat area
         if(b){
             ui.getStage().setKeyboardFocus(chatField);

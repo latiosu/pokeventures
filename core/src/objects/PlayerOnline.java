@@ -1,17 +1,19 @@
 package objects;
 
+import engine.Config;
+
 import java.net.InetAddress;
 import java.util.Date;
 
 public class PlayerOnline extends Player {
 
-    private long uid;
     private InetAddress address;
     private int port;
 
     // Default main player constructor
     public PlayerOnline(String username) {
-        this(new Date().getTime(), 0, 0, Direction.DOWN, Type.CHARMANDER, true, username, null, -1);
+        this(new Date().getTime(), Config.SPAWN_X, Config.SPAWN_Y,
+                Direction.DOWN, Type.CHARMANDER, true, username, null, -1);
     }
 
     public PlayerOnline(long uid, float x, float y, Direction dir, Type t, boolean isMain,

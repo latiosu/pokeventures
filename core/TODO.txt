@@ -3,11 +3,12 @@
              GOALS
     ========================
 
-HIGH - Implement collision system
+HIGH - Implement collision system (Collision tile should be stored in X-1,Y (if lower left corner is origin))
 
 MED - Add projectiles (fireball/watergun/razorleaf)
 MED - Add combat system
 
+LOW - Interpolate other player positions (if isMoving, then increment pos by 1 or 2 in their direction)
 LOW - Add documentation to majority of code
 
 

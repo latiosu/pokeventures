@@ -8,28 +8,26 @@ public class PlayerAnimation {
 
     private Player player;
     private Animation currentAnimation;
-    private boolean playing = false;
+    private float pauseDelta, lastDelta;
 
     public PlayerAnimation(Player p, Player.Type t) {
         player = p;
+        pauseDelta = 0;
+        lastDelta = 0;
         currentAnimation = AssetManager.getAnimation(t, Entity.Direction.DOWN);
     }
 
-    public void play(){
-        playing = true;
+    public void changeAnim(){
         currentAnimation = AssetManager.getAnimation(player.getType(), player.getDirection());
     }
 
-    public void stop(){
-        playing = false;
-    }
-
     public TextureRegion getFrame(float delta){
-        if(playing && !currentAnimation.isAnimationFinished(delta)){
-            return currentAnimation.getKeyFrame(delta,false);
+        if(player.isMoving) {
+            lastDelta = delta;
+            return currentAnimation.getKeyFrame(delta);
         } else {
-            stop();
-            return currentAnimation.getKeyFrame(0);
+            pauseDelta = lastDelta;
+            return currentAnimation.getKeyFrame(pauseDelta);
         }
     }
 }
