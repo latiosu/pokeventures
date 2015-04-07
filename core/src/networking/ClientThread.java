@@ -69,7 +69,7 @@ public class ClientThread extends Thread {
         PlayerOnline player = new PlayerOnline(p.getUID(), p.getX(), p.getY(),
                 Entity.Direction.getDir(p.getDir()), Entity.Type.getType(p.getType()),
                 false, p.getUsername(), address, port);
-        // Warning: Attempts to add player to world
+
         core.getPlayers().add(p.getUID(), player);
     }
 
@@ -86,7 +86,6 @@ public class ClientThread extends Thread {
     }
 
     private void handleMove(Packet02Move packet) {
-        // Converts integer values from packet to standard types
         core.updatePlayer(packet.getUID(), packet.getUsername(), packet.getX(), packet.getY(),
                 packet.isMoving(), packet.getDir(), packet.getType());
     }
@@ -98,8 +97,11 @@ public class ClientThread extends Thread {
         core.storeMsg(new Message(packet.getTime(), packet.getUsername(), packet.getMessage()));
     }
 
+    /**
+     * Sends given data to the server.
+     */
     public void sendData(byte[] data) {
-        DatagramPacket packet = new DatagramPacket(data, data.length, address, Config.GAME_PORT); // Send data to server
+        DatagramPacket packet = new DatagramPacket(data, data.length, address, Config.GAME_PORT);
         try {
             socket.send(packet);
         } catch (IOException e) {

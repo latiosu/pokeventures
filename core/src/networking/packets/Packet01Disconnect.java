@@ -26,6 +26,7 @@ public class Packet01Disconnect extends Packet {
     }
 
     @Override
+    /* Reminder: Update this when changing packet structure */
     public byte[] getData() {
         return ("01" + this.uid).getBytes();
     }

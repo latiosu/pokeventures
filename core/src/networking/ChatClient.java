@@ -169,7 +169,6 @@ public class ChatClient {
         if(!messages.contains(msg)){
             if(messages.add(msg)){
                 updateChatUI(msg);
-//                System.out.printf("CLIENT=[%s] %s: %s\n", getDate(msg.time), msg.username, msg.message);
                 return true;
             } else {
                 System.err.printf("Error: Failed to store message %s", msg.message);

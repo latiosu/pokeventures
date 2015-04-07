@@ -4,44 +4,27 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import networking.packets.Packet02Move;
 import objects.Entity;
 import objects.Player;
+import objects.PlayerOnline;
 
 public class Logic {
 
     private Core core;
     private OrthographicCamera cam;
 
-    private float mapWidth, mapHeight, minCamX, minCamY, maxCamX, maxCamY,
-            spawnX, spawnY, minX, minY, maxX, maxY;
-
     public Logic(Core core, OrthographicCamera cam){
         this.core = core;
         this.cam = cam;
-
-        mapWidth = AssetManager.level.getWidth();
-        mapHeight = AssetManager.level.getHeight();
-        spawnX = Config.SPAWN_X;
-        spawnY = Config.SPAWN_Y;
-        minCamX = Config.CAM_MIN_X;
-        minCamY = Config.CAM_MIN_Y;
-
-        // Not in config
-        minX = 0;
-        minY = 0;
-        maxX = mapWidth - Config.CHAR_WIDTH;
-        maxY = mapHeight - Config.CHAR_HEIGHT;
-        maxCamX = mapWidth - (Config.VIEWPORT_WIDTH/2f);
-        maxCamY = mapHeight - (Config.VIEWPORT_HEIGHT/2f);
     }
 
     /**
-     * Note: These are client-sided rendering updates
+     * Note: Client handles collisions, positioning and rendering of main player.
      */
-    public void update(Player mp){
+    public void update(PlayerOnline mp){
         updateMainPlayer(mp);
         updateCamera(mp);
     }
 
-    private void updateMainPlayer(Player mp) {
+    private void updateMainPlayer(PlayerOnline mp) {
         // Input logic
         boolean[] keys = UserInputProcessor.directionKeys;
         mp.setType(UserInputProcessor.selectedType);
@@ -62,58 +45,59 @@ public class Logic {
         if(mp.isMoving()) {
             switch (mp.getDirection()) {
                 case DOWN:
-                    if(mp.getY() > minY) {
+                    if(mp.getY() > 0) {
                         mp.setY(mp.getY() - Config.WALK_DIST);
                     }
                     break;
                 case LEFT:
-                    if(mp.getX() > minX) {
+                    if(mp.getX() > 0) {
                         mp.setX(mp.getX() - Config.WALK_DIST);
                     }
                     break;
                 case UP:
-                    if(mp.getY() < maxY) {
+                    if(mp.getY() < AssetManager.level.getHeight() - Config.CHAR_HEIGHT) {
                         mp.setY(mp.getY() + Config.WALK_DIST);
                     }
                     break;
                 case RIGHT:
-                    if(mp.getX() < maxX) {
+                    if(mp.getX() < AssetManager.level.getWidth() - Config.CHAR_WIDTH) {
                         mp.setX(mp.getX() + Config.WALK_DIST);
                     }
                     break;
             }
         }
 
+        // Handle collision for main player
+        core.getWorldManager().handleCollision(mp);
+
         // Send movement packet with freshly updated main player data
         sendUpdatePacket(mp);
+    }
+
+
+    private void updateCamera(Player mp) {
+        cam.position.x = mp.getX();
+        cam.position.y = mp.getY();
+        cam.update();
+        updateCameraBounds();
     }
 
     /**
      * Camera algorithm only follows player if camera can be centered.
      */
-    private void updateCamera(Player mp) {
-//        System.out.printf("%.0f, %.0f\n", mp.getX(), mp.getY());
-//        if(mp.isMoving()) {
-        cam.position.x = mp.getX();
-        cam.position.y = mp.getY();
-        cam.update();
-        updateCameraBounds();
-//        }
-    }
-
     private void updateCameraBounds() {
         // Map boundaries
-        if(cam.position.x > maxCamX) {
-            cam.position.x = maxCamX;
+        if(cam.position.x > Config.CAM_MAX_X) {
+            cam.position.x = Config.CAM_MAX_X;
         }
-        if(cam.position.y > maxCamY) {
-            cam.position.y = maxCamY;
+        if(cam.position.y > Config.CAM_MAX_Y) {
+            cam.position.y = Config.CAM_MAX_Y;
         }
-        if(cam.position.x < minCamX) {
-            cam.position.x = minCamX;
+        if(cam.position.x < Config.CAM_MIN_X) {
+            cam.position.x = Config.CAM_MIN_X;
         }
-        if(cam.position.y < minCamY) {
-            cam.position.y = minCamY;
+        if(cam.position.y < Config.CAM_MIN_Y) {
+            cam.position.y = Config.CAM_MIN_Y;
         }
         cam.update();
     }

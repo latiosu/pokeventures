@@ -4,11 +4,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Rectangle;
 import objects.Entity;
 import objects.PlayerOnline;
 import objects.Tiles.BlockedTile;
 import objects.Tiles.Tile;
 import objects.Tiles.WalkableTile;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class WorldManager {
 
@@ -21,6 +26,7 @@ public class WorldManager {
     private int tileSize, mapWidth, mapHeight;
     private Texture worldBG;
     private Tile[][] tiles; // Uses i=y, j=x
+    private ArrayList<Tile> blocked = new ArrayList<Tile>(); // <--- DEBUGGING USE ONLY
 
     public WorldManager() {
 
@@ -41,56 +47,63 @@ public class WorldManager {
     private Tile[][] parseWorld(String cmap) {
         Tile[][] tiles = new Tile[mapWidth / tileSize][mapHeight / tileSize];
         Tile t = null;
-        int red = 0, white = 0, black = 0;
-
         Pixmap pixmap = new Pixmap(Gdx.files.internal(cmap)); /* Warning: Need to optimize this process */
         for (int y = 1; y < mapHeight; y += tileSize) {
             for (int x = 1; x < mapWidth; x += tileSize) { // <--- Start at (1,1) to ignore grid lines
 
                 int colour = pixmap.getPixel(x, y);
                 int tx = x-1;
-                int ty = mapHeight-y-1;
+                int ty = mapHeight-y+1-tileSize;
 
-                 /* Make sure to order by frequency */
+                 /* Note: Try to order by frequency */
                 if (colour == WHITE) {
                     t = new WalkableTile(tx, ty);
-                    white++;
                 } else if (colour == RED) {
                     t = new BlockedTile(tx, ty);
-                    red++;
-                } else if (colour == BLACK) {
-                    black++;
-                } else if (colour == GREEN) {
-
-                } else if (colour == BLUE) {
-
+                    blocked.add(t); // DEBUGGING USE ONLY
                 } else {
                     t = null;
-                    System.err.printf("Error: Could not find colour: %d", colour);
+                    System.err.printf("Error: Could not find colour: %d\n", colour);
                 }
-                tiles[x / tileSize][(mapHeight - y) / tileSize] = t; // Covert origin to (bottom left) pixel-by-pixel grid
+                tiles[toTileX(x)][toTileY(mapHeight - y)] = t; // Covert origin to (bottom left) pixel-by-pixel grid
             }
         }
-
-        System.out.printf("red=%d, white=%d, black=%d\n", red, white, black);
 
         return tiles;
     }
 
-    public void handleCollision(PlayerOnline p, float px, float py, Entity.Direction dir) {
-        float newPos = tiles[toTileX(px)][toTileY(py)].handleCollision(px, py, dir);
-//        System.out.printf("%d %d %f %s\n", toTileX(x), toTileY(y), newPos, tiles[toTileX(x)][toTileY(y)].getClass().getName());
-
-        switch (dir) {
-            case UP:
-            case DOWN:
-                p.setY(newPos);
-                break;
-            case LEFT:
-            case RIGHT:
-                p.setX(newPos);
-                break;
+    /**
+     * Searches a 3x3 grid of valid tiles around player for collisions.
+     */
+    public void handleCollision(PlayerOnline mp) {
+        int x = toTileX(mp.getX());
+        int y = toTileY(mp.getY());
+        for(int j=-1; j<=1; j++) {
+            for(int i=-1; i<=1; i++) {
+                if(validBlockedTile(x+i, y+j)) {
+                    if (Intersector.overlaps(tiles[x+i][y+j].getBounds(), mp.getBounds())) {
+                        tiles[x+i][y+j].handleCollision(mp);
+                        return;
+                    }
+                }
+            }
         }
+    }
+
+    /* DEBUGGING METHOD */
+    public ArrayList<Tile> getBlocked() {
+        return blocked;
+    }
+
+    private boolean validTile(int x, int y) {
+        return x >= 0 && y >= 0 && x < mapWidth/tileSize && y < mapHeight/tileSize;
+    }
+
+    private boolean validBlockedTile(int x, int y) {
+        if(validTile(x, y)) {
+            return tiles[x][y] instanceof BlockedTile;
+        }
+        return false;
     }
 
     public Tile getTile(float px, float py) {
@@ -101,12 +114,12 @@ public class WorldManager {
      * Converts given player x-coordinate to respective tile map x-coordinate.
      */
     private int toTileX(float px) {
-        return (int)(px/tileSize); //return (int)((px + Config.SPAWN_X)/tileSize);
+        return (int) (px / tileSize);
     }
     /**
      * Converts given player y-coordinate to respective tile map y-coordinate.
      */
     private int toTileY(float py) {
-        return (int)(py/tileSize); // return (int)((py + Config.SPAWN_Y)/tileSize);
+        return (int) (py / tileSize);
     }
 }

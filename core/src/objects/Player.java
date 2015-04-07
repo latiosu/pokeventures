@@ -3,10 +3,12 @@ package objects;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import engine.AssetManager;
 import engine.Config;
 
 import java.util.Date;
+import java.util.Vector;
 
 public class Player extends Entity {
 
@@ -40,24 +42,13 @@ public class Player extends Entity {
         this.setDirection(d);
     }
 
-    /**
-     * Returns x-coordinate of collision box origin. Note: The collision box
-     * is the user's sensation of the character's physical shape.
-     */
-    public float getCollisionX() {
-        return x;
-    }
-
-    /**
-     * Returns y-coordinate of collision box origin. Note: The collision box
-     * is the user's sensation of the character's physical shape.
-     */
-    public float getCollisionY() {
-        return y;
-    }
-
     public Rectangle getBounds() {
         return new Rectangle(x, y, Config.CHAR_WIDTH, Config.CHAR_HEIGHT);
+    }
+
+    /* DEBUGGING USE ONLY */
+    public Vector2 getCentre() {
+        return getBounds().getCenter(new Vector2());
     }
 
     /**

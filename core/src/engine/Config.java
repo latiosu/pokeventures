@@ -6,9 +6,10 @@ import objects.Entity;
 public class Config {
     /* ====== General ====== */
     // Game
+    public static final boolean DEBUG = true;
     public static final Entity.Type DEFAULT_TYPE = Entity.Type.CHARMANDER;
-    public static final String MAP = "overworld.png";
-    public static final float SPAWN_X = 864;
+    public static final String MAP = "overworld-clean.png";
+    public static final float SPAWN_X = 865;
     public static final float SPAWN_Y = 550;
 
     // Networking
@@ -34,10 +35,11 @@ public class Config {
     public static final float FONT_HEIGHT = 8f;
 
     // Camera
-    public static final float CAM_MIN_X = (VIEWPORT_WIDTH/2f) - SPAWN_X;
-    public static final float CAM_MIN_Y = (VIEWPORT_HEIGHT/2f) - SPAWN_Y;
-//    public static final float CAM_MAX_X = MAP_WIDTH + SPAWN_X - (VIEWPORT_WIDTH/2f);
-//    public static final float CAM_MAX_Y = MAP_HEIGHT + SPAWN_Y - (VIEWPORT_HEIGHT/2f);
+    public static final float CAM_MIN_X = (VIEWPORT_WIDTH/2f);
+    public static final float CAM_MIN_Y = (VIEWPORT_HEIGHT/2f);
+    public static final float CAM_MAX_X = AssetManager.level.getWidth() - (VIEWPORT_WIDTH/2f);
+    public static final float CAM_MAX_Y = AssetManager.level.getHeight() - (VIEWPORT_HEIGHT/2f);
+
 
     // Chat System
     public static final int MAX_CHAT_ROWS = 6;

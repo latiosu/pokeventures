@@ -1,6 +1,6 @@
 package objects.Tiles;
 
-import objects.Entity;
+import objects.PlayerOnline;
 
 public class BlockedTile extends Tile {
 
@@ -9,19 +9,23 @@ public class BlockedTile extends Tile {
     }
 
     @Override
-    public float handleCollision(float px, float py, Entity.Direction dir) {
-        switch (dir) {
+    public void handleCollision(PlayerOnline mp) {
+        switch (mp.getDirection()) {
             case DOWN:
-                return getTop();
+                mp.setY(getTop());
+                break;
             case UP:
-                return getBottom();
+                mp.setY(getBottom());
+                break;
             case LEFT:
-                return getRight();
+                mp.setX(getRight());
+                break;
             case RIGHT:
-                return getLeft();
+                mp.setX(getLeft());
+                break;
             default:
                 System.err.printf("Error: Invalid direction");
-                return 0;
+                break;
         }
     }
 }

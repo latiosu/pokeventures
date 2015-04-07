@@ -3,11 +3,14 @@ package engine;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Intersector;
 import engine.structs.Message;
 import engine.structs.UserList;
 import networking.ClientThread;
@@ -18,6 +21,7 @@ import networking.packets.Packet00Login;
 import networking.packets.Packet01Disconnect;
 import objects.Player;
 import objects.PlayerOnline;
+import objects.Tiles.Tile;
 
 
 public class Core extends Game {
@@ -124,18 +128,35 @@ public class Core extends Game {
         ui.render();
 
         // DEBUG STUFF
-//        if(playMode) {
-//            ShapeRenderer sr = new ShapeRenderer();
-//            PlayerOnline mp = players.getMainPlayer();
-//            sr.begin(ShapeRenderer.ShapeType.Line);
-//            sr.setProjectionMatrix(cam.combined);
-//            sr.setColor(Color.YELLOW);
-//            sr.rect(mp.getX(), mp.getY(), Config.CHAR_WIDTH, Config.CHAR_HEIGHT);
-//            Tile a = world.getTile(mp.getX(), mp.getY());
-//            sr.setColor(Color.BLACK);
-//            sr.rect(a.getX(), a.getY(), 16, 16); // render current tile
-//            sr.end();
-//        }
+        if(Config.DEBUG) {
+            if (playMode) {
+                Gdx.gl.glEnable(GL20.GL_BLEND);
+                Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+                PlayerOnline mp = players.getMainPlayer();
+                ShapeRenderer sr = new ShapeRenderer();
+                sr.setAutoShapeType(true);
+                sr.setProjectionMatrix(cam.combined);
+                sr.begin(ShapeRenderer.ShapeType.Filled); // BEGIN DEBUG RENDERING
+
+                // Render blocked as red
+                sr.setColor(1f, 0f, 0f, 0.3f);
+                for (Tile t : world.getBlocked()) {
+                    sr.rect(t.getX(), t.getY(), 16, 16);
+                }
+
+                // Render player centre tile as white
+                Tile a = world.getTile(mp.getX(), mp.getY());
+                sr.setColor(1f, 1f, 1f, 0.4f);
+                sr.rect(a.getX(), a.getY(), 16, 16);
+
+                // Render player outline as yellow
+                sr.set(ShapeRenderer.ShapeType.Line);
+                sr.setColor(Color.YELLOW);
+                sr.rect(mp.getX(), mp.getY(), Config.CHAR_WIDTH, Config.CHAR_HEIGHT);
+
+                sr.end(); // END DEBUG RENDERING
+            }
+        }
 
         delta += Gdx.graphics.getDeltaTime();
         animDelta += Gdx.graphics.getDeltaTime();

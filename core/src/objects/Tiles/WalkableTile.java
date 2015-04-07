@@ -1,6 +1,6 @@
 package objects.Tiles;
 
-import objects.Entity;
+import objects.PlayerOnline;
 
 public class WalkableTile extends Tile {
 
@@ -9,17 +9,22 @@ public class WalkableTile extends Tile {
     }
 
     @Override
-    public float handleCollision(float px, float py, Entity.Direction dir) {
-        switch (dir) {
+    /**
+     * Ignores collisions.
+     */
+    public void handleCollision(PlayerOnline mp) {
+        switch (mp.getDirection()) {
             case DOWN:
             case UP:
-                return py;
+                mp.getX();
+                break;
             case LEFT:
             case RIGHT:
-                return px;
+                mp.getY();
+                break;
             default:
                 System.err.printf("Error: Invalid direction");
-                return 0;
+                break;
         }
     }
 }

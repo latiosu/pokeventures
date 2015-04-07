@@ -148,7 +148,7 @@ public class ServerThread extends Thread {
         packet.writeDataFrom(this); // Notify all users of new MESSAGE
 
         // Log message to console
-        System.out.printf("SERVER=[%s] %s: %s\n", getDate(packet.getTime()), packet.getUsername(), packet.getMessage());
+        System.out.printf("[%s] %s: %s\n", getDate(packet.getTime()), packet.getUsername(), packet.getMessage());
     }
 
     public void sendData(byte[] data, InetAddress address, int port) {
