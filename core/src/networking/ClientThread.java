@@ -4,9 +4,7 @@ import engine.Config;
 import engine.Core;
 import engine.structs.Message;
 import networking.packets.*;
-import objects.Entity;
-import objects.Player;
-import objects.PlayerOnline;
+import objects.*;
 
 import java.io.IOException;
 import java.net.*;
@@ -67,7 +65,7 @@ public class ClientThread extends Thread {
 
     private void handleLogin(Packet00Login p, InetAddress address, int port) {
         PlayerOnline player = new PlayerOnline(p.getUID(), p.getX(), p.getY(),
-                Entity.Direction.getDir(p.getDir()), Entity.Type.getType(p.getType()),
+                Direction.getDir(p.getDir()), PlayerType.getType(p.getType()),
                 false, p.getUsername(), address, port);
 
         core.getPlayers().add(p.getUID(), player);

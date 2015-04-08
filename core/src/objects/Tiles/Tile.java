@@ -30,23 +30,17 @@ public abstract class Tile {
     public Rectangle getBounds() {
         return bounds;
     }
-    private float toPlayerX(float x) {
-        return x;
-    }
-    private float toPlayerY(float y) {
-        return y;
-    }
     protected float getTop() {
-        return toPlayerY(y + tileSize);
+        return (y + tileSize);
     }
     protected float getBottom() {
-        return toPlayerY(y - tileSize);
+        return (y - Config.CHAR_COLL_HEIGHT);
     }
     protected float getRight() {
-        return toPlayerX(x + tileSize);
+        return (x + tileSize);
     }
     protected float getLeft() {
-        return toPlayerX(x) - Config.CHAR_WIDTH;
+        return (x) - Config.CHAR_COLL_WIDTH;
     }
     public float getX() {
         return x;

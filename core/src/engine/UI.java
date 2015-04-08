@@ -2,14 +2,22 @@ package engine;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import engine.structs.Message;
 import engine.structs.TimeComparator;
 import networking.ChatClient;
 
+import javax.swing.*;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
@@ -21,12 +29,18 @@ public class UI {
     private String text = ""; /* Possibly used for keyboard input */
     private boolean hasFocus = false;
     private ChatClient cc;
+    private boolean isSetupPhase = false;
+    private Image setupBG;
+
+    // Labels
+    private Label versionNumber;
 
     public UI(Core core) {
         this.core = core;
         skin = AssetManager.skin;
         stage = new Stage(new ScreenViewport());
         runSetup();
+        initLabels();
     }
 
     public void render() {
@@ -40,8 +54,21 @@ public class UI {
         skin.dispose();
     }
 
+    private void initLabels() {
+        versionNumber = new Label(Config.VERSION, skin, "default");
+        versionNumber.setName("version");
+        versionNumber.setPosition((Config.VIEWPORT_WIDTH*2f)-versionNumber.getWidth()-10, 5);
+        stage.addActor(versionNumber);
+    }
+
     /* Contains a start networking call */
-    public void runSetup(){
+    private void runSetup(){
+        isSetupPhase = true;
+        // Render setup background
+        setupBG = new Image(AssetManager.setupBG);
+        setupBG.setName("setup-bg");
+        stage.addActor(setupBG);
+
         // Become host dialog
         Dialog d1 = new Dialog("", skin, "dialog") {
             protected void result (Object object) {
@@ -55,7 +82,7 @@ public class UI {
             }
         };
         d1.setMovable(false);
-        d1.getContentTable().pad(10, 100, 0, 100);
+        d1.getContentTable().pad(10, 60, 0, 60);
         d1.getButtonTable().pad(0, 0, 20, 0);
         d1.text("Hosting a game or joining?").button("Host", true).button("Join", false).key(Input.Keys.ENTER, true)
                 .key(Input.Keys.ESCAPE, false).show(stage);
@@ -88,7 +115,7 @@ public class UI {
     }
 
     /* Initializes main player and game UI */
-    public void requestUsername() {
+    private void requestUsername() {
         // Request username dialog
         final TextField field = new TextField("", skin, "plain");
         field.setMaxLength(15);
@@ -101,6 +128,9 @@ public class UI {
                 core.initMainPlayer(sanitizeText(text)); // Define main player for client
                 initChat(); // Instantiate Chat client
                 setFocus(false);
+
+                setupBG.addAction(Actions.fadeOut(0.4f));
+                isSetupPhase = false;
             }
         };
         d2.setMovable(false);

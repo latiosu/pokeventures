@@ -1,33 +1,50 @@
 
-    ========================
-             GOALS
-    ========================
+    =====================
+            GOALS
+    =====================
+
 
 MED - Add projectiles (fireball/watergun/razorleaf)
-MED - Add combat system
+MED - Add combat system:
+        + Players should be able to perform melee attacks while moving
+        + Players should be able to fire a projectile in their current direction (client handles collision)
+MED - Add chat bubble system
+MED - Smooth out player movement (smaller walk steps)
 
+LOW - Add mob system with AI controlled by server thread
 LOW - Add timeout-based disconnects (no packets received for 5-10 seconds)
 LOW - Interpolate other player positions (if isMoving, then increment pos by 1 or 2 in their direction)
 LOW - Add documentation to majority of code
+LOW - Update character size when window size changes
 
 
 
 
-    ========================
-              DONE
-    ========================
+    ====================
+            BUGS
+    ====================
+
+
+
+
+
+    ====================
+            DONE
+    ====================
 
 CRITICAL - Add camera bounds
 CRITICAL - Fix multiplayer login issue (Third user causes disconnects/client to malfunction)
 CRITICAL - Fix focus transfer with chat system
 CRITICAL - Implement chat system and text transfer
 
+HIGH - Add version numbers to game
 HIGH - Implement collision system (Collision tile should be stored in X-1,Y (if lower left corner is origin))
 HIGH - Add map bounds
 HIGH - Allow for Server IP entry via dialog box if 'becoming host' is declined
 HIGH - Integrate initial position and type with login packet
 HIGH - Add Mouse input to remove chat window
 
+MED - Make collision bounds controllable via Config class
 MED - Show username above player characters
 MED - Implement character change
 MED - Implement player direction and animation in packets
@@ -38,3 +55,12 @@ LOW - Update ServerThread to use UserList data structure for storing Players
 LOW - Standardise packet transfer types to integer
 LOW - Add readme.md to git repository
 LOW - Sanitize username input
+
+    =====================
+            FIXED
+    =====================
+* Fix bug where non-server player cannot change characters (temporary change, then revert back to charmander)
+* Certain messages cause an ArrayIndexOutOfBoundsException (possibly linked with comma text removal issue)
+* Text input after a comma (,) is lost for message sending
+* Not all of the font's characters are being typed
+

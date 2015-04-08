@@ -13,10 +13,10 @@ public class PlayerOnline extends Player {
     // Default main player constructor
     public PlayerOnline(String username) {
         this(new Date().getTime(), Config.SPAWN_X, Config.SPAWN_Y,
-                Direction.DOWN, Type.CHARMANDER, true, username, null, -1);
+                Direction.DOWN, PlayerType.CHARMANDER, true, username, null, -1);
     }
 
-    public PlayerOnline(long uid, float x, float y, Direction dir, Type t, boolean isMain,
+    public PlayerOnline(long uid, float x, float y, Direction dir, PlayerType t, boolean isMain,
                         String username, InetAddress address, int port) {
         super(uid, t, isMain, username);
         this.x = x;

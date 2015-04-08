@@ -98,7 +98,7 @@ public class ChatClient {
                         }
                         // ==== Send message to server here ====
                         registerMsg(core.getPlayers().getMainPlayer().getUsername(), trimmed);
-                        textField.setText("");
+                        showChat(false);
                         break;
                 }
             }
@@ -184,6 +184,7 @@ public class ChatClient {
      */
     public void showChat(boolean b) {
         ui.setFocus(b);
+        chatField.setText("");
         chatField.setVisible(b); // Show input area
         chatAreaHL.setVisible(b); // Highlight chat area
         if(b){

@@ -10,11 +10,11 @@ public class PlayerAnimation {
     private Animation currentAnimation;
     private float pauseDelta, lastDelta;
 
-    public PlayerAnimation(Player p, Player.Type t) {
+    public PlayerAnimation(Player p, PlayerType t) {
         player = p;
         pauseDelta = 0;
         lastDelta = 0;
-        currentAnimation = AssetManager.getAnimation(t, Entity.Direction.DOWN);
+        currentAnimation = AssetManager.getAnimation(t, Direction.DOWN);
     }
 
     public void changeAnim(){

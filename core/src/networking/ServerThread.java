@@ -1,15 +1,14 @@
 package networking;
 
-import engine.AssetManager;
 import engine.Config;
 import engine.Core;
-import engine.WorldManager;
 import engine.structs.Message;
 import engine.structs.TimeComparator;
 import engine.structs.UserList;
 import networking.packets.*;
-import objects.Entity;
+import objects.Direction;
 import objects.PlayerOnline;
+import objects.PlayerType;
 
 import java.io.IOException;
 import java.net.*;
@@ -63,7 +62,7 @@ public class ServerThread extends Thread {
             case LOGIN:
                 Packet00Login lp = new Packet00Login(data);
                 PlayerOnline p = new PlayerOnline(lp.getUID(), lp.getX(), lp.getY(),
-                        Entity.Direction.getDir(lp.getDir()), Entity.Type.getType(lp.getType()),
+                        Direction.getDir(lp.getDir()), PlayerType.getType(lp.getType()),
                         false, lp.getUsername(), address, port);
                 this.addConnection(p, lp);
                 System.out.printf("[%s:%d] %s has connected. Online: %d\n",
@@ -134,6 +133,7 @@ public class ServerThread extends Thread {
             p.setY(packet.getY());
             p.setDirection(packet.getDir());
             p.setMoving(packet.isMoving());
+            p.setType(packet.getType());
             Packet02Move newPacket = new Packet02Move(p.getUID(), p.getUsername(), p.getX(), p.getY(),
                     p.isMovingNum(), p.getDirection().getNum(), p.getType().getNum());
             newPacket.writeDataFrom(this); // Notify all users of new POSITION DATA

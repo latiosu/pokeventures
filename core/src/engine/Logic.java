@@ -2,7 +2,7 @@ package engine;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import networking.packets.Packet02Move;
-import objects.Entity;
+import objects.Direction;
 import objects.Player;
 import objects.PlayerOnline;
 
@@ -32,13 +32,13 @@ public class Logic {
         if(!keys[0] && !keys[1] && !keys[2] && !keys[3]) {
             mp.setMoving(false);
         } else if (keys[0]) {
-            mp.move(Entity.Direction.DOWN);
+            mp.move(Direction.DOWN);
         } else if (keys[1]) {
-            mp.move(Entity.Direction.LEFT);
+            mp.move(Direction.LEFT);
         } else if (keys[2]) {
-            mp.move(Entity.Direction.UP);
+            mp.move(Direction.UP);
         } else if (keys[3]) {
-            mp.move(Entity.Direction.RIGHT);
+            mp.move(Direction.RIGHT);
         }
 
         // Position logic
@@ -55,12 +55,12 @@ public class Logic {
                     }
                     break;
                 case UP:
-                    if(mp.getY() < AssetManager.level.getHeight() - Config.CHAR_HEIGHT) {
+                    if(mp.getY() < AssetManager.level.getHeight() - Config.CHAR_COLL_HEIGHT) {
                         mp.setY(mp.getY() + Config.WALK_DIST);
                     }
                     break;
                 case RIGHT:
-                    if(mp.getX() < AssetManager.level.getWidth() - Config.CHAR_WIDTH) {
+                    if(mp.getX() < AssetManager.level.getWidth() - Config.CHAR_COLL_WIDTH) {
                         mp.setX(mp.getX() + Config.WALK_DIST);
                     }
                     break;

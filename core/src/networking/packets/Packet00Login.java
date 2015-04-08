@@ -12,7 +12,7 @@ public class Packet00Login extends Packet {
 
     public Packet00Login(byte[] data) {
         super(00);
-        String[] dataArray = readData(data).split(","); // Cut first two chars and split
+        String[] dataArray = readData(data).split("`"); // Cut first two chars and split
         this.uid = Long.parseLong(dataArray[0]);
         this.username = dataArray[1];
         this.x = Float.parseFloat(dataArray[2]);
@@ -42,8 +42,8 @@ public class Packet00Login extends Packet {
     @Override
     /* Reminder: Update this when changing packet structure */
     public byte[] getData() {
-        return ("00" + this.uid + "," + this.username + "," + this.x + "," +
-                this.y + "," + this.dir + "," + this.type).getBytes();
+        return ("00" + this.uid + "`" + this.username + "`" + this.x + "`" +
+                this.y + "`" + this.dir + "`" + this.type).getBytes();
     }
 
     public String getUsername() {

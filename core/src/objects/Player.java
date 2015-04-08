@@ -8,7 +8,6 @@ import engine.AssetManager;
 import engine.Config;
 
 import java.util.Date;
-import java.util.Vector;
 
 public class Player extends Entity {
 
@@ -19,11 +18,11 @@ public class Player extends Entity {
     public boolean isMain;
 
     public Player(String username) {
-        this(new Date().getTime(), Entity.Type.CHARMANDER, true, username);
+        this(new Date().getTime(), PlayerType.CHARMANDER, true, username);
     }
 
-    public Player(long uid, Entity.Type type, boolean isMain, String username){
-        super(type, Direction.DOWN);
+    public Player(long uid, PlayerType type, boolean isMain, String username){
+        super(type);
         anim = new PlayerAnimation(this, type);
         this.isMain = isMain;
         this.username = username;
@@ -43,7 +42,7 @@ public class Player extends Entity {
     }
 
     public Rectangle getBounds() {
-        return new Rectangle(x, y, Config.CHAR_WIDTH, Config.CHAR_HEIGHT);
+        return new Rectangle(x, y, Config.CHAR_COLL_WIDTH, Config.CHAR_COLL_HEIGHT);
     }
 
     /* DEBUGGING USE ONLY */

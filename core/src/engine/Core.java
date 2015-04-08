@@ -10,17 +10,17 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Intersector;
 import engine.structs.Message;
 import engine.structs.UserList;
 import networking.ClientThread;
 import networking.packets.Packet03Chat;
-import objects.Entity;
+import objects.Direction;
 import networking.ServerThread;
 import networking.packets.Packet00Login;
 import networking.packets.Packet01Disconnect;
 import objects.Player;
 import objects.PlayerOnline;
+import objects.PlayerType;
 import objects.Tiles.Tile;
 
 
@@ -152,7 +152,7 @@ public class Core extends Game {
                 // Render player outline as yellow
                 sr.set(ShapeRenderer.ShapeType.Line);
                 sr.setColor(Color.YELLOW);
-                sr.rect(mp.getX(), mp.getY(), Config.CHAR_WIDTH, Config.CHAR_HEIGHT);
+                sr.rect(mp.getX(), mp.getY(), Config.CHAR_COLL_WIDTH, Config.CHAR_COLL_HEIGHT);
 
                 sr.end(); // END DEBUG RENDERING
             }
@@ -194,7 +194,7 @@ public class Core extends Game {
 
     /* Update values and animation frame */
     public void updatePlayer(long uid, String username, float x, float y, boolean isMoving,
-                             Entity.Direction dir, Player.Type type) {
+                             Direction dir, PlayerType type) {
         Player p = getPlayers().get(uid);
         if(p != null) {
             p.setX(x);
