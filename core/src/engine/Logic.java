@@ -6,14 +6,13 @@ import objects.Direction;
 import objects.Player;
 import objects.PlayerOnline;
 import objects.State;
-import objects.attacks.AttackType;
 
 public class Logic {
 
     private Core core;
     private OrthographicCamera cam;
 
-    public Logic(Core core, OrthographicCamera cam){
+    public Logic(Core core, OrthographicCamera cam) {
         this.core = core;
         this.cam = cam;
     }
@@ -21,7 +20,7 @@ public class Logic {
     /**
      * Note: Client handles collisions, positioning and rendering of main player.
      */
-    public void update(PlayerOnline mp){
+    public void update(PlayerOnline mp) {
         updateMainPlayer(mp);
         updateCamera(mp);
     }
@@ -33,11 +32,11 @@ public class Logic {
         mp.setType(UserInputProcessor.selectedType);
 
         // Update animation state
-        if(attacks[0]) {
+        if (attacks[0]) {
             mp.setState(State.ATK_MELEE);
-        } else if(attacks[1]) {
+        } else if (attacks[1]) {
             mp.setState(State.ATK_RANGED);
-        } else if(!arrows[0] && !arrows[1] && !arrows[2] && !arrows[3]) {
+        } else if (!arrows[0] && !arrows[1] && !arrows[2] && !arrows[3]) {
             mp.setState(State.IDLE);
         } else {
             mp.setState(State.WALK);
@@ -55,25 +54,25 @@ public class Logic {
         }
 
         // Position logic
-        if(mp.getState() == State.WALK) { // Note: Note able to walk + attack simultaneously
+        if (mp.getState() == State.WALK) { // Note: Note able to walk + attack simultaneously
             switch (mp.getDirection()) {
                 case DOWN:
-                    if(mp.getY() > 0) {
+                    if (mp.getY() > 0) {
                         mp.setY(mp.getY() - Config.WALK_DIST);
                     }
                     break;
                 case LEFT:
-                    if(mp.getX() > 0) {
+                    if (mp.getX() > 0) {
                         mp.setX(mp.getX() - Config.WALK_DIST);
                     }
                     break;
                 case UP:
-                    if(mp.getY() < AssetManager.level.getHeight() - Config.CHAR_COLL_HEIGHT) {
+                    if (mp.getY() < AssetManager.level.getHeight() - Config.CHAR_COLL_HEIGHT) {
                         mp.setY(mp.getY() + Config.WALK_DIST);
                     }
                     break;
                 case RIGHT:
-                    if(mp.getX() < AssetManager.level.getWidth() - Config.CHAR_COLL_WIDTH) {
+                    if (mp.getX() < AssetManager.level.getWidth() - Config.CHAR_COLL_WIDTH) {
                         mp.setX(mp.getX() + Config.WALK_DIST);
                     }
                     break;
@@ -100,16 +99,16 @@ public class Logic {
      */
     private void updateCameraBounds() {
         // Map boundaries
-        if(cam.position.x > Config.CAM_MAX_X) {
+        if (cam.position.x > Config.CAM_MAX_X) {
             cam.position.x = Config.CAM_MAX_X;
         }
-        if(cam.position.y > Config.CAM_MAX_Y) {
+        if (cam.position.y > Config.CAM_MAX_Y) {
             cam.position.y = Config.CAM_MAX_Y;
         }
-        if(cam.position.x < Config.CAM_MIN_X) {
+        if (cam.position.x < Config.CAM_MIN_X) {
             cam.position.x = Config.CAM_MIN_X;
         }
-        if(cam.position.y < Config.CAM_MIN_Y) {
+        if (cam.position.y < Config.CAM_MIN_Y) {
             cam.position.y = Config.CAM_MIN_Y;
         }
         cam.update();

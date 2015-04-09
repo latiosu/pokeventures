@@ -17,12 +17,12 @@ public class PlayerAnimation {
         currentAnim = AssetManager.getAnimation(t, State.IDLE, Direction.DOWN);
     }
 
-    public void updateAnim(){
+    public void updateAnim() {
         currentAnim = AssetManager.getAnimation(player.getType(), player.getState(), player.getDirection());
     }
 
-    public TextureRegion getFrame(float delta){
-        if(player.getState() != State.IDLE) {
+    public TextureRegion getFrame(float delta) {
+        if (player.getState() != State.IDLE) {
             lastDelta = delta;
             return currentAnim.getKeyFrame(delta);
         } else {

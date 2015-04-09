@@ -2,8 +2,6 @@ package networking;
 
 import engine.Config;
 import engine.Core;
-import engine.structs.Message;
-import engine.structs.TimeComparator;
 import engine.structs.UserList;
 import networking.packets.*;
 import objects.Direction;
@@ -11,11 +9,12 @@ import objects.PlayerOnline;
 import objects.PlayerType;
 
 import java.io.IOException;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.PriorityQueue;
-import java.util.Queue;
 
 public class ServerThread extends Thread {
 
@@ -37,7 +36,7 @@ public class ServerThread extends Thread {
 
     @Override
     public void run() {
-        while(true) {
+        while (true) {
             byte[] data = new byte[Config.PACKET_SIZE];
             DatagramPacket packet = new DatagramPacket(data, data.length);
             try {
@@ -92,11 +91,11 @@ public class ServerThread extends Thread {
 
     public void addConnection(PlayerOnline newPlayer, Packet00Login packet) {
         boolean isConnected = false;
-        for(PlayerOnline p : this.onlinePlayers) {
-            if(newPlayer.getUID() == p.getUID()) {
+        for (PlayerOnline p : this.onlinePlayers) {
+            if (newPlayer.getUID() == p.getUID()) {
                 // Already connected and registered with server
                 isConnected = true;
-                if(p.getAddress() == null && p.getPort() == -1) {
+                if (p.getAddress() == null && p.getPort() == -1) {
                     p.setAddress(newPlayer.getAddress());
                     p.setPort(newPlayer.getPort());
                 } else {
@@ -112,7 +111,7 @@ public class ServerThread extends Thread {
             }
         }
 
-        if(!isConnected) {
+        if (!isConnected) {
             // Add new player to online list
             this.onlinePlayers.add(newPlayer.getUID(), newPlayer);
         }
@@ -128,7 +127,7 @@ public class ServerThread extends Thread {
      */
     private void handleMove(Packet02Move packet) {
         PlayerOnline p;
-        if((p = onlinePlayers.get(packet.getUID())) != null) {
+        if ((p = onlinePlayers.get(packet.getUID())) != null) {
             // Sync new data from player with other players
             p.setX(packet.getX());
             p.setY(packet.getY());
@@ -161,7 +160,7 @@ public class ServerThread extends Thread {
     }
 
     public void sendDataToAllClients(byte[] data) {
-        for(PlayerOnline p : onlinePlayers){
+        for (PlayerOnline p : onlinePlayers) {
             sendData(data, p.getAddress(), p.getPort());
         }
     }

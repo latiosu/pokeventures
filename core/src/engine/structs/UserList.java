@@ -1,11 +1,12 @@
 package engine.structs;
 
+import objects.PlayerOnline;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-import objects.PlayerOnline;
 
 public class UserList implements List {
 
@@ -19,7 +20,7 @@ public class UserList implements List {
     }
 
     public PlayerOnline getMainPlayer() {
-        if(mainPlayer == null){
+        if (mainPlayer == null) {
             System.err.println("Error: Main player has not been set.");
         }
         return mainPlayer;
@@ -61,7 +62,7 @@ public class UserList implements List {
     /* Can consider making non-parametric UserList
      * to get better error info. */
     public boolean add(long uid, PlayerOnline player) {
-        if(!contains(uid)){
+        if (!contains(uid)) {
             map.put(uid, player);
             list.add(player);
         } else {

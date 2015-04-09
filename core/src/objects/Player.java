@@ -6,9 +6,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import engine.AssetManager;
 import engine.Config;
-import objects.attacks.AttackType;
-
-import java.util.Date;
 
 public class Player extends Entity {
 
@@ -17,7 +14,7 @@ public class Player extends Entity {
     private String username;
     private float usernameWidth;
 
-    public Player(long uid, PlayerType type, String username){
+    public Player(long uid, PlayerType type, String username) {
         super(type);
         this.anim = new PlayerAnimation(this, type);
         this.username = username;
@@ -64,7 +61,7 @@ public class Player extends Entity {
 //            case DOWN:
 //                return y-1;
             default:
-                return y-1;
+                return y - 1;
         }
     }
 
@@ -73,7 +70,7 @@ public class Player extends Entity {
      * automatically adjusted based on username length to appear center-justified.
      */
     public float getNameX() {
-        return x - (usernameWidth/2f - (Config.CHAR_WIDTH/2f));
+        return x - (usernameWidth / 2f - (Config.CHAR_WIDTH / 2f));
     }
 
     /**
@@ -83,15 +80,19 @@ public class Player extends Entity {
     public float getNameY() {
         return y + (Config.CHAR_HEIGHT + Config.FONT_HEIGHT) + Config.USERNAME_PADDING_Y;
     }
-    public TextureRegion getFrame(float delta){
+
+    public TextureRegion getFrame(float delta) {
         return anim.getFrame(delta);
     }
+
     public PlayerAnimation getAnim() {
         return anim;
     }
+
     public String getUsername() {
         return username;
     }
+
     public long getUID() {
         return uid;
     }

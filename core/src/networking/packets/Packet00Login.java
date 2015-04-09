@@ -11,7 +11,7 @@ public class Packet00Login extends Packet {
     private int dir, type;
 
     public Packet00Login(byte[] data) {
-        super(00);
+        super(0);
         String[] dataArray = readData(data).split("`"); // Cut first two chars and split
         this.uid = Long.parseLong(dataArray[0]);
         this.username = dataArray[1];
@@ -22,7 +22,7 @@ public class Packet00Login extends Packet {
     }
 
     public Packet00Login(long uid, String username, float x, float y, int dir, int type) {
-        super(00);
+        super(0);
         this.uid = uid;
         this.username = username;
         this.x = x;
@@ -33,7 +33,7 @@ public class Packet00Login extends Packet {
 
     @Override
     public void writeDataFrom(Thread thread) {
-        if(thread instanceof ClientThread)
+        if (thread instanceof ClientThread)
             ((ClientThread) thread).sendData(getData());
         else if (thread instanceof ServerThread)
             ((ServerThread) thread).sendDataToAllClients(getData());
@@ -49,18 +49,23 @@ public class Packet00Login extends Packet {
     public String getUsername() {
         return this.username;
     }
+
     public float getX() {
         return x;
     }
+
     public float getY() {
         return y;
     }
+
     public int getDir() {
         return dir;
     }
+
     public int getType() {
         return type;
     }
+
     public long getUID() {
         return uid;
     }

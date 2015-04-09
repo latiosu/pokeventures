@@ -3,7 +3,6 @@ package networking.packets;
 import networking.ClientThread;
 import networking.ServerThread;
 import objects.Direction;
-import objects.PlayerType;
 import objects.attacks.AttackType;
 
 public class Packet04Attack extends Packet {
@@ -35,10 +34,9 @@ public class Packet04Attack extends Packet {
 
     @Override
     public void writeDataFrom(Thread thread) {
-        if(thread instanceof ClientThread) {
+        if (thread instanceof ClientThread) {
             ((ClientThread) thread).sendData(getData());
-        }
-        else if (thread instanceof ServerThread)
+        } else if (thread instanceof ServerThread)
             ((ServerThread) thread).sendDataToAllClients(getData());
     }
 
@@ -48,18 +46,23 @@ public class Packet04Attack extends Packet {
         return ("02" + this.pid + "`" + this.x + "`" + this.y +
                 "`" + this.dir + "`" + this.atkType + "`" + this.tid).getBytes();
     }
+
     public long getPID() {
         return pid;
     }
+
     public float getX() {
         return x;
     }
+
     public float getY() {
         return y;
     }
+
     public Direction getDir() {
         return Direction.getDir(dir);
     }
+
     public AttackType getAtkType() {
         return AttackType.getType(atkType);
     }

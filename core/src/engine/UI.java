@@ -2,24 +2,12 @@ package engine;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import engine.structs.Message;
-import engine.structs.TimeComparator;
 import networking.ChatClient;
-
-import javax.swing.*;
-import java.util.PriorityQueue;
-import java.util.Queue;
 
 public class UI {
 
@@ -29,7 +17,6 @@ public class UI {
     private String text = ""; /* Possibly used for keyboard input */
     private boolean hasFocus = false;
     private ChatClient cc;
-    private boolean isSetupPhase = false;
     private Image setupBG;
 
     // Labels
@@ -49,7 +36,7 @@ public class UI {
         stage.draw();
     }
 
-    public void dispose(){
+    public void dispose() {
         stage.dispose();
         skin.dispose();
     }
@@ -57,13 +44,12 @@ public class UI {
     private void initLabels() {
         versionNumber = new Label(Config.VERSION, skin, "default");
         versionNumber.setName("version");
-        versionNumber.setPosition((Config.VIEWPORT_WIDTH*2f)-versionNumber.getWidth()-10, 5);
+        versionNumber.setPosition((Config.VIEWPORT_WIDTH * 2f) - versionNumber.getWidth() - 10, 5);
         stage.addActor(versionNumber);
     }
 
     /* Contains a start networking call */
-    private void runSetup(){
-        isSetupPhase = true;
+    private void runSetup() {
         // Render setup background
         setupBG = new Image(AssetManager.setupBG);
         setupBG.setName("setup-bg");
@@ -71,9 +57,9 @@ public class UI {
 
         // Become host dialog
         Dialog d1 = new Dialog("", skin, "dialog") {
-            protected void result (Object object) {
+            protected void result(Object object) {
                 // Determine if hosting server
-                if(core.isHost = object.toString().equals("true")) {
+                if (core.isHost = object.toString().equals("true")) {
                     core.startNetworking("localhost");
                     requestUsername();
                 } else {
@@ -98,7 +84,7 @@ public class UI {
         field.setSelection(0, field.getText().length());
 
         Dialog d2 = new Dialog("", skin, "dialog") {
-            protected void result (Object object) {
+            protected void result(Object object) {
                 setText(field.getText());
                 core.startNetworking(text); // Start networking connections
                 requestUsername();
@@ -123,14 +109,13 @@ public class UI {
         field.setAlignment(Align.center);
 
         Dialog d2 = new Dialog("", skin, "dialog") {
-            protected void result (Object object) {
+            protected void result(Object object) {
                 setText(field.getText());
                 core.initMainPlayer(sanitizeText(text)); // Define main player for client
                 initChat(); // Instantiate Chat client
                 setFocus(false);
 
                 setupBG.addAction(Actions.fadeOut(0.4f));
-                isSetupPhase = false;
             }
         };
         d2.setMovable(false);
@@ -156,12 +141,8 @@ public class UI {
         return input.toLowerCase().replaceAll(regex, "");
     }
 
-    private void setText(String text){
+    private void setText(String text) {
         this.text = text;
-    }
-
-    public String getText() {
-        return text;
     }
 
     public Stage getStage() {

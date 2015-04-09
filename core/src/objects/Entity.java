@@ -17,18 +17,23 @@ public abstract class Entity extends GameObject {
     public PlayerType getType() {
         return type;
     }
+
     public void setType(PlayerType type) {
         this.type = type;
     }
+
     public boolean isHit() {
         return isHit;
     }
+
     public void setHit(boolean isHit) {
         this.isHit = isHit;
     }
+
     public State getState() {
         return state;
     }
+
     public void setState(State state) {
         this.state = state;
     }

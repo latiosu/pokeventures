@@ -6,12 +6,11 @@ public enum AttackType {
     PROJECTILE(2);
 
     private int num;
+
     AttackType(int num) {
         this.num = num;
     }
-    public int getNum(){
-        return num;
-    }
+
     public static AttackType getType(int i) {
         switch (i) {
             case 0:
@@ -24,5 +23,9 @@ public enum AttackType {
                 System.err.println("Error: Attack not found.");
                 return null;
         }
+    }
+
+    public int getNum() {
+        return num;
     }
 }

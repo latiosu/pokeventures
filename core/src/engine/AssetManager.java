@@ -27,43 +27,6 @@ public class AssetManager {
         loadAssets();
     }
 
-    private void loadAssets() {
-        // Load UI components
-        skin = new Skin(Gdx.files.internal("assets/uiskin.json"));
-        setupBG = new Texture(Gdx.files.internal("assets/setup-bg.png"));
-        // Load Fonts
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("assets/text.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 12;
-        font = generator.generateFont(parameter);
-        generator.dispose();
-        // Load overworld
-        level = new Texture(Gdx.files.internal("assets/" + Config.MAP));
-        // Load character animations
-        PlayerType[] ptypes = { PlayerType.CHARMANDER, PlayerType.BULBASAUR, PlayerType.SQUIRTLE }; // Could change PType to an EnumMap
-        for(int i=0; i<ptypes.length; i++) {
-            if(Config.USE_EXTERNAL_ANIMS) {
-                animations.put(ptypes[i], generate(new TextureAtlas(Gdx.files.internal("packed/" + ptypes[i].getName() + ".atlas"))));
-            } else {
-                animations.put(ptypes[i], generate(new TextureAtlas(Gdx.files.internal("assets/packed/" + ptypes[i].getName() + ".atlas"))));
-            }
-        }
-    }
-
-    // PlayerType > State > Direction
-    private Map<String, Animation> generate(TextureAtlas atlas){
-        Map<String, Animation> map = new HashMap<String, Animation>();
-
-        String[] states = {"idle-", "walk-", "melee-", "ranged-"}; // ORDER MATTERS (used for if-statement)
-        String[] dirs = {"down", "left", "up", "right"};
-        for(int i=0; i<states.length; i++) {
-            for(int j=0; j<dirs.length; j++) {
-                map.put(states[i] + dirs[j], new Animation(Config.ANIM_DURATION, atlas.findRegions(states[i] + dirs[j])));
-            }
-        }
-        return map;
-    }
-
     public static Animation getAnimation(PlayerType type, State state, Direction direction) {
         String animName = "";
         switch (state) {
@@ -95,5 +58,42 @@ public class AssetManager {
                 break;
         }
         return animations.get(type).get(animName);
+    }
+
+    private void loadAssets() {
+        // Load UI components
+        skin = new Skin(Gdx.files.internal("assets/uiskin.json"));
+        setupBG = new Texture(Gdx.files.internal("assets/setup-bg.png"));
+        // Load Fonts
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("assets/text.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 12;
+        font = generator.generateFont(parameter);
+        generator.dispose();
+        // Load overworld
+        level = new Texture(Gdx.files.internal("assets/" + Config.MAP));
+        // Load character animations
+        PlayerType[] ptypes = {PlayerType.CHARMANDER, PlayerType.BULBASAUR, PlayerType.SQUIRTLE}; // Could change PType to an EnumMap
+        for (PlayerType pt : ptypes) {
+            if (Config.USE_EXTERNAL_ANIMS) {
+                animations.put(pt, generate(new TextureAtlas(Gdx.files.internal("packed/" + pt.getName() + ".atlas"))));
+            } else {
+                animations.put(pt, generate(new TextureAtlas(Gdx.files.internal("assets/packed/" + pt.getName() + ".atlas"))));
+            }
+        }
+    }
+
+    // PlayerType > State > Direction
+    private Map<String, Animation> generate(TextureAtlas atlas) {
+        Map<String, Animation> map = new HashMap<String, Animation>();
+
+        String[] states = {"idle-", "walk-", "melee-", "ranged-"};
+        String[] dirs = {"down", "left", "up", "right"};
+        for (String s : states) {
+            for (String d : dirs) {
+                map.put(s + d, new Animation(Config.ANIM_DURATION, atlas.findRegions(s + d)));
+            }
+        }
+        return map;
     }
 }

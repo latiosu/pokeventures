@@ -13,13 +13,13 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import engine.structs.Message;
 import engine.structs.UserList;
 import networking.ClientThread;
-import networking.packets.Packet03Chat;
-import objects.*;
 import networking.ServerThread;
 import networking.packets.Packet00Login;
 import networking.packets.Packet01Disconnect;
-import objects.attacks.Projectile;
+import networking.packets.Packet03Chat;
+import objects.*;
 import objects.Tiles.Tile;
+import objects.attacks.Projectile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +45,6 @@ public class Core extends Game {
     private SpriteBatch batch;
     private Texture tex;
     private Sprite sprite;
-    private AssetManager assets;
 
     // Engine classes
     private WorldManager world;
@@ -59,13 +58,13 @@ public class Core extends Game {
     private ClientThread client;
 
     @Override
-	public void create () {
+    public void create() {
         // Object-related
         players = new UserList();
         projectiles = new ArrayList<Projectile>();
 
         // Engine
-        assets = new AssetManager();
+        new AssetManager();
         cam = new OrthographicCamera(Config.VIEWPORT_WIDTH, Config.VIEWPORT_HEIGHT);
         ui = new UI(this);
         world = new WorldManager();
@@ -80,7 +79,7 @@ public class Core extends Game {
 
         // Overworld data
         batch = new SpriteBatch();
-		tex = world.loadWorld(Config.MAP);
+        tex = world.loadWorld(Config.MAP);
         tex.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
 
         sprite = new Sprite(tex);
@@ -92,7 +91,7 @@ public class Core extends Game {
     }
 
     @Override
-    public void dispose(){
+    public void dispose() {
         // Send disconnect packet to server
         closeNetworking();
         batch.dispose();
@@ -100,38 +99,38 @@ public class Core extends Game {
         ui.dispose();
     }
 
-	@Override
-	public void render () {
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+    @Override
+    public void render() {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         // Update logic 15 times per second
         if (delta > UPDATE_RATE) {
-            if(playMode) {
+            if (playMode) {
                 logic.update(players.getMainPlayer());
             }
             delta -= UPDATE_RATE;
         }
 
         // Update animations 2 times per second
-        if(animDelta > ANIM_RATE){
+        if (animDelta > ANIM_RATE) {
             animDelta -= ANIM_RATE;
         }
 
         batch.setProjectionMatrix(cam.combined);
         batch.begin();
-		sprite.draw(batch);
-        if(playMode) {
-            for(Player p : getPlayers()) {
+        sprite.draw(batch);
+        if (playMode) {
+            for (Player p : getPlayers()) {
                 p.render(animDelta, batch);
             }
         }
-		batch.end();
+        batch.end();
 
         ui.render();
 
         // DEBUG STUFF
-        if(Config.DEBUG) {
+        if (Config.DEBUG) {
             if (playMode) {
                 Gdx.gl.glEnable(GL20.GL_BLEND);
                 Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -163,14 +162,14 @@ public class Core extends Game {
 
         delta += Gdx.graphics.getDeltaTime();
         animDelta += Gdx.graphics.getDeltaTime();
-	}
+    }
 
     public synchronized UserList getPlayers() {
         return this.players;
     }
 
     public void startNetworking(String ip) {
-        if(isHost){
+        if (isHost) {
             System.out.println("Running as server.");
             server = new ServerThread(this);
             server.start();
@@ -186,7 +185,7 @@ public class Core extends Game {
         players.add(p.getUID(), p);
         Packet00Login loginPacket = new Packet00Login(p.getUID(), p.getUsername(),
                 p.getX(), p.getY(), p.getDirection().getNum(), p.getType().getNum());
-        if(server != null) {
+        if (server != null) {
             server.addConnection(p, loginPacket);
         }
         // Send packet to server to sync main player
@@ -199,7 +198,7 @@ public class Core extends Game {
     public void updatePlayer(long uid, String username, float x, float y, State state,
                              Direction dir, PlayerType type) {
         Player p = getPlayers().get(uid);
-        if(p != null) {
+        if (p != null) {
             p.setX(x);
             p.setY(y);
             p.setState(state);
@@ -238,9 +237,11 @@ public class Core extends Game {
     public UI getUI() {
         return ui;
     }
+
     public ClientThread getClientThread() {
         return client;
     }
+
     public WorldManager getWorldManager() {
         return world;
     }

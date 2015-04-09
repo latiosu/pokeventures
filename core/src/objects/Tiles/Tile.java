@@ -11,13 +11,6 @@ public abstract class Tile {
     protected int tileSize;
     protected Rectangle bounds;
 
-    public static enum Type {
-        WALKABLE,
-        WALKABLE_HORIZONTAL,
-        WALKABLE_VERTICAL,
-        BLOCKED,
-    }
-
     public Tile(float x, float y) {
         this.x = x;
         this.y = y;
@@ -30,21 +23,27 @@ public abstract class Tile {
     public Rectangle getBounds() {
         return bounds;
     }
+
     protected float getTop() {
         return (y + tileSize);
     }
+
     protected float getBottom() {
         return (y - Config.CHAR_COLL_HEIGHT);
     }
+
     protected float getRight() {
         return (x + tileSize);
     }
+
     protected float getLeft() {
         return (x) - Config.CHAR_COLL_WIDTH;
     }
+
     public float getX() {
         return x;
     }
+
     public float getY() {
         return y;
     }

@@ -7,12 +7,11 @@ public enum Direction {
     RIGHT(4);
 
     private int num;
+
     Direction(int num) {
         this.num = num;
     }
-    public int getNum(){
-        return num;
-    }
+
     public static Direction getDir(int i) {
         switch (i) {
             case 1:
@@ -27,5 +26,9 @@ public enum Direction {
                 System.err.println("Error: Direction not found.");
                 return null;
         }
+    }
+
+    public int getNum() {
+        return num;
     }
 }

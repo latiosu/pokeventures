@@ -7,12 +7,11 @@ public enum State {
     ATK_RANGED(3);
 
     private int num;
+
     State(int num) {
         this.num = num;
     }
-    public int getNum(){
-        return num;
-    }
+
     public static State getState(int i) {
         switch (i) {
             case 0:
@@ -27,5 +26,9 @@ public enum State {
                 System.err.println("Error: State not found.");
                 return null;
         }
+    }
+
+    public int getNum() {
+        return num;
     }
 }

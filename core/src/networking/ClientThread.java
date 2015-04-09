@@ -4,7 +4,10 @@ import engine.Config;
 import engine.Core;
 import engine.structs.Message;
 import networking.packets.*;
-import objects.*;
+import objects.Direction;
+import objects.Player;
+import objects.PlayerOnline;
+import objects.PlayerType;
 
 import java.io.IOException;
 import java.net.*;
@@ -29,7 +32,7 @@ public class ClientThread extends Thread {
 
     @Override
     public void run() {
-        while(true) {
+        while (true) {
             byte[] data = new byte[Config.PACKET_SIZE];
             DatagramPacket packet = new DatagramPacket(data, data.length);
             try {
@@ -74,8 +77,8 @@ public class ClientThread extends Thread {
     /* Assumes player exists in Core.players list */
     private void handleDisconnect(Packet01Disconnect packet) {
         int index = 0;
-        for(Player p : core.getPlayers()){
-            if(p.getUID()==packet.getUID()) {
+        for (Player p : core.getPlayers()) {
+            if (p.getUID() == packet.getUID()) {
                 break;
             }
             index++;

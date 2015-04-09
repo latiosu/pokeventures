@@ -7,16 +7,12 @@ public enum PlayerType {
 
     private int num;
     private String name;
+
     PlayerType(String name, int num) {
         this.name = name;
         this.num = num;
     }
-    public int getNum(){
-        return num;
-    }
-    public String getName() {
-        return name;
-    }
+
     public static PlayerType getType(int i) {
         switch (i) {
             case 1:
@@ -28,5 +24,13 @@ public enum PlayerType {
             default:
                 return null;
         }
+    }
+
+    public int getNum() {
+        return num;
+    }
+
+    public String getName() {
+        return name;
     }
 }

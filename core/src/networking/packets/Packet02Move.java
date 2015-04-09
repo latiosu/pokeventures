@@ -5,7 +5,6 @@ import networking.ServerThread;
 import objects.Direction;
 import objects.PlayerType;
 import objects.State;
-import objects.attacks.AttackType;
 
 public class Packet02Move extends Packet {
 
@@ -15,7 +14,7 @@ public class Packet02Move extends Packet {
     private int state, dir, type;
 
     public Packet02Move(byte[] data) {
-        super(02);
+        super(2);
         String[] dataArray = readData(data).split("`");
         this.uid = Long.parseLong(dataArray[0]);
         this.username = dataArray[1];
@@ -28,7 +27,7 @@ public class Packet02Move extends Packet {
 
     public Packet02Move(long uid, String username, float x, float y, int state,
                         int dir, int type) {
-        super(02);
+        super(2);
         this.uid = uid;
         this.username = username;
         this.x = x;
@@ -40,10 +39,9 @@ public class Packet02Move extends Packet {
 
     @Override
     public void writeDataFrom(Thread thread) {
-        if(thread instanceof ClientThread) {
+        if (thread instanceof ClientThread) {
             ((ClientThread) thread).sendData(getData());
-        }
-        else if (thread instanceof ServerThread)
+        } else if (thread instanceof ServerThread)
             ((ServerThread) thread).sendDataToAllClients(getData());
     }
 
@@ -53,24 +51,31 @@ public class Packet02Move extends Packet {
         return ("02" + this.uid + "`" + this.username + "`" + this.x + "`" + this.y +
                 "`" + state + "`" + dir + "`" + type).getBytes();
     }
+
     public long getUID() {
         return uid;
     }
+
     public float getX() {
         return x;
     }
+
     public float getY() {
         return y;
     }
+
     public State getState() {
         return State.getState(state);
     }
+
     public Direction getDir() {
         return Direction.getDir(dir);
     }
+
     public PlayerType getType() {
         return PlayerType.getType(type);
     }
+
     public String getUsername() {
         return username;
     }
