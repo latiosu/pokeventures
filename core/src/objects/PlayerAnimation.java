@@ -7,27 +7,27 @@ import engine.AssetManager;
 public class PlayerAnimation {
 
     private Player player;
-    private Animation currentAnimation;
+    private Animation currentAnim;
     private float pauseDelta, lastDelta;
 
     public PlayerAnimation(Player p, PlayerType t) {
         player = p;
         pauseDelta = 0;
         lastDelta = 0;
-        currentAnimation = AssetManager.getAnimation(t, Direction.DOWN);
+        currentAnim = AssetManager.getAnimation(t, State.IDLE, Direction.DOWN);
     }
 
-    public void changeAnim(){
-        currentAnimation = AssetManager.getAnimation(player.getType(), player.getDirection());
+    public void updateAnim(){
+        currentAnim = AssetManager.getAnimation(player.getType(), player.getState(), player.getDirection());
     }
 
     public TextureRegion getFrame(float delta){
-        if(player.isMoving) {
+        if(player.getState() != State.IDLE) {
             lastDelta = delta;
-            return currentAnimation.getKeyFrame(delta);
+            return currentAnim.getKeyFrame(delta);
         } else {
             pauseDelta = lastDelta;
-            return currentAnimation.getKeyFrame(pauseDelta);
+            return currentAnim.getKeyFrame(pauseDelta);
         }
     }
 }

@@ -1,0 +1,90 @@
+
+charmander.png
+size: 32,128
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+idle-down
+  rotate: false
+  xy: 15, 22
+  size: 11, 16
+  orig: 11, 16
+  offset: 0, 0
+  index: 0
+walk-down
+  rotate: false
+  xy: 15, 22
+  size: 11, 16
+  orig: 11, 16
+  offset: 0, 0
+  index: 0
+idle-left
+  rotate: false
+  xy: 2, 58
+  size: 18, 16
+  orig: 18, 16
+  offset: 0, 0
+  index: 0
+walk-left
+  rotate: false
+  xy: 2, 58
+  size: 18, 16
+  orig: 18, 16
+  offset: 0, 0
+  index: 0
+idle-right
+  rotate: false
+  xy: 2, 40
+  size: 18, 16
+  orig: 18, 16
+  offset: 0, 0
+  index: 0
+walk-right
+  rotate: false
+  xy: 2, 40
+  size: 18, 16
+  orig: 18, 16
+  offset: 0, 0
+  index: 0
+idle-up
+  rotate: false
+  xy: 2, 21
+  size: 11, 17
+  orig: 11, 17
+  offset: 0, 0
+  index: 0
+walk-up
+  rotate: false
+  xy: 2, 21
+  size: 11, 17
+  orig: 11, 17
+  offset: 0, 0
+  index: 0
+walk-down
+  rotate: false
+  xy: 15, 4
+  size: 11, 16
+  orig: 11, 16
+  offset: 0, 0
+  index: 1
+walk-left
+  rotate: false
+  xy: 2, 94
+  size: 19, 16
+  orig: 19, 16
+  offset: 0, 0
+  index: 1
+walk-right
+  rotate: false
+  xy: 2, 76
+  size: 19, 16
+  orig: 19, 16
+  offset: 0, 0
+  index: 1
+walk-up
+  rotate: false
+  xy: 2, 2
+  size: 11, 17
+  orig: 11, 17
+  offset: 0, 0
+  index: 1

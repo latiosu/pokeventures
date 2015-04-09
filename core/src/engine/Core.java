@@ -14,14 +14,15 @@ import engine.structs.Message;
 import engine.structs.UserList;
 import networking.ClientThread;
 import networking.packets.Packet03Chat;
-import objects.Direction;
+import objects.*;
 import networking.ServerThread;
 import networking.packets.Packet00Login;
 import networking.packets.Packet01Disconnect;
-import objects.Player;
-import objects.PlayerOnline;
-import objects.PlayerType;
+import objects.attacks.Projectile;
 import objects.Tiles.Tile;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Core extends Game {
@@ -37,6 +38,7 @@ public class Core extends Game {
 
     // Object classes
     private UserList players;
+    private List<Projectile> projectiles;
 
     // Rendering classes
     private OrthographicCamera cam;
@@ -60,6 +62,7 @@ public class Core extends Game {
 	public void create () {
         // Object-related
         players = new UserList();
+        projectiles = new ArrayList<Projectile>();
 
         // Engine
         assets = new AssetManager();
@@ -193,18 +196,16 @@ public class Core extends Game {
     }
 
     /* Update values and animation frame */
-    public void updatePlayer(long uid, String username, float x, float y, boolean isMoving,
+    public void updatePlayer(long uid, String username, float x, float y, State state,
                              Direction dir, PlayerType type) {
         Player p = getPlayers().get(uid);
         if(p != null) {
             p.setX(x);
             p.setY(y);
-            p.setMoving(isMoving);
+            p.setState(state);
             p.setDirection(dir);
             p.setType(type);
-            if (isMoving) {
-                p.getAnim().changeAnim();
-            }
+            p.getAnim().updateAnim();
         } else {
             System.err.println("Error: User not found - " + username);
         }

@@ -9,6 +9,7 @@ public class UserInputProcessor implements InputProcessor {
     /* Note: These values must be read another class
      * to update the values for the main player. */
     public static boolean[] directionKeys; // Down Left Up Right
+    public static boolean[] attackKeys;
     public static PlayerType selectedType;
     private Core core;
 
@@ -16,6 +17,7 @@ public class UserInputProcessor implements InputProcessor {
         this.core = core;
         selectedType = Config.DEFAULT_TYPE;
         directionKeys = new boolean[4];
+        attackKeys = new boolean[2];
     }
 
     @Override
@@ -36,17 +38,23 @@ public class UserInputProcessor implements InputProcessor {
             case Input.Keys.RIGHT:
                 directionKeys[3] = true;
                 break;
+            case Input.Keys.CONTROL_LEFT:
+                attackKeys[0] = true;
+                break;
+            case Input.Keys.SHIFT_LEFT:
+                attackKeys[1] = true;
+                break;
             case Input.Keys.NUM_1:
                 selectedType = PlayerType.CHARMANDER;
-                core.getPlayers().getMainPlayer().getAnim().changeAnim();
+                core.getPlayers().getMainPlayer().getAnim().updateAnim();
                 break;
             case Input.Keys.NUM_2:
                 selectedType = PlayerType.BULBASAUR;
-                core.getPlayers().getMainPlayer().getAnim().changeAnim();
+                core.getPlayers().getMainPlayer().getAnim().updateAnim();
                 break;
             case Input.Keys.NUM_3:
                 selectedType = PlayerType.SQUIRTLE;
-                core.getPlayers().getMainPlayer().getAnim().changeAnim();
+                core.getPlayers().getMainPlayer().getAnim().updateAnim();
                 break;
             case Input.Keys.ENTER:
                 core.getUI().showChat(true);
@@ -72,6 +80,12 @@ public class UserInputProcessor implements InputProcessor {
                 break;
             case Input.Keys.RIGHT:
                 directionKeys[3] = false;
+                break;
+            case Input.Keys.CONTROL_LEFT:
+                attackKeys[0] = false;
+                break;
+            case Input.Keys.SHIFT_LEFT:
+                attackKeys[1] = false;
                 break;
         }
         return false;

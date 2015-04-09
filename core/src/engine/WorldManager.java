@@ -5,15 +5,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.Rectangle;
-import objects.Entity;
 import objects.PlayerOnline;
 import objects.Tiles.BlockedTile;
 import objects.Tiles.Tile;
 import objects.Tiles.WalkableTile;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 public class WorldManager {
 
@@ -73,7 +70,7 @@ public class WorldManager {
     }
 
     /**
-     * Searches a 3x3 grid of valid tiles around player for collisions.
+     * Searches a 3x3 grid of valid Tiles around player for collisions.
      */
     public void handleCollision(PlayerOnline mp) {
         int x = toTileX(mp.getX());

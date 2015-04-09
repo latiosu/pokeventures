@@ -2,12 +2,18 @@
     =====================
             GOALS
     =====================
+    /*  PROGRESS: Projectile type and isAttacking is updated from time of input,
+        until received by Logic class. HAVE YET TO WORK OUT HOW TO HANDLE
+        PROJECTILE COLLISIONS. (Implement in server? Then how does user animate?)
+         (Implement in user? Then how does server share info with other users?)*/
 
 
 MED - Add projectiles (fireball/watergun/razorleaf)
 MED - Add combat system:
         + Players should be able to perform melee attacks while moving
-        + Players should be able to fire a projectile in their current direction (client handles collision)
+        + Players should be able to fire a projectile in their current direction (server handles collision?)
+        + Players should have an energy bar for attacks (cooldown system)
+        = Idea: Attacks have elements and can destroy projectiles of the weaker element
 MED - Add chat bubble system
 MED - Smooth out player movement (smaller walk steps)
 
@@ -16,14 +22,16 @@ LOW - Add timeout-based disconnects (no packets received for 5-10 seconds)
 LOW - Interpolate other player positions (if isMoving, then increment pos by 1 or 2 in their direction)
 LOW - Add documentation to majority of code
 LOW - Update character size when window size changes
-
+LOW - For each packet the server receives (contains x, y), use a quad tree to determine which players to send update packets to
+LOW - Change packets to store timeslices (multiple changes in one packet)
+LOW - Add elevation system to maps (will reverse a new level system)
 
 
 
     ====================
             BUGS
     ====================
-
+* Rendering of left-directed animations should be offset to appear as thought the character is moving
 
 
 
@@ -51,6 +59,7 @@ MED - Implement player direction and animation in packets
 MED - Add focus system for input handling via UI and game
 MED - Fix username clashes
 
+LOW - Adjust player collision bounds for consistency and smoothness
 LOW - Update ServerThread to use UserList data structure for storing Players
 LOW - Standardise packet transfer types to integer
 LOW - Add readme.md to git repository

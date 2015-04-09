@@ -1,6 +1,8 @@
-package objects;
+package objects.attacks;
 
 import com.badlogic.gdx.math.Rectangle;
+import objects.Direction;
+import objects.GameObject;
 
 public class Projectile extends GameObject {
 

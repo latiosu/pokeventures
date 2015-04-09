@@ -66,7 +66,7 @@ public class ClientThread extends Thread {
     private void handleLogin(Packet00Login p, InetAddress address, int port) {
         PlayerOnline player = new PlayerOnline(p.getUID(), p.getX(), p.getY(),
                 Direction.getDir(p.getDir()), PlayerType.getType(p.getType()),
-                false, p.getUsername(), address, port);
+                p.getUsername(), address, port);
 
         core.getPlayers().add(p.getUID(), player);
     }
@@ -85,7 +85,7 @@ public class ClientThread extends Thread {
 
     private void handleMove(Packet02Move packet) {
         core.updatePlayer(packet.getUID(), packet.getUsername(), packet.getX(), packet.getY(),
-                packet.isMoving(), packet.getDir(), packet.getType());
+                packet.getState(), packet.getDir(), packet.getType());
     }
 
     /**

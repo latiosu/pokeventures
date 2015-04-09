@@ -5,6 +5,8 @@ import networking.packets.Packet02Move;
 import objects.Direction;
 import objects.Player;
 import objects.PlayerOnline;
+import objects.State;
+import objects.attacks.AttackType;
 
 public class Logic {
 
@@ -26,23 +28,34 @@ public class Logic {
 
     private void updateMainPlayer(PlayerOnline mp) {
         // Input logic
-        boolean[] keys = UserInputProcessor.directionKeys;
+        boolean[] arrows = UserInputProcessor.directionKeys;
+        boolean[] attacks = UserInputProcessor.attackKeys;
         mp.setType(UserInputProcessor.selectedType);
-        mp.setMoving(true);
-        if(!keys[0] && !keys[1] && !keys[2] && !keys[3]) {
-            mp.setMoving(false);
-        } else if (keys[0]) {
-            mp.move(Direction.DOWN);
-        } else if (keys[1]) {
-            mp.move(Direction.LEFT);
-        } else if (keys[2]) {
-            mp.move(Direction.UP);
-        } else if (keys[3]) {
-            mp.move(Direction.RIGHT);
+
+        // Update animation state
+        if(attacks[0]) {
+            mp.setState(State.ATK_MELEE);
+        } else if(attacks[1]) {
+            mp.setState(State.ATK_RANGED);
+        } else if(!arrows[0] && !arrows[1] && !arrows[2] && !arrows[3]) {
+            mp.setState(State.IDLE);
+        } else {
+            mp.setState(State.WALK);
+        }
+
+        // Update movement flags
+        if (arrows[0]) {
+            mp.setDirection(Direction.DOWN);
+        } else if (arrows[1]) {
+            mp.setDirection(Direction.LEFT);
+        } else if (arrows[2]) {
+            mp.setDirection(Direction.UP);
+        } else if (arrows[3]) {
+            mp.setDirection(Direction.RIGHT);
         }
 
         // Position logic
-        if(mp.isMoving()) {
+        if(mp.getState() == State.WALK) { // Note: Note able to walk + attack simultaneously
             switch (mp.getDirection()) {
                 case DOWN:
                     if(mp.getY() > 0) {
@@ -104,7 +117,8 @@ public class Logic {
 
     private void sendUpdatePacket(Player mp) {
         Packet02Move packet = new Packet02Move(mp.getUID(), mp.getUsername(),
-                mp.getX(), mp.getY(), mp.isMovingNum(), mp.getDirection().getNum(), mp.getType().getNum());
+                mp.getX(), mp.getY(), mp.getState().getNum(),
+                mp.getDirection().getNum(), mp.getType().getNum());
         packet.writeDataFrom(core.getClientThread());
     }
 

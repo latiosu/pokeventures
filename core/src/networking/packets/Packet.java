@@ -8,7 +8,8 @@ public abstract class Packet {
         LOGIN(00),
         DISCONNECT(01),
         MOVE(02),
-        CHAT(03);
+        CHAT(03),
+        ATTACK(04);
 
         private int packetId;
         private PacketType(int packetId) {

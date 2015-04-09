@@ -4,13 +4,15 @@ import networking.ClientThread;
 import networking.ServerThread;
 import objects.Direction;
 import objects.PlayerType;
+import objects.State;
+import objects.attacks.AttackType;
 
 public class Packet02Move extends Packet {
 
     private long uid;
     private String username;
     private float x, y;
-    private int isMoving, dir, type;
+    private int state, dir, type;
 
     public Packet02Move(byte[] data) {
         super(02);
@@ -19,26 +21,28 @@ public class Packet02Move extends Packet {
         this.username = dataArray[1];
         this.x = Float.parseFloat(dataArray[2]);
         this.y = Float.parseFloat(dataArray[3]);
-        this.isMoving = Integer.parseInt(dataArray[4]);
+        this.state = Integer.parseInt(dataArray[4]);
         this.dir = Integer.parseInt(dataArray[5]);
         this.type = Integer.parseInt(dataArray[6]);
     }
 
-    public Packet02Move(long uid, String username, float x, float y, int isMoving, int dir, int type) {
+    public Packet02Move(long uid, String username, float x, float y, int state,
+                        int dir, int type) {
         super(02);
         this.uid = uid;
         this.username = username;
         this.x = x;
         this.y = y;
-        this.isMoving = isMoving;
+        this.state = state;
         this.dir = dir;
         this.type = type;
     }
 
     @Override
     public void writeDataFrom(Thread thread) {
-        if(thread instanceof ClientThread)
+        if(thread instanceof ClientThread) {
             ((ClientThread) thread).sendData(getData());
+        }
         else if (thread instanceof ServerThread)
             ((ServerThread) thread).sendDataToAllClients(getData());
     }
@@ -47,7 +51,7 @@ public class Packet02Move extends Packet {
     /* Reminder: Update this when changing packet structure */
     public byte[] getData() {
         return ("02" + this.uid + "`" + this.username + "`" + this.x + "`" + this.y +
-                "`" + isMoving + "`" + dir + "`" + type).getBytes();
+                "`" + state + "`" + dir + "`" + type).getBytes();
     }
     public long getUID() {
         return uid;
@@ -58,8 +62,8 @@ public class Packet02Move extends Packet {
     public float getY() {
         return y;
     }
-    public boolean isMoving() {
-        return isMoving==1;
+    public State getState() {
+        return State.getState(state);
     }
     public Direction getDir() {
         return Direction.getDir(dir);

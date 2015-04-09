@@ -22,13 +22,11 @@ public class ServerThread extends Thread {
     private DatagramSocket socket;
     private Core core;
     private engine.structs.List onlinePlayers;
-    private Queue<Message> messages;
     private SimpleDateFormat sdf;
 
     public ServerThread(Core core) {
         this.core = core;
         onlinePlayers = new UserList();
-        messages = new PriorityQueue<Message>(Config.MESSAGES_INIT, new TimeComparator());
         sdf = new SimpleDateFormat(Config.DATE_FORMAT);
         try {
             this.socket = new DatagramSocket(Config.GAME_PORT);
@@ -63,7 +61,7 @@ public class ServerThread extends Thread {
                 Packet00Login lp = new Packet00Login(data);
                 PlayerOnline p = new PlayerOnline(lp.getUID(), lp.getX(), lp.getY(),
                         Direction.getDir(lp.getDir()), PlayerType.getType(lp.getType()),
-                        false, lp.getUsername(), address, port);
+                        lp.getUsername(), address, port);
                 this.addConnection(p, lp);
                 System.out.printf("[%s:%d] %s has connected. Online: %d\n",
                         address.getHostAddress(), port,
@@ -86,6 +84,9 @@ public class ServerThread extends Thread {
                 this.handleChat(new Packet03Chat(data));
                 break;
 
+            case ATTACK:
+                // NOT YET IMPLEMENTED
+                break;
         }
     }
 
@@ -132,10 +133,10 @@ public class ServerThread extends Thread {
             p.setX(packet.getX());
             p.setY(packet.getY());
             p.setDirection(packet.getDir());
-            p.setMoving(packet.isMoving());
+            p.setState(packet.getState());
             p.setType(packet.getType());
             Packet02Move newPacket = new Packet02Move(p.getUID(), p.getUsername(), p.getX(), p.getY(),
-                    p.isMovingNum(), p.getDirection().getNum(), p.getType().getNum());
+                    p.getState().getNum(), p.getDirection().getNum(), p.getType().getNum());
             newPacket.writeDataFrom(this); // Notify all users of new POSITION DATA
         }
     }
@@ -144,7 +145,6 @@ public class ServerThread extends Thread {
      * Note: Notifies all online players of new message.
      */
     private void handleChat(Packet03Chat packet) {
-        messages.add(new Message(packet.getTime(), packet.getUsername(), packet.getMessage()));
         packet.writeDataFrom(this); // Notify all users of new MESSAGE
 
         // Log message to console
