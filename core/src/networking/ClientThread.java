@@ -63,22 +63,25 @@ public class ClientThread extends Thread {
             case CHAT:
                 handleChat(new Packet03Chat(data));
                 break;
+            case ATTACK:
+                handleAttack(new Packet04Attack(data));
+                break;
         }
     }
 
-    private void handleLogin(Packet00Login p, InetAddress address, int port) {
-        PlayerOnline player = new PlayerOnline(p.getUID(), p.getX(), p.getY(),
-                Direction.getDir(p.getDir()), PlayerType.getType(p.getType()),
-                p.getUsername(), address, port);
+    private void handleLogin(Packet00Login pk, InetAddress address, int port) {
+        PlayerOnline player = new PlayerOnline(pk.getUID(), pk.getX(), pk.getY(),
+                Direction.getDir(pk.getDir()), PlayerType.getType(pk.getType()),
+                pk.getUsername(), address, port);
 
-        core.getPlayers().add(p.getUID(), player);
+        core.getPlayers().add(pk.getUID(), player);
     }
 
     /* Assumes player exists in Core.players list */
-    private void handleDisconnect(Packet01Disconnect packet) {
+    private void handleDisconnect(Packet01Disconnect pk) {
         int index = 0;
         for (Player p : core.getPlayers()) {
-            if (p.getUID() == packet.getUID()) {
+            if (p.getUID() == pk.getUID()) {
                 break;
             }
             index++;
@@ -86,16 +89,21 @@ public class ClientThread extends Thread {
         core.getPlayers().remove(index);
     }
 
-    private void handleMove(Packet02Move packet) {
-        core.updatePlayer(packet.getUID(), packet.getUsername(), packet.getX(), packet.getY(),
-                packet.getState(), packet.getDir(), packet.getType());
+    private void handleMove(Packet02Move pk) {
+        core.updatePlayer(pk.getUID(), pk.getUsername(), pk.getX(), pk.getY(),
+                pk.getState(), pk.getDir(), pk.getType());
     }
 
     /**
      * Note: DOES NOT REPLY TO SERVER
      */
-    private void handleChat(Packet03Chat packet) {
-        core.storeMsg(new Message(packet.getTime(), packet.getUsername(), packet.getMessage()));
+    private void handleChat(Packet03Chat pk) {
+        core.storeMsg(new Message(pk.getTime(), pk.getUsername(), pk.getMessage()));
+    }
+
+    private void handleAttack(Packet04Attack pk) {
+        core.updateAttack(pk.getId(), pk.getUid(), pk.getPtype(), pk.getDir(), pk.getX(), pk.getY(),
+                pk.getAtkType(), pk.isAlive());
     }
 
     /**

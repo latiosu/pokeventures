@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Intersector;
-import objects.PlayerOnline;
+import objects.Player;
 import objects.Tiles.BlockedTile;
 import objects.Tiles.Tile;
 import objects.Tiles.WalkableTile;
@@ -21,16 +21,15 @@ public class WorldManager {
     static final int BLUE = Color.rgba8888(0f, 0f, 1f, 1f);
 
     private int tileSize, mapWidth, mapHeight;
-    private Texture worldBG;
     private Tile[][] tiles; // Uses i=y, j=x
-    private ArrayList<Tile> blocked = new ArrayList<Tile>();
+    private ArrayList<Tile> blocked;
 
     public WorldManager() {
-
+        blocked = new ArrayList<Tile>();
     }
 
     public Texture loadWorld(String map) {
-        worldBG = AssetManager.level;
+        Texture worldBG = AssetManager.level;
         tileSize = Config.TILE_SIZE;
         mapWidth = worldBG.getWidth();
         mapHeight = worldBG.getHeight();
@@ -74,7 +73,7 @@ public class WorldManager {
     /**
      * Searches a 3x3 grid of valid Tiles around player for collisions.
      */
-    public void handleCollision(PlayerOnline mp) {
+    public void handleCollision(Player mp) {
         int x = toTileX(mp.getX());
         int y = toTileY(mp.getY());
         for (int j = -1; j <= 1; j++) {

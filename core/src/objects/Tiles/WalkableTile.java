@@ -1,6 +1,6 @@
 package objects.Tiles;
 
-import objects.PlayerOnline;
+import objects.Player;
 
 public class WalkableTile extends Tile {
 
@@ -12,7 +12,7 @@ public class WalkableTile extends Tile {
     /**
      * Ignores collisions.
      */
-    public void handleCollision(PlayerOnline mp) {
+    public void handleCollision(Player mp) {
         switch (mp.getDirection()) {
             case DOWN:
             case UP:

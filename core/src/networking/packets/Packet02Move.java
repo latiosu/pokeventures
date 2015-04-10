@@ -11,7 +11,7 @@ public class Packet02Move extends Packet {
     private long uid;
     private String username;
     private float x, y;
-    private int state, dir, type;
+    private int state, dir, ptype;
 
     public Packet02Move(byte[] data) {
         super(2);
@@ -22,11 +22,11 @@ public class Packet02Move extends Packet {
         this.y = Float.parseFloat(dataArray[3]);
         this.state = Integer.parseInt(dataArray[4]);
         this.dir = Integer.parseInt(dataArray[5]);
-        this.type = Integer.parseInt(dataArray[6]);
+        this.ptype = Integer.parseInt(dataArray[6]);
     }
 
     public Packet02Move(long uid, String username, float x, float y, int state,
-                        int dir, int type) {
+                        int dir, int ptype) {
         super(2);
         this.uid = uid;
         this.username = username;
@@ -34,7 +34,7 @@ public class Packet02Move extends Packet {
         this.y = y;
         this.state = state;
         this.dir = dir;
-        this.type = type;
+        this.ptype = ptype;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class Packet02Move extends Packet {
     /* Reminder: Update this when changing packet structure */
     public byte[] getData() {
         return ("02" + this.uid + "`" + this.username + "`" + this.x + "`" + this.y +
-                "`" + state + "`" + dir + "`" + type).getBytes();
+                "`" + state + "`" + dir + "`" + ptype).getBytes();
     }
 
     public long getUID() {
@@ -73,7 +73,7 @@ public class Packet02Move extends Packet {
     }
 
     public PlayerType getType() {
-        return PlayerType.getType(type);
+        return PlayerType.getType(ptype);
     }
 
     public String getUsername() {

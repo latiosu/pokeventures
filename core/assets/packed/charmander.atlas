@@ -6,14 +6,14 @@ filter: Nearest,Nearest
 repeat: none
 idle-down
   rotate: false
-  xy: 138, 3
+  xy: 174, 3
   size: 11, 16
   orig: 11, 16
   offset: 0, 0
   index: 0
 walk-down
   rotate: false
-  xy: 138, 3
+  xy: 174, 3
   size: 11, 16
   orig: 11, 16
   offset: 0, 0
@@ -48,30 +48,16 @@ walk-right
   index: 1
 idle-up
   rotate: false
-  xy: 151, 2
+  xy: 187, 2
   size: 11, 17
   orig: 11, 17
   offset: 0, 0
   index: 0
 walk-up
   rotate: false
-  xy: 151, 2
+  xy: 187, 2
   size: 11, 17
   orig: 11, 17
-  offset: 0, 0
-  index: 1
-melee-down
-  rotate: false
-  xy: 84, 3
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: 0
-melee-down
-  rotate: false
-  xy: 102, 3
-  size: 16, 16
-  orig: 16, 16
   offset: 0, 0
   index: 1
 melee-down
@@ -80,10 +66,94 @@ melee-down
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
+  index: 0
+melee-down
+  rotate: false
+  xy: 138, 3
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+melee-down
+  rotate: false
+  xy: 156, 3
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
   index: 2
+melee-down-attack
+  rotate: false
+  xy: 84, 3
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 0
+ranged-up-attack
+  rotate: false
+  xy: 84, 3
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 0
+ranged-left-attack
+  rotate: false
+  xy: 84, 3
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 0
+ranged-down-attack
+  rotate: false
+  xy: 84, 3
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 0
+ranged-right-attack
+  rotate: false
+  xy: 84, 3
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 0
+melee-down-attack
+  rotate: false
+  xy: 102, 3
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+ranged-up-attack
+  rotate: false
+  xy: 102, 3
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+ranged-right-attack
+  rotate: false
+  xy: 102, 3
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+ranged-left-attack
+  rotate: false
+  xy: 102, 3
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+ranged-down-attack
+  rotate: false
+  xy: 102, 3
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
 walk-down
   rotate: false
-  xy: 177, 3
+  xy: 213, 3
   size: 11, 16
   orig: 11, 16
   offset: 0, 0
@@ -104,7 +174,7 @@ walk-right
   index: 0
 walk-up
   rotate: false
-  xy: 164, 2
+  xy: 200, 2
   size: 11, 17
   orig: 11, 17
   offset: 0, 0

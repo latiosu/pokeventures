@@ -1,6 +1,6 @@
 package objects.Tiles;
 
-import objects.PlayerOnline;
+import objects.Player;
 
 public class BlockedTile extends Tile {
 
@@ -9,7 +9,7 @@ public class BlockedTile extends Tile {
     }
 
     @Override
-    public void handleCollision(PlayerOnline mp) {
+    public void handleCollision(Player mp) {
         switch (mp.getDirection()) {
             case DOWN:
                 mp.setY(getTop());

@@ -3,7 +3,6 @@ package objects;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import engine.AssetManager;
 import engine.Config;
 
@@ -13,13 +12,18 @@ public class Player extends Entity {
     private PlayerAnimation anim;
     private String username;
     private float usernameWidth;
+    private float hp;
+    private boolean hasMeleeAtk, hasRangedAtk;
 
     public Player(long uid, PlayerType type, String username) {
         super(type);
+        this.uid = uid;
         this.anim = new PlayerAnimation(this, type);
         this.username = username;
         this.usernameWidth = AssetManager.font.getBounds(username).width;
-        this.uid = uid;
+        this.hp = Config.PLAYER_HP;
+        this.hasMeleeAtk = false;
+        this.hasRangedAtk = false;
     }
 
     /* Note: Using a player list for rendering */
@@ -32,7 +36,6 @@ public class Player extends Entity {
         }
     }
 
-    // Getters and setters
     public Rectangle getBounds() {
         return new Rectangle(x, y, Config.CHAR_COLL_WIDTH, Config.CHAR_COLL_HEIGHT);
     }
@@ -89,5 +92,29 @@ public class Player extends Entity {
 
     public long getUID() {
         return uid;
+    }
+
+    public boolean hasMeleeAtk() {
+        return hasMeleeAtk;
+    }
+
+    public void setHasMeleeAtk(boolean hasMeleeAtk) {
+        this.hasMeleeAtk = hasMeleeAtk;
+    }
+
+    public boolean hasRangedAtk() {
+        return hasRangedAtk;
+    }
+
+    public void setHasRangedAtk(boolean hasRangedAtk) {
+        this.hasRangedAtk = hasRangedAtk;
+    }
+
+    public float getHp() {
+        return hp;
+    }
+
+    public void setHp(float hp) {
+        this.hp = hp;
     }
 }

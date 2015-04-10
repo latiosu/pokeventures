@@ -2,20 +2,19 @@ package engine.structs;
 
 import objects.PlayerOnline;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class UserList implements List {
+public class UserList implements List<PlayerOnline> {
 
     private Map<Long, PlayerOnline> map;
     private java.util.List<PlayerOnline> list;
     private PlayerOnline mainPlayer;
 
     public UserList() {
-        map = new HashMap<Long, PlayerOnline>();
+        map = new ConcurrentHashMap<Long, PlayerOnline>();
         list = new CopyOnWriteArrayList<PlayerOnline>(); /* <-- Works well for small array lists */
     }
 
@@ -43,12 +42,6 @@ public class UserList implements List {
     }
 
     @Override
-    public void clear() {
-        map = new HashMap<Long, PlayerOnline>();
-        list = new ArrayList<PlayerOnline>();
-    }
-
-    @Override
     public PlayerOnline get(int i) {
         return list.get(i);
     }
@@ -59,8 +52,6 @@ public class UserList implements List {
     }
 
     @Override
-    /* Can consider making non-parametric UserList
-     * to get better error info. */
     public boolean add(long uid, PlayerOnline player) {
         if (!contains(uid)) {
             map.put(uid, player);
@@ -78,11 +69,6 @@ public class UserList implements List {
     }
 
     @Override
-    public boolean isEmpty() {
-        return list.isEmpty();
-    }
-
-    @Override
     public boolean contains(long uid) {
         return map.get(uid) != null;
     }
@@ -90,10 +76,5 @@ public class UserList implements List {
     @Override
     public Iterator<PlayerOnline> iterator() {
         return list.iterator();
-    }
-
-    @Override
-    public Iterator<String> usernameIterator() {
-        return null;
     }
 }

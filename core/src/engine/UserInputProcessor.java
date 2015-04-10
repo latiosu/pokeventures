@@ -38,10 +38,10 @@ public class UserInputProcessor implements InputProcessor {
             case Input.Keys.RIGHT:
                 directionKeys[3] = true;
                 break;
-            case Input.Keys.CONTROL_LEFT:
+            case Input.Keys.Z:
                 attackKeys[0] = true;
                 break;
-            case Input.Keys.SHIFT_LEFT:
+            case Input.Keys.X:
                 attackKeys[1] = true;
                 break;
             case Input.Keys.NUM_1:

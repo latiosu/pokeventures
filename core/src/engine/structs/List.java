@@ -1,20 +1,16 @@
 package engine.structs;
 
-import objects.PlayerOnline;
-
 import java.util.Iterator;
 
-public interface List extends Iterable<PlayerOnline> {
+public interface List<E> extends Iterable<E> {
 
-    public PlayerOnline remove(int i);
+    public E remove(int i);
 
-    public PlayerOnline remove(long uid);
+    public E remove(long uid);
 
-    public void clear();
+    public E get(int i);
 
-    public PlayerOnline get(int i);
-
-    public PlayerOnline get(long uid);
+    public E get(long uid);
 
     /**
      * Attempts to add user to list. Will print an error and return false if
@@ -22,16 +18,11 @@ public interface List extends Iterable<PlayerOnline> {
      *
      * @return - true if successful, false otherwise
      */
-    public boolean add(long uid, PlayerOnline e);
+    public boolean add(long uid, E e);
 
     public int size();
 
-    public boolean isEmpty();
-
     public boolean contains(long uid);
 
-    public Iterator<PlayerOnline> iterator();
-
-    public Iterator<String> usernameIterator();
-
+    public Iterator<E> iterator();
 }

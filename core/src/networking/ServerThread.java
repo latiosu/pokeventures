@@ -1,7 +1,6 @@
 package networking;
 
 import engine.Config;
-import engine.Core;
 import engine.structs.UserList;
 import networking.packets.*;
 import objects.Direction;
@@ -19,12 +18,10 @@ import java.util.Date;
 public class ServerThread extends Thread {
 
     private DatagramSocket socket;
-    private Core core;
-    private engine.structs.List onlinePlayers;
+    private UserList onlinePlayers;
     private SimpleDateFormat sdf;
 
-    public ServerThread(Core core) {
-        this.core = core;
+    public ServerThread() {
         onlinePlayers = new UserList();
         sdf = new SimpleDateFormat(Config.DATE_FORMAT);
         try {
@@ -84,12 +81,12 @@ public class ServerThread extends Thread {
                 break;
 
             case ATTACK:
-                // NOT YET IMPLEMENTED
+                this.handleAttack(new Packet04Attack(data));
                 break;
         }
     }
 
-    public void addConnection(PlayerOnline newPlayer, Packet00Login packet) {
+    public void addConnection(PlayerOnline newPlayer, Packet00Login pk) {
         boolean isConnected = false;
         for (PlayerOnline p : this.onlinePlayers) {
             if (newPlayer.getUID() == p.getUID()) {
@@ -103,7 +100,7 @@ public class ServerThread extends Thread {
                 }
             } else {
                 // Notify selected player that a new player HAS JOINED
-                this.sendData(packet.getData(), p.getAddress(), p.getPort());
+                this.sendData(pk.getData(), p.getAddress(), p.getPort());
                 // Notify new player that selected player EXISTS
                 Packet00Login lp = new Packet00Login(p.getUID(), p.getUsername(), p.getX(), p.getY(),
                         p.getDirection().getNum(), p.getType().getNum());
@@ -117,23 +114,23 @@ public class ServerThread extends Thread {
         }
     }
 
-    public void removeConnection(Packet01Disconnect packet) {
-        onlinePlayers.remove(packet.getUID());
-        packet.writeDataFrom(this);
+    public void removeConnection(Packet01Disconnect pk) {
+        onlinePlayers.remove(pk.getUID());
+        pk.writeDataFrom(this);
     }
 
     /**
      * Note: Notifies all online players of a specific player's position data and direction.
      */
-    private void handleMove(Packet02Move packet) {
+    private void handleMove(Packet02Move pk) {
         PlayerOnline p;
-        if ((p = onlinePlayers.get(packet.getUID())) != null) {
+        if ((p = onlinePlayers.get(pk.getUID())) != null) {
             // Sync new data from player with other players
-            p.setX(packet.getX());
-            p.setY(packet.getY());
-            p.setDirection(packet.getDir());
-            p.setState(packet.getState());
-            p.setType(packet.getType());
+            p.setX(pk.getX());
+            p.setY(pk.getY());
+            p.setDirection(pk.getDir());
+            p.setState(pk.getState());
+            p.setType(pk.getType());
             Packet02Move newPacket = new Packet02Move(p.getUID(), p.getUsername(), p.getX(), p.getY(),
                     p.getState().getNum(), p.getDirection().getNum(), p.getType().getNum());
             newPacket.writeDataFrom(this); // Notify all users of new POSITION DATA
@@ -143,11 +140,15 @@ public class ServerThread extends Thread {
     /**
      * Note: Notifies all online players of new message.
      */
-    private void handleChat(Packet03Chat packet) {
-        packet.writeDataFrom(this); // Notify all users of new MESSAGE
+    private void handleChat(Packet03Chat pk) {
+        pk.writeDataFrom(this); // Notify all users of new MESSAGE
 
         // Log message to console
-        System.out.printf("[%s] %s: %s\n", getDate(packet.getTime()), packet.getUsername(), packet.getMessage());
+        System.out.printf("[%s] %s: %s\n", getDate(pk.getTime()), pk.getUsername(), pk.getMessage());
+    }
+
+    private void handleAttack(Packet04Attack pk) {
+        pk.writeDataFrom(this);
     }
 
     public void sendData(byte[] data, InetAddress address, int port) {

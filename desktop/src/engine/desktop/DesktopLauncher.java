@@ -15,8 +15,6 @@ public class DesktopLauncher {
         config.height = 320*2;
         config.resizable = false;
 
-
-
         try {
             // Pack textures
             if (Config.PACK_TEXTURES) {

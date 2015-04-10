@@ -4,8 +4,6 @@ import engine.structs.Message;
 import networking.ClientThread;
 import networking.ServerThread;
 
-import java.util.Date;
-
 public class Packet03Chat extends Packet {
 
     private long time;

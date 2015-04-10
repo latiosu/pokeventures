@@ -19,9 +19,6 @@ public class UI {
     private ChatClient cc;
     private Image setupBG;
 
-    // Labels
-    private Label versionNumber;
-
     public UI(Core core) {
         this.core = core;
         skin = AssetManager.skin;
@@ -42,7 +39,7 @@ public class UI {
     }
 
     private void initLabels() {
-        versionNumber = new Label(Config.VERSION, skin, "default");
+        Label versionNumber = new Label(Config.VERSION, skin, "default");
         versionNumber.setName("version");
         versionNumber.setPosition((Config.VIEWPORT_WIDTH * 2f) - versionNumber.getWidth() - 10, 5);
         stage.addActor(versionNumber);

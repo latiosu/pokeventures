@@ -3,7 +3,7 @@ package objects.attacks;
 public enum AttackType {
     NONE(0),
     MELEE(1),
-    PROJECTILE(2);
+    RANGED(2);
 
     private int num;
 
@@ -18,7 +18,7 @@ public enum AttackType {
             case 1:
                 return MELEE;
             case 2:
-                return PROJECTILE;
+                return RANGED;
             default:
                 System.err.println("Error: Attack not found.");
                 return null;

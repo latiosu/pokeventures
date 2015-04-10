@@ -130,18 +130,16 @@ public class ChatClient {
      * Stores message inside client's message bank and logs result if successful.
      * Note: Does NOT send a reply to the server.
      */
-    public boolean storeMsg(Message msg) {
+    public void storeMsg(Message msg) {
         if (!messages.contains(msg)) {
             if (messages.add(msg)) {
                 updateChatUI(msg);
-                return true;
             } else {
                 System.err.printf("Error: Failed to store message %s", msg.message);
             }
         } else {
             System.err.printf("Error: Message already exists in message bank.");
         }
-        return false;
     }
 
     /**

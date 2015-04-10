@@ -27,35 +27,38 @@ public class AssetManager {
         loadAssets();
     }
 
-    public static Animation getAnimation(PlayerType type, State state, Direction direction) {
+    public static Animation getAnimation(PlayerType type, State state, Direction direction, boolean isAttack) {
         String animName = "";
         switch (state) {
             case IDLE:
-                animName += "idle-";
+                animName += "idle";
                 break;
             case WALK:
-                animName += "walk-";
+                animName += "walk";
                 break;
             case ATK_MELEE:
-                animName += "melee-";
+                animName += "melee";
                 break;
             case ATK_RANGED:
-                animName += "ranged-";
+                animName += "ranged";
                 break;
         }
         switch (direction) {
             case DOWN:
-                animName += "down";
+                animName += "-down";
                 break;
             case LEFT:
-                animName += "left";
+                animName += "-left";
                 break;
             case UP:
-                animName += "up";
+                animName += "-up";
                 break;
             case RIGHT:
-                animName += "right";
+                animName += "-right";
                 break;
+        }
+        if (isAttack) {
+            animName += "-attack";
         }
         return animations.get(type).get(animName);
     }
@@ -82,15 +85,18 @@ public class AssetManager {
         }
     }
 
-    // PlayerType > State > Direction
+    // PlayerType > State > Direction > Null/Attack
     private Map<String, Animation> generate(TextureAtlas atlas) {
         Map<String, Animation> map = new HashMap<String, Animation>();
 
-        String[] states = {"idle-", "walk-", "melee-", "ranged-"};
-        String[] dirs = {"down", "left", "up", "right"};
+        String[] states = {"idle", "walk", "melee", "ranged"};
+        String[] dirs = {"-down", "-left", "-up", "-right"};
+        String[] attacks = {"", "-attack"};
         for (String s : states) {
             for (String d : dirs) {
-                map.put(s + d, new Animation(Config.ANIM_DURATION, atlas.findRegions(s + d)));
+                for (String a : attacks) {
+                    map.put(s + d + a, new Animation(Config.ANIM_DURATION, atlas.findRegions(s + d + a)));
+                }
             }
         }
         return map;

@@ -13,7 +13,7 @@ public class PlayerAnimation {
 
     public PlayerAnimation(Player p, PlayerType t) {
         player = p;
-        currentAnim = AssetManager.getAnimation(t, State.IDLE, Direction.DOWN);
+        currentAnim = AssetManager.getAnimation(t, State.IDLE, Direction.DOWN, false);
     }
 
     /**
@@ -24,7 +24,7 @@ public class PlayerAnimation {
             player.isNewState = false;
             currentDelta = 0;
         }
-        currentAnim = AssetManager.getAnimation(player.getType(), player.getState(), player.getDirection());
+        currentAnim = AssetManager.getAnimation(player.getType(), player.getState(), player.getDirection(), false);
     }
 
     public TextureRegion getFrame(float delta) {
@@ -44,6 +44,7 @@ public class PlayerAnimation {
             switch (player.getState()) {
                 case ATK_MELEE:
                     UserInputProcessor.attackKeys[0] = false;
+                    player.setHasMeleeAtk(false); // Allow more melee attacks after anim
                     break;
                 case ATK_RANGED:
                     UserInputProcessor.attackKeys[1] = false;

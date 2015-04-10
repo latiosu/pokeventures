@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import engine.structs.AttackList;
 import engine.structs.Message;
 import engine.structs.UserList;
 import networking.ClientThread;
@@ -19,10 +20,10 @@ import networking.packets.Packet01Disconnect;
 import networking.packets.Packet03Chat;
 import objects.*;
 import objects.Tiles.Tile;
-import objects.attacks.Projectile;
-
-import java.util.ArrayList;
-import java.util.List;
+import objects.attacks.Attack;
+import objects.attacks.AttackType;
+import objects.attacks.MeleeAttack;
+import objects.attacks.RangedAttack;
 
 
 public class Core extends Game {
@@ -35,7 +36,7 @@ public class Core extends Game {
 
     // Object classes
     private UserList players;
-    private List<Projectile> projectiles;
+    private AttackList attacks;
 
     // Rendering classes
     private OrthographicCamera cam;
@@ -46,9 +47,7 @@ public class Core extends Game {
     // Engine classes
     private WorldManager world;
     private Logic logic;
-    private UserInputProcessor input;
     private UI ui;
-    private InputMultiplexer multiplexer;
 
     // Networking classes
     private ServerThread server;
@@ -58,7 +57,7 @@ public class Core extends Game {
     public void create() {
         // Object-related
         players = new UserList();
-        projectiles = new ArrayList<Projectile>();
+        attacks = new AttackList();
 
         // Engine
         new AssetManager();
@@ -68,8 +67,8 @@ public class Core extends Game {
 
 
         // Input handling
-        multiplexer = new InputMultiplexer();
-        input = new UserInputProcessor(this);
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        UserInputProcessor input = new UserInputProcessor(this);
         multiplexer.addProcessor(ui.getStage());
         multiplexer.addProcessor(input);
         Gdx.input.setInputProcessor(multiplexer);
@@ -81,6 +80,7 @@ public class Core extends Game {
 
         sprite = new Sprite(tex);
         sprite.setOrigin(0, 0);
+
         // Player spawn position
         cam.position.x = Config.SPAWN_X;
         cam.position.y = Config.SPAWN_Y;
@@ -113,8 +113,11 @@ public class Core extends Game {
         batch.begin();
         sprite.draw(batch);
         if (playMode) {
-            for (Player p : getPlayers()) {
+            for (Player p : players) {
                 p.render(Gdx.graphics.getDeltaTime(), batch);
+            }
+            for (Attack a : attacks) {
+                a.render(Gdx.graphics.getDeltaTime(), batch);
             }
         }
         batch.end();
@@ -155,14 +158,10 @@ public class Core extends Game {
         delta += Gdx.graphics.getDeltaTime();
     }
 
-    public synchronized UserList getPlayers() {
-        return this.players;
-    }
-
     public void startNetworking(String ip) {
         if (isHost) {
             System.out.println("Running as server.");
-            server = new ServerThread(this);
+            server = new ServerThread();
             server.start();
         }
         System.out.println("Running as client.");
@@ -201,6 +200,31 @@ public class Core extends Game {
         }
     }
 
+    public void updateAttack(long id, long uid, PlayerType ptype, Direction dir, float x, float y, AttackType type, boolean isAlive) {
+        Attack atk = getAttacks().get(id);
+        if (atk != null) {
+            if (!atk.isAlive()) { // Remove if not alive
+                getAttacks().remove(id);
+            } else {
+                atk.setDirection(dir);
+                atk.setX(x);
+                atk.setY(y);
+                atk.setAlive(isAlive);
+            }
+        } else {
+            switch (type) {
+                case MELEE:
+                    atk = new MeleeAttack(id, uid, ptype, dir, x, y);
+                    break;
+                case RANGED:
+                    atk = new RangedAttack(id, uid, ptype, dir, x, y);
+                    break;
+            }
+            attacks.add(id, atk);
+        }
+//        System.out.println(attacks.size());
+    }
+
     /**
      * Attempts to send a packet to server indicating the
      * client wants to disconnect.
@@ -235,5 +259,13 @@ public class Core extends Game {
 
     public WorldManager getWorldManager() {
         return world;
+    }
+
+    public synchronized UserList getPlayers() {
+        return this.players;
+    }
+
+    public synchronized AttackList getAttacks() {
+        return this.attacks;
     }
 }

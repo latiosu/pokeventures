@@ -2,7 +2,7 @@ package objects.Tiles;
 
 import com.badlogic.gdx.math.Rectangle;
 import engine.Config;
-import objects.PlayerOnline;
+import objects.Player;
 
 /* Collision Handling Entity */
 public abstract class Tile {
@@ -18,7 +18,7 @@ public abstract class Tile {
         this.bounds = new Rectangle(x, y, tileSize, tileSize);
     }
 
-    public abstract void handleCollision(PlayerOnline mp);
+    public abstract void handleCollision(Player mp);
 
     public Rectangle getBounds() {
         return bounds;
