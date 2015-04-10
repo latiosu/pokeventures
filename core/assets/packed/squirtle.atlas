@@ -17,7 +17,7 @@ walk-down
   size: 11, 15
   orig: 11, 15
   offset: 0, 0
-  index: 0
+  index: 1
 idle-left
   rotate: false
   xy: 2, 2
@@ -31,7 +31,7 @@ walk-left
   size: 15, 15
   orig: 15, 15
   offset: 0, 0
-  index: 0
+  index: 1
 idle-right
   rotate: false
   xy: 19, 2
@@ -45,7 +45,7 @@ walk-right
   size: 15, 15
   orig: 15, 15
   offset: 0, 0
-  index: 0
+  index: 1
 idle-up
   rotate: false
   xy: 83, 2
@@ -59,32 +59,32 @@ walk-up
   size: 11, 15
   orig: 11, 15
   offset: 0, 0
-  index: 0
+  index: 1
 walk-down
   rotate: false
   xy: 96, 2
   size: 11, 15
   orig: 11, 15
   offset: 0, 0
-  index: 1
+  index: 0
 walk-left
   rotate: false
   xy: 36, 2
   size: 15, 15
   orig: 15, 15
   offset: 0, 0
-  index: 1
+  index: 0
 walk-right
   rotate: false
   xy: 53, 2
   size: 15, 15
   orig: 15, 15
   offset: 0, 0
-  index: 1
+  index: 0
 walk-up
   rotate: false
   xy: 109, 2
   size: 11, 15
   orig: 11, 15
   offset: 0, 0
-  index: 1
+  index: 0

@@ -42,19 +42,22 @@ public class Logic {
             mp.setState(State.WALK);
         }
 
-        // Update movement flags
-        if (arrows[0]) {
-            mp.setDirection(Direction.DOWN);
-        } else if (arrows[1]) {
-            mp.setDirection(Direction.LEFT);
-        } else if (arrows[2]) {
-            mp.setDirection(Direction.UP);
-        } else if (arrows[3]) {
-            mp.setDirection(Direction.RIGHT);
-        }
-
-        // Position logic
-        if (mp.getState() == State.WALK) { // Note: Note able to walk + attack simultaneously
+        // Attack / Movement logic
+        if (mp.getState() == State.ATK_MELEE) {
+            System.out.println("Attack: MELEE");
+        } else if (mp.getState() == State.ATK_RANGED) {
+            System.out.println("Attack: RANGED");
+        } else if (mp.getState() == State.WALK) { // Note: Note able to walk + attack simultaneously
+            // Update movement direction flags only during walk state
+            if (arrows[0]) {
+                mp.setDirection(Direction.DOWN);
+            } else if (arrows[1]) {
+                mp.setDirection(Direction.LEFT);
+            } else if (arrows[2]) {
+                mp.setDirection(Direction.UP);
+            } else if (arrows[3]) {
+                mp.setDirection(Direction.RIGHT);
+            }
             switch (mp.getDirection()) {
                 case DOWN:
                     if (mp.getY() > 0) {
@@ -78,6 +81,12 @@ public class Logic {
                     break;
             }
         }
+
+        // UPDATE PLAYER ANIMATION IMMEDIATELY FOR RESPONSIVENESS
+        mp.getAnim().updateAnim();
+
+        // Handle collision for projectiles
+//        core.getWorldManager().handleProjectiles();
 
         // Handle collision for main player
         core.getWorldManager().handleCollision(mp);

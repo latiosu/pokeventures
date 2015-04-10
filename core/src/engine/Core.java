@@ -28,10 +28,7 @@ import java.util.List;
 public class Core extends Game {
 
     // Engine variables/constants
-    private static final float UPDATE_RATE = Config.UPDATE_RATE;
-    private static final float ANIM_RATE = Config.ANIM_RATE;
     private static float delta = 0;
-    private static float animDelta = 0;
 
     public boolean playMode = false;
     public boolean isHost = false;
@@ -105,16 +102,11 @@ public class Core extends Game {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         // Update logic 15 times per second
-        if (delta > UPDATE_RATE) {
+        if (delta > Config.UPDATE_RATE) {
             if (playMode) {
                 logic.update(players.getMainPlayer());
             }
-            delta -= UPDATE_RATE;
-        }
-
-        // Update animations 2 times per second
-        if (animDelta > ANIM_RATE) {
-            animDelta -= ANIM_RATE;
+            delta -= Config.UPDATE_RATE;
         }
 
         batch.setProjectionMatrix(cam.combined);
@@ -122,7 +114,7 @@ public class Core extends Game {
         sprite.draw(batch);
         if (playMode) {
             for (Player p : getPlayers()) {
-                p.render(animDelta, batch);
+                p.render(Gdx.graphics.getDeltaTime(), batch);
             }
         }
         batch.end();
@@ -161,7 +153,6 @@ public class Core extends Game {
         }
 
         delta += Gdx.graphics.getDeltaTime();
-        animDelta += Gdx.graphics.getDeltaTime();
     }
 
     public synchronized UserList getPlayers() {

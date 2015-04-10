@@ -1,90 +1,111 @@
 
 charmander.png
-size: 32,128
+size: 256,32
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 idle-down
   rotate: false
-  xy: 15, 22
+  xy: 138, 3
   size: 11, 16
   orig: 11, 16
   offset: 0, 0
   index: 0
 walk-down
   rotate: false
-  xy: 15, 22
+  xy: 138, 3
   size: 11, 16
   orig: 11, 16
   offset: 0, 0
-  index: 0
+  index: 1
 idle-left
   rotate: false
-  xy: 2, 58
+  xy: 44, 3
   size: 18, 16
   orig: 18, 16
   offset: 0, 0
   index: 0
 walk-left
   rotate: false
-  xy: 2, 58
+  xy: 44, 3
   size: 18, 16
   orig: 18, 16
   offset: 0, 0
-  index: 0
+  index: 1
 idle-right
   rotate: false
-  xy: 2, 40
+  xy: 64, 3
   size: 18, 16
   orig: 18, 16
   offset: 0, 0
   index: 0
 walk-right
   rotate: false
-  xy: 2, 40
+  xy: 64, 3
   size: 18, 16
   orig: 18, 16
   offset: 0, 0
-  index: 0
+  index: 1
 idle-up
   rotate: false
-  xy: 2, 21
+  xy: 151, 2
   size: 11, 17
   orig: 11, 17
   offset: 0, 0
   index: 0
 walk-up
   rotate: false
-  xy: 2, 21
+  xy: 151, 2
   size: 11, 17
   orig: 11, 17
   offset: 0, 0
+  index: 1
+melee-down
+  rotate: false
+  xy: 84, 3
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
   index: 0
+melee-down
+  rotate: false
+  xy: 102, 3
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+melee-down
+  rotate: false
+  xy: 120, 3
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
 walk-down
   rotate: false
-  xy: 15, 4
+  xy: 177, 3
   size: 11, 16
   orig: 11, 16
   offset: 0, 0
-  index: 1
+  index: 0
 walk-left
   rotate: false
-  xy: 2, 94
+  xy: 2, 3
   size: 19, 16
   orig: 19, 16
   offset: 0, 0
-  index: 1
+  index: 0
 walk-right
   rotate: false
-  xy: 2, 76
+  xy: 23, 3
   size: 19, 16
   orig: 19, 16
   offset: 0, 0
-  index: 1
+  index: 0
 walk-up
   rotate: false
-  xy: 2, 2
+  xy: 164, 2
   size: 11, 17
   orig: 11, 17
   offset: 0, 0
-  index: 1
+  index: 0

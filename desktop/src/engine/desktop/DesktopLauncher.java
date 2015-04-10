@@ -15,15 +15,25 @@ public class DesktopLauncher {
         config.height = 320*2;
         config.resizable = false;
 
-        PlayerType[] ptypes = { PlayerType.CHARMANDER, PlayerType.BULBASAUR, PlayerType.SQUIRTLE };
-        for(int i=0; i< ptypes.length; i++) {
-            if(Config.USE_EXTERNAL_ANIMS){
-                TexturePacker.process("to-be-packed/" + ptypes[i].getName(), "packed", ptypes[i].getName());
-            } else {
-                TexturePacker.process("assets/to-be-packed/" + ptypes[i].getName(), "assets/packed", ptypes[i].getName());
-            }
-        }
 
-        new LwjglApplication(new Core(), config);
+
+        try {
+            // Pack textures
+            if (Config.PACK_TEXTURES) {
+                for (PlayerType pt : PlayerType.values()) {
+                    if (Config.USE_EXTERNAL_ANIMS) {
+                        TexturePacker.process("to-be-packed/" + pt.getName(), "packed", pt.getName());
+                    } else {
+                        TexturePacker.process("assets/to-be-packed/" + pt.getName(), "assets/packed", pt.getName());
+                    }
+                }
+            }
+
+            // Start game
+            new LwjglApplication(new Core(), config);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
 	}
 }

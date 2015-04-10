@@ -24,18 +24,17 @@ public class Player extends Entity {
 
     /* Note: Using a player list for rendering */
     public void render(float delta, SpriteBatch batch) {
-        batch.draw(getFrame(delta), getRenderX(), getRenderY());
-        AssetManager.font.draw(batch, username, getNameX(), getNameY());
+        try {
+            batch.draw(getFrame(delta), getRenderX(), getRenderY());
+            AssetManager.font.draw(batch, username, getNameX(), getNameY());
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.err.printf("Error: Animation not found - %s %s\n", state.name(), direction.name());
+        }
     }
 
     // Getters and setters
     public Rectangle getBounds() {
         return new Rectangle(x, y, Config.CHAR_COLL_WIDTH, Config.CHAR_COLL_HEIGHT);
-    }
-
-    /* DEBUGGING USE ONLY */
-    public Vector2 getCentre() {
-        return getBounds().getCenter(new Vector2());
     }
 
     /**
@@ -57,12 +56,7 @@ public class Player extends Entity {
      * VARY depending on the character's direction.
      */
     public float getRenderY() {
-        switch (direction) {
-//            case DOWN:
-//                return y-1;
-            default:
-                return y - 1;
-        }
+        return y - 1;
     }
 
     /**

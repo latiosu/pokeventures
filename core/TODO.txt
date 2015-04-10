@@ -10,7 +10,7 @@
 
 MED - Add projectiles (fireball/watergun/razorleaf)
 MED - Add combat system:
-        + Players should be able to perform melee attacks while moving
+        + Players should be able to perform melee attacks while moving (currently cannot)
         + Players should be able to fire a projectile in their current direction (server handles collision?)
         + Players should have an energy bar for attacks (cooldown system)
         = Idea: Attacks have elements and can destroy projectiles of the weaker element
@@ -45,6 +45,8 @@ CRITICAL - Fix multiplayer login issue (Third user causes disconnects/client to 
 CRITICAL - Fix focus transfer with chat system
 CRITICAL - Implement chat system and text transfer
 
+HIGH - Add idle frames for all players (reversed order of walk animation)
+HIGH - Added rendering functionality of attack animations
 HIGH - Add version numbers to game
 HIGH - Implement collision system (Collision tile should be stored in X-1,Y (if lower left corner is origin))
 HIGH - Add map bounds

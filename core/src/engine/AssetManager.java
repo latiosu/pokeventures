@@ -73,8 +73,7 @@ public class AssetManager {
         // Load overworld
         level = new Texture(Gdx.files.internal("assets/" + Config.MAP));
         // Load character animations
-        PlayerType[] ptypes = {PlayerType.CHARMANDER, PlayerType.BULBASAUR, PlayerType.SQUIRTLE}; // Could change PType to an EnumMap
-        for (PlayerType pt : ptypes) {
+        for (PlayerType pt : PlayerType.values()) {
             if (Config.USE_EXTERNAL_ANIMS) {
                 animations.put(pt, generate(new TextureAtlas(Gdx.files.internal("packed/" + pt.getName() + ".atlas"))));
             } else {

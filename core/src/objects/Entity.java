@@ -3,7 +3,7 @@ package objects;
 public abstract class Entity extends GameObject {
 
     protected PlayerType type;
-    protected boolean isHit;
+    protected boolean isHit, isNewState;
     protected State state;
 
     protected Entity(PlayerType type) {
@@ -35,6 +35,17 @@ public abstract class Entity extends GameObject {
     }
 
     public void setState(State state) {
-        this.state = state;
+        if (this.state != state) {
+            isNewState = true;
+            this.state = state;
+        }
+    }
+
+    public boolean isNewState() {
+        return isNewState;
+    }
+
+    public void setNewState(boolean isNewState) {
+        this.isNewState = isNewState;
     }
 }

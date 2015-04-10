@@ -23,7 +23,7 @@ public class WorldManager {
     private int tileSize, mapWidth, mapHeight;
     private Texture worldBG;
     private Tile[][] tiles; // Uses i=y, j=x
-    private ArrayList<Tile> blocked = new ArrayList<Tile>(); // <--- DEBUGGING USE ONLY
+    private ArrayList<Tile> blocked = new ArrayList<Tile>();
 
     public WorldManager() {
 
@@ -57,7 +57,9 @@ public class WorldManager {
                     t = new WalkableTile(tx, ty);
                 } else if (colour == RED) {
                     t = new BlockedTile(tx, ty);
-                    blocked.add(t); // DEBUGGING USE ONLY
+                    if (Config.DEBUG) {
+                        blocked.add(t);
+                    }
                 } else {
                     t = null;
                     System.err.printf("Error: Could not find colour: %d\n", colour);

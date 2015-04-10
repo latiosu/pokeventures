@@ -8,9 +8,10 @@ public class Config {
     // Game
     public static final boolean DEBUG = false;
     public static final boolean USE_EXTERNAL_ANIMS = false;
+    public static final boolean PACK_TEXTURES = true;
 
-    //    public static final String VERSION = "Pre-alpha v0.4: Collision DLC";
-    public static final String VERSION = "Clarisse Mode";
+    public static final String VERSION = "Pre-alpha v0.45: Attack Animations";
+//    public static final String VERSION = "Pre-alpha: Clarisse Mode";
     public static final PlayerType DEFAULT_TYPE = PlayerType.CHARMANDER;
     public static final String MAP = "overworld.png";
     public static final float SPAWN_X = 865;
@@ -28,14 +29,15 @@ public class Config {
     public static final float VIEWPORT_WIDTH = Gdx.graphics.getWidth() / 2f;
     public static final float VIEWPORT_HEIGHT = Gdx.graphics.getHeight() / 2f;
     public static final float UPDATE_RATE = 1 / 15f;
-    public static final float ANIM_RATE = 1 / 2f; // 2.5f is
     public static final float CHAR_WIDTH = 11f;
     public static final float CHAR_HEIGHT = 14f;
     public static final float CHAR_COLL_WIDTH = 11f;
     public static final float CHAR_COLL_HEIGHT = 12f;
 
+    // Animations
+    public static final float ANIM_DURATION = 1 / 5f; // 200ms
+
     // Rendering
-    public static final float ANIM_DURATION = 1 / 5f; // 6f is decent
     public static final float RENDER_OFFSET_X = 4f;
     public static final float USERNAME_PADDING_Y = 10f;
     public static final float FONT_HEIGHT = 8f;
