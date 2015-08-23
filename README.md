@@ -2,6 +2,9 @@
 
 A small game being developed with [libGDX](http://libgdx.badlogicgames.com) to experiment with multiplayer and Pokemon! :D
 
+## Screenshot
+<img src = "http://puu.sh/jLrzJ/da969ea48d.png">
+
 ### Requirements 
 * [Gradle](http://gradle.org/)
 * TCP/UDP port 5284 to be open for multiplayer
