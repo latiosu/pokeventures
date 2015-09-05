@@ -33,6 +33,7 @@ public class ServerThread extends Thread {
 
     @Override
     public void run() {
+        System.out.println("Running as server.");
         while (true) {
             byte[] data = new byte[Config.PACKET_SIZE];
             DatagramPacket packet = new DatagramPacket(data, data.length);
