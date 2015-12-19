@@ -12,27 +12,14 @@ import java.util.Date;
 
 public class RangedAttack extends Attack {
 
-    private final float MAX_RANGE = 50;
+    private final float MAX_RANGE = 85;
     private final float TRAVEL_RATE = 10;
     private final float OFFSET = 4;
 
     public RangedAttack(long id, long uid, PlayerType ptype, Direction dir, float x, float y) {
         super(id, uid, ptype, dir, x, y, Config.TILE_SIZE, Config.TILE_SIZE,  AttackType.RANGED, true);
         anim = AssetManager.getAnimation(ptype, State.ATK_RANGED, direction, true);
-        switch (direction) {
-            case DOWN:
-                offsetY = -OFFSET;
-                break;
-            case LEFT:
-                offsetX = -OFFSET;
-                break;
-            case UP:
-                offsetY = OFFSET;
-                break;
-            case RIGHT:
-                offsetX = OFFSET;
-                break;
-        }
+        updatePosition(dir, OFFSET);
     }
 
     public RangedAttack(long uid, PlayerType ptype, Direction dir, float x, float y) {

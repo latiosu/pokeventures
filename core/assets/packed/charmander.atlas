@@ -1,181 +1,237 @@
 
 charmander.png
-size: 256,32
+size: 128,128
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 idle-down
   rotate: false
-  xy: 174, 3
+  xy: 76, 74
   size: 11, 16
   orig: 11, 16
   offset: 0, 0
   index: 0
 walk-down
   rotate: false
-  xy: 174, 3
+  xy: 76, 74
   size: 11, 16
   orig: 11, 16
   offset: 0, 0
   index: 1
 idle-left
   rotate: false
-  xy: 44, 3
+  xy: 23, 110
   size: 18, 16
   orig: 18, 16
   offset: 0, 0
   index: 0
 walk-left
   rotate: false
-  xy: 44, 3
+  xy: 23, 110
   size: 18, 16
   orig: 18, 16
   offset: 0, 0
   index: 1
 idle-right
   rotate: false
-  xy: 64, 3
+  xy: 2, 74
   size: 18, 16
   orig: 18, 16
   offset: 0, 0
   index: 0
 walk-right
   rotate: false
-  xy: 64, 3
+  xy: 2, 74
   size: 18, 16
   orig: 18, 16
   offset: 0, 0
   index: 1
 idle-up
   rotate: false
-  xy: 187, 2
+  xy: 115, 109
   size: 11, 17
   orig: 11, 17
   offset: 0, 0
   index: 0
 walk-up
   rotate: false
-  xy: 187, 2
+  xy: 115, 109
   size: 11, 17
   orig: 11, 17
   offset: 0, 0
-  index: 1
+  index: 0
 melee-down
   rotate: false
-  xy: 120, 3
+  xy: 2, 56
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 0
 melee-down
   rotate: false
-  xy: 138, 3
+  xy: 22, 74
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 1
 melee-down
   rotate: false
-  xy: 156, 3
+  xy: 41, 92
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 2
 melee-down-attack
   rotate: false
-  xy: 84, 3
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: 0
-ranged-up-attack
-  rotate: false
-  xy: 84, 3
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: 0
-ranged-left-attack
-  rotate: false
-  xy: 84, 3
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: 0
-ranged-down-attack
-  rotate: false
-  xy: 84, 3
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: 0
-ranged-right-attack
-  rotate: false
-  xy: 84, 3
+  xy: 23, 92
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 0
 melee-down-attack
   rotate: false
-  xy: 102, 3
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: 1
-ranged-up-attack
-  rotate: false
-  xy: 102, 3
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: 1
-ranged-right-attack
-  rotate: false
-  xy: 102, 3
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: 1
-ranged-left-attack
-  rotate: false
-  xy: 102, 3
+  xy: 43, 110
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 1
 ranged-down-attack
   rotate: false
-  xy: 102, 3
+  xy: 61, 110
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 0
+ranged-down-attack
+  rotate: false
+  xy: 2, 38
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: 1
+ranged-down-attack
+  rotate: false
+  xy: 20, 56
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+ranged-down-attack
+  rotate: false
+  xy: 40, 74
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 3
+ranged-left-attack
+  rotate: false
+  xy: 59, 92
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 0
+ranged-left-attack
+  rotate: false
+  xy: 79, 110
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+ranged-left-attack
+  rotate: false
+  xy: 2, 20
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+ranged-left-attack
+  rotate: false
+  xy: 2, 2
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 3
+ranged-right-attack
+  rotate: false
+  xy: 20, 38
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 0
+ranged-right-attack
+  rotate: false
+  xy: 38, 56
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+ranged-right-attack
+  rotate: false
+  xy: 58, 74
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+ranged-right-attack
+  rotate: false
+  xy: 77, 92
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 3
+ranged-up-attack
+  rotate: false
+  xy: 97, 110
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 0
+ranged-up-attack
+  rotate: false
+  xy: 20, 20
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+ranged-up-attack
+  rotate: false
+  xy: 20, 2
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+ranged-up-attack
+  rotate: false
+  xy: 38, 38
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 3
 walk-down
   rotate: false
-  xy: 213, 3
+  xy: 95, 92
   size: 11, 16
   orig: 11, 16
   offset: 0, 0
   index: 0
 walk-left
   rotate: false
-  xy: 2, 3
+  xy: 2, 110
   size: 19, 16
   orig: 19, 16
   offset: 0, 0
   index: 0
 walk-right
   rotate: false
-  xy: 23, 3
+  xy: 2, 92
   size: 19, 16
   orig: 19, 16
   offset: 0, 0
   index: 0
 walk-up
   rotate: false
-  xy: 200, 2
+  xy: 56, 55
   size: 11, 17
   orig: 11, 17
   offset: 0, 0
-  index: 0
+  index: 1

@@ -38,9 +38,10 @@ public class UserInputProcessor implements InputProcessor {
             case Input.Keys.RIGHT:
                 directionKeys[3] = true;
                 break;
-            case Input.Keys.Z:
-                attackKeys[0] = true;
-                break;
+            // Disabling melee
+//            case Input.Keys.Z:
+//                attackKeys[0] = true;
+//                break;
             case Input.Keys.X:
                 attackKeys[1] = true;
                 break;

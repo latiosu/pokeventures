@@ -20,20 +20,7 @@ public class MeleeAttack extends Attack {
     public MeleeAttack(long id, long uid, PlayerType ptype, Direction dir, float x, float y) {
         super(id, uid, ptype, dir, x, y, Config.TILE_SIZE, Config.TILE_SIZE,  AttackType.MELEE, true);
         anim = AssetManager.getAnimation(ptype, State.ATK_MELEE, direction, true);
-        switch (direction) {
-            case DOWN:
-                offsetY = -OFFSET;
-                break;
-            case LEFT:
-                offsetX = -OFFSET;
-                break;
-            case UP:
-                offsetY = OFFSET;
-                break;
-            case RIGHT:
-                offsetX = OFFSET;
-                break;
-        }
+        updatePosition(dir, OFFSET);
     }
 
     public MeleeAttack(long uid, PlayerType ptype, Direction dir, float x, float y) {

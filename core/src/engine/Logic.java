@@ -38,21 +38,27 @@ public class Logic {
         mp.setType(UserInputProcessor.selectedType);
 
         // Update animation state
-        if (attacks[0]) {
-            mp.setState(State.ATK_MELEE);
-        } else if (attacks[1]) {
-            mp.setState(State.ATK_RANGED);
-        } else if (!arrows[0] && !arrows[1] && !arrows[2] && !arrows[3]) {
+        // Disabling attack animations
+//        if (attacks[0]) {
+//            mp.setState(State.ATK_MELEE);
+//        } else if (attacks[1]) {
+//            mp.setState(State.ATK_RANGED);
+//        }
+        if (!arrows[0] && !arrows[1] && !arrows[2] && !arrows[3]) {
             mp.setState(State.IDLE);
         } else {
             mp.setState(State.WALK);
         }
 
         // Attack / Movement logic
-        if (mp.getState() == State.ATK_MELEE) {
-            generateAttack(mp, AttackType.MELEE);
-        } else if (mp.getState() == State.ATK_RANGED) {
+        // Disabling melees
+//        if (mp.getState() == State.ATK_MELEE) {
+//            generateAttack(mp, AttackType.MELEE);
+//        } else
+
+        if (attacks[1]) {
             generateAttack(mp, AttackType.RANGED);
+            attacks[1] = false;
         } else if (mp.getState() == State.WALK) { // Note: Note able to walk + attack simultaneously
             // Update movement direction flags only during walk state
             if (arrows[0]) {

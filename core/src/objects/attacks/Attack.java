@@ -43,6 +43,23 @@ public abstract class Attack extends GameObject {
 
     protected abstract void updateDamage(Player mp);
 
+    protected void updatePosition(Direction direction, float offset) {
+        switch (direction) {
+            case DOWN:
+                offsetY = -offset;
+                break;
+            case LEFT:
+                offsetX = -offset;
+                break;
+            case UP:
+                offsetY = offset;
+                break;
+            case RIGHT:
+                offsetX = offset;
+                break;
+        }
+    }
+
     public Rectangle getBounds() {
         return new Rectangle(x, y, width, height);
     }
