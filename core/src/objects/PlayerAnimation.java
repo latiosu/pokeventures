@@ -28,28 +28,10 @@ public class PlayerAnimation {
     }
 
     public TextureRegion getFrame(float delta) {
-        updateAnimLogic(delta);
-        return currentAnim.getKeyFrame(currentDelta);
-    }
-
-    /**
-     * Handles logic for rendering animations.
-     * Note: Will ignore player input until ATTACK animations complete.
-     */
-    private void updateAnimLogic(float delta) {
         currentDelta += delta;
         if(currentAnim.isAnimationFinished(currentDelta)) {
             currentDelta -= currentAnim.getAnimationDuration();
-
-            switch (player.getState()) {
-                case ATK_MELEE:
-                    UserInputProcessor.attackKeys[0] = false;
-                    player.setHasMeleeAtk(false); // Allow more melee attacks after anim
-                    break;
-                case ATK_RANGED:
-                    UserInputProcessor.attackKeys[1] = false;
-                    break;
-            }
         }
+        return currentAnim.getKeyFrame(currentDelta);
     }
 }

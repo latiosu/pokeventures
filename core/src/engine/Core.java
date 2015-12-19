@@ -22,7 +22,6 @@ import objects.*;
 import objects.Tiles.Tile;
 import objects.attacks.Attack;
 import objects.attacks.AttackType;
-import objects.attacks.MeleeAttack;
 import objects.attacks.RangedAttack;
 
 
@@ -213,16 +212,12 @@ public class Core extends Game {
             }
         } else {
             switch (type) {
-                case MELEE:
-                    atk = new MeleeAttack(id, uid, ptype, dir, x, y);
-                    break;
                 case RANGED:
                     atk = new RangedAttack(id, uid, ptype, dir, x, y);
                     break;
             }
             attacks.add(id, atk);
         }
-//        System.out.println(attacks.size());
     }
 
     /**

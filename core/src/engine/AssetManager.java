@@ -23,7 +23,7 @@ public class AssetManager {
     public static Texture setupBG;
 
     public AssetManager() {
-        animations = new HashMap<PlayerType, Map<String, Animation>>();
+        animations = new HashMap<>();
         loadAssets();
     }
 
@@ -35,9 +35,6 @@ public class AssetManager {
                 break;
             case WALK:
                 animName += "walk";
-                break;
-            case ATK_MELEE:
-                animName += "melee";
                 break;
             case ATK_RANGED:
                 animName += "ranged";
@@ -87,9 +84,9 @@ public class AssetManager {
 
     // PlayerType > State > Direction > Null/Attack
     private Map<String, Animation> generate(TextureAtlas atlas) {
-        Map<String, Animation> map = new HashMap<String, Animation>();
+        Map<String, Animation> map = new HashMap<>();
 
-        String[] states = {"idle", "walk", "melee", "ranged"};
+        String[] states = {"idle", "walk", "ranged"};
         String[] dirs = {"-down", "-left", "-up", "-right"};
         String[] attacks = {"", "-attack"};
         for (String s : states) {

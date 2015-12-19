@@ -2,7 +2,6 @@ package objects.attacks;
 
 public enum AttackType {
     NONE(0),
-    MELEE(1),
     RANGED(2);
 
     private int num;
@@ -15,8 +14,6 @@ public enum AttackType {
         switch (i) {
             case 0:
                 return NONE;
-            case 1:
-                return MELEE;
             case 2:
                 return RANGED;
             default:

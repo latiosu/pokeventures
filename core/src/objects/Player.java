@@ -13,7 +13,7 @@ public class Player extends Entity {
     private String username;
     private float usernameWidth;
     private float hp;
-    private boolean hasMeleeAtk, hasRangedAtk;
+    private boolean hasRangedAtk;
 
     public Player(long uid, PlayerType type, String username) {
         super(type);
@@ -22,7 +22,6 @@ public class Player extends Entity {
         this.username = username;
         this.usernameWidth = AssetManager.font.getBounds(username).width;
         this.hp = Config.PLAYER_HP;
-        this.hasMeleeAtk = false;
         this.hasRangedAtk = false;
     }
 
@@ -92,14 +91,6 @@ public class Player extends Entity {
 
     public long getUID() {
         return uid;
-    }
-
-    public boolean hasMeleeAtk() {
-        return hasMeleeAtk;
-    }
-
-    public void setHasMeleeAtk(boolean hasMeleeAtk) {
-        this.hasMeleeAtk = hasMeleeAtk;
     }
 
     public boolean hasRangedAtk() {

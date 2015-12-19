@@ -9,7 +9,6 @@ import objects.PlayerOnline;
 import objects.State;
 import objects.attacks.Attack;
 import objects.attacks.AttackType;
-import objects.attacks.MeleeAttack;
 import objects.attacks.RangedAttack;
 
 public class Logic {
@@ -38,12 +37,6 @@ public class Logic {
         mp.setType(UserInputProcessor.selectedType);
 
         // Update animation state
-        // Disabling attack animations
-//        if (attacks[0]) {
-//            mp.setState(State.ATK_MELEE);
-//        } else if (attacks[1]) {
-//            mp.setState(State.ATK_RANGED);
-//        }
         if (!arrows[0] && !arrows[1] && !arrows[2] && !arrows[3]) {
             mp.setState(State.IDLE);
         } else {
@@ -51,11 +44,6 @@ public class Logic {
         }
 
         // Attack / Movement logic
-        // Disabling melees
-//        if (mp.getState() == State.ATK_MELEE) {
-//            generateAttack(mp, AttackType.MELEE);
-//        } else
-
         if (attacks[1]) {
             generateAttack(mp, AttackType.RANGED);
             attacks[1] = false;
@@ -111,12 +99,6 @@ public class Logic {
     private void generateAttack(Player mp, AttackType type) {
         Attack atk = null;
         switch (type) {
-            case MELEE:
-                if (!mp.hasMeleeAtk()) {
-                    atk = new MeleeAttack(mp.getUID(), mp.getType(), mp.getDirection(), mp.getX(), mp.getY());
-                    mp.setHasMeleeAtk(true);
-                }
-                break;
             case RANGED:
                 if (!mp.hasRangedAtk()) {
                     atk = new RangedAttack(mp.getUID(), mp.getType(), mp.getDirection(), mp.getX(), mp.getY());
@@ -131,7 +113,6 @@ public class Logic {
             sendAttackPacket(atk);
         }
     }
-
 
     private void updateCamera(Player mp) {
         cam.position.x = mp.getX();

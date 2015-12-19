@@ -9,7 +9,7 @@ public class UserInputProcessor implements InputProcessor {
     /* Note: These values must be read another class
      * to update the values for the main player. */
     public static boolean[] directionKeys; // Down-Left-Up-Right
-    public static boolean[] attackKeys; // Melee-Ranged
+    public static boolean[] attackKeys; // None-Ranged
     public static PlayerType selectedType;
     private Core core;
 
@@ -38,11 +38,7 @@ public class UserInputProcessor implements InputProcessor {
             case Input.Keys.RIGHT:
                 directionKeys[3] = true;
                 break;
-            // Disabling melee
-//            case Input.Keys.Z:
-//                attackKeys[0] = true;
-//                break;
-            case Input.Keys.X:
+            case Input.Keys.SPACE:
                 attackKeys[1] = true;
                 break;
             case Input.Keys.NUM_1:

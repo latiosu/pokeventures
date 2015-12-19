@@ -6,7 +6,6 @@
 MED - Add projectiles (fireball/watergun/razorleaf)
         + Projectiles should not be able to hit recently connected players
 MED - Add combat system:
-        + Players should be able to perform melee attacks while moving (currently cannot)
         + Players should be able to fire a projectile in their current direction (server handles collision?)
         + Players should have an energy bar for attacks (cooldown system)
         = Idea: Attacks have elements and can destroy projectiles of the weaker element
