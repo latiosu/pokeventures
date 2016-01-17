@@ -22,41 +22,49 @@ public class UserInputProcessor implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
+        // Capture keystrokes in chat
         if (core.getUI().hasFocus()) {
             return false;
         }
-        switch (keycode) {
-            case Input.Keys.DOWN:
-                directionKeys[0] = true;
-                break;
-            case Input.Keys.LEFT:
-                directionKeys[1] = true;
-                break;
-            case Input.Keys.UP:
-                directionKeys[2] = true;
-                break;
-            case Input.Keys.RIGHT:
-                directionKeys[3] = true;
-                break;
-            case Input.Keys.SPACE:
-                attackKeys[1] = true;
-                break;
-            case Input.Keys.NUM_1:
-                selectedType = PlayerType.CHARMANDER;
-                core.getPlayers().getMainPlayer().getAnim().updateAnim();
-                break;
-            case Input.Keys.NUM_2:
-                selectedType = PlayerType.BULBASAUR;
-                core.getPlayers().getMainPlayer().getAnim().updateAnim();
-                break;
-            case Input.Keys.NUM_3:
-                selectedType = PlayerType.SQUIRTLE;
-                core.getPlayers().getMainPlayer().getAnim().updateAnim();
-                break;
-            case Input.Keys.ENTER:
-                core.getUI().showChat(true);
-                break;
+
+        // Movement
+        if (keycode == Input.Keys.DOWN) {
+            directionKeys[0] = true;
         }
+        if (keycode == Input.Keys.LEFT) {
+            directionKeys[1] = true;
+        }
+        if (keycode == Input.Keys.UP) {
+            directionKeys[2] = true;
+        }
+        if (keycode == Input.Keys.RIGHT) {
+            directionKeys[3] = true;
+        }
+
+        // Attack
+        if (keycode == Input.Keys.SPACE) {
+            attackKeys[1] = true;
+        }
+
+        // Change characters
+        if (keycode == Input.Keys.NUM_1) {
+            selectedType = PlayerType.CHARMANDER;
+            core.getPlayers().getMainPlayer().getAnim().updateAnim();
+        }
+        if (keycode == Input.Keys.NUM_2) {
+            selectedType = PlayerType.BULBASAUR;
+            core.getPlayers().getMainPlayer().getAnim().updateAnim();
+        }
+        if (keycode == Input.Keys.NUM_3) {
+            selectedType = PlayerType.SQUIRTLE;
+            core.getPlayers().getMainPlayer().getAnim().updateAnim();
+        }
+
+        // Chat
+        if (keycode == Input.Keys.ENTER) {
+            core.getUI().showChat(true);
+        }
+
         return false;
     }
 
@@ -65,19 +73,29 @@ public class UserInputProcessor implements InputProcessor {
         if (core.getUI().hasFocus()) {
             return false;
         }
-        switch (keycode) {
-            case Input.Keys.DOWN:
-                directionKeys[0] = false;
-                break;
-            case Input.Keys.LEFT:
-                directionKeys[1] = false;
-                break;
-            case Input.Keys.UP:
-                directionKeys[2] = false;
-                break;
-            case Input.Keys.RIGHT:
-                directionKeys[3] = false;
-                break;
+
+        // Movement
+        if (keycode == Input.Keys.DOWN) {
+            directionKeys[0] = false;
+        }
+        if (keycode == Input.Keys.LEFT) {
+            directionKeys[1] = false;
+        }
+        if (keycode == Input.Keys.UP) {
+            directionKeys[2] = false;
+        }
+        if (keycode == Input.Keys.RIGHT) {
+            directionKeys[3] = false;
+        }
+
+        // Attack
+        if (keycode == Input.Keys.SPACE) {
+            attackKeys[1] = false;
+        }
+
+        // Chat
+        if (keycode == Input.Keys.ENTER) {
+            core.getUI().showChat(false);
         }
         return false;
     }

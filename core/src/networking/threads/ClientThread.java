@@ -1,4 +1,4 @@
-package networking;
+package networking.threads;
 
 import engine.Config;
 import engine.Core;
@@ -12,10 +12,9 @@ import objects.PlayerType;
 import java.io.IOException;
 import java.net.*;
 
-public class ClientThread extends Thread {
+public class ClientThread extends BasicThread {
 
     private InetAddress address;
-    private DatagramSocket socket;
     private Core core;
 
     public ClientThread(Core core, String ip) {
@@ -23,28 +22,12 @@ public class ClientThread extends Thread {
         try {
             this.socket = new DatagramSocket();
             this.address = InetAddress.getByName(ip);
-        } catch (SocketException e) {
-            e.printStackTrace();
-        } catch (UnknownHostException e) {
+        } catch (UnknownHostException | SocketException e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-    public void run() {
-        while (true) {
-            byte[] data = new byte[Config.PACKET_SIZE];
-            DatagramPacket packet = new DatagramPacket(data, data.length);
-            try {
-                socket.receive(packet); // Warning: will wait indefinitely
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            this.parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
-        }
-    }
-
-    private void parsePacket(byte[] data, InetAddress address, int port) {
+    protected void parsePacket(byte[] data, InetAddress address, int port) {
         String message = new String(data).trim();
         Packet.PacketType type = Packet.lookupPacket(message.substring(0, 2));
         switch (type) {
@@ -102,8 +85,7 @@ public class ClientThread extends Thread {
     }
 
     private void handleAttack(Packet04Attack pk) {
-        core.updateAttack(pk.getId(), pk.getUid(), pk.getPtype(), pk.getDir(), pk.getX(), pk.getY(),
-                pk.getAtkType(), pk.isAlive());
+        core.updateAttack(pk.getId(), pk.getUid(), pk.getPtype(), pk.getDir(), pk.getX(), pk.getY(), pk.isAlive());
     }
 
     /**

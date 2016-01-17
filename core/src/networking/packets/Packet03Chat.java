@@ -1,8 +1,8 @@
 package networking.packets;
 
 import engine.structs.Message;
-import networking.ClientThread;
-import networking.ServerThread;
+import networking.threads.ClientThread;
+import networking.threads.ServerThread;
 
 public class Packet03Chat extends Packet {
 

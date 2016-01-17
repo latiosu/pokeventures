@@ -1,7 +1,7 @@
 package networking.packets;
 
-import networking.ClientThread;
-import networking.ServerThread;
+import networking.threads.ClientThread;
+import networking.threads.ServerThread;
 
 public class Packet01Disconnect extends Packet {
 

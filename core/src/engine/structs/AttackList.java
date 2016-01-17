@@ -1,6 +1,6 @@
 package engine.structs;
 
-import objects.attacks.Attack;
+import objects.Attack;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -13,19 +13,21 @@ public class AttackList implements List<Attack> {
     private java.util.List<Attack> list;
 
     public AttackList() {
-        map = new ConcurrentHashMap<Long, Attack>();
-        list = new CopyOnWriteArrayList<Attack>(); /* <-- Works well for small array lists */
+        map = new ConcurrentHashMap<>();
+        list = new CopyOnWriteArrayList<>(); /* <-- Works well for small array lists */
     }
 
+    @SuppressWarnings("SuspiciousMethodCalls")
     @Override
     public Attack remove(int i) {
         return map.remove(list.remove(i));
     }
 
+    @SuppressWarnings("SuspiciousMethodCalls")
     @Override
     public Attack remove(long uid) {
         Attack result = get(uid);
-        list.remove(result);
+        map.remove(list.remove(result));
         return result;
     }
 

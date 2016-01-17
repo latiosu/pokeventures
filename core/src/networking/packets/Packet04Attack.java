@@ -1,16 +1,15 @@
 package networking.packets;
 
-import networking.ClientThread;
-import networking.ServerThread;
+import networking.threads.ClientThread;
+import networking.threads.ServerThread;
 import objects.Direction;
 import objects.PlayerType;
-import objects.attacks.AttackType;
 
 public class Packet04Attack extends Packet {
 
     private long id, uid;
     private float x, y;
-    private int ptype, dir, atkType, alive;
+    private int ptype, dir, alive;
 
     public Packet04Attack(byte[] data) {
         super(4);
@@ -21,11 +20,10 @@ public class Packet04Attack extends Packet {
         this.dir = Integer.parseInt(dataArray[3]);
         this.x = Float.parseFloat(dataArray[4]);
         this.y = Float.parseFloat(dataArray[5]);
-        this.atkType = Integer.parseInt(dataArray[6]);
-        this.alive = Integer.parseInt(dataArray[7]);
+        this.alive = Integer.parseInt(dataArray[6]);
     }
 
-    public Packet04Attack(long id, long uid, int ptype, int dir, float x, float y, int atkType, int alive) {
+    public Packet04Attack(long id, long uid, int ptype, int dir, float x, float y, int alive) {
         super(4);
         this.id = id;
         this.uid = uid;
@@ -33,7 +31,6 @@ public class Packet04Attack extends Packet {
         this.x = x;
         this.y = y;
         this.dir = dir;
-        this.atkType = atkType;
         this.alive = alive;
     }
 
@@ -48,8 +45,8 @@ public class Packet04Attack extends Packet {
     @Override
     /* Reminder: Update this when changing packet structure */
     public byte[] getData() {
-        return ("04" + this.id + "`" + this.uid + "`" + this.ptype + "`" + this.dir + "`" + this.x + "`" + this.y
-                 + "`" + this.atkType + "`" + this.alive).getBytes();
+        return ("04" + this.id + "`" + this.uid + "`" + this.ptype + "`" + this.dir + "`" + this.x + "`" + this.y + "`"
+                + this.alive).getBytes();
     }
 
     public long getId() {
@@ -74,10 +71,6 @@ public class Packet04Attack extends Packet {
 
     public Direction getDir() {
         return Direction.getDir(dir);
-    }
-
-    public AttackType getAtkType() {
-        return AttackType.getType(atkType);
     }
 
     public boolean isAlive() {

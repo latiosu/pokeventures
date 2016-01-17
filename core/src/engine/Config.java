@@ -6,12 +6,11 @@ import objects.PlayerType;
 public class Config {
     /* ====== General ====== */
     // Game
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
     public static final boolean USE_EXTERNAL_ANIMS = false;
     public static final boolean PACK_TEXTURES = true;
 
-    public static final String VERSION = "Pre-alpha v0.45: Attack Animations";
-//    public static final String VERSION = "Pre-alpha: Clarisse Mode";
+    public static final String VERSION = "Pre-alpha v0.60: Combat";
     public static final PlayerType DEFAULT_TYPE = PlayerType.CHARMANDER;
     public static final String MAP = "overworld.png";
     public static final float SPAWN_X = 865;
@@ -55,4 +54,10 @@ public class Config {
     public static final int MAX_MSG_LENGTH = 100;
     public static final String DATE_FORMAT = "h:mm:ss a";
     public static final String DATE_FORMAT_CHAT = "h:mm a";
+
+    // Character Stuff
+    public static final double MAX_CHARMANDER_ASPD = 3; // Attacks per second
+    public static final double MAX_BULBASAUR_ASPD = 3;
+    public static final double MAX_SQUIRTLE_ASPD = 3;
+
 }

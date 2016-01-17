@@ -1,4 +1,4 @@
-package networking;
+package networking.threads;
 
 import engine.Config;
 import engine.structs.UserList;
@@ -15,9 +15,8 @@ import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class ServerThread extends Thread {
+public class ServerThread extends BasicThread {
 
-    private DatagramSocket socket;
     private UserList onlinePlayers;
     private SimpleDateFormat sdf;
 
@@ -31,21 +30,7 @@ public class ServerThread extends Thread {
         }
     }
 
-    @Override
-    public void run() {
-        while (true) {
-            byte[] data = new byte[Config.PACKET_SIZE];
-            DatagramPacket packet = new DatagramPacket(data, data.length);
-            try {
-                socket.receive(packet); // Warning: will wait indefinitely
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            this.parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
-        }
-    }
-
-    private void parsePacket(byte[] data, InetAddress address, int port) {
+    protected void parsePacket(byte[] data, InetAddress address, int port) {
         String message = new String(data).trim();
         Packet.PacketType type = Packet.lookupPacket(message.substring(0, 2)); // first two characters
         switch (type) {

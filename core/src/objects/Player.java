@@ -13,7 +13,7 @@ public class Player extends Entity {
     private String username;
     private float usernameWidth;
     private float hp;
-    private boolean hasRangedAtk;
+    private long lastAttackTime;
 
     public Player(long uid, PlayerType type, String username) {
         super(type);
@@ -22,7 +22,7 @@ public class Player extends Entity {
         this.username = username;
         this.usernameWidth = AssetManager.font.getBounds(username).width;
         this.hp = Config.PLAYER_HP;
-        this.hasRangedAtk = false;
+        this.lastAttackTime = 0;
     }
 
     /* Note: Using a player list for rendering */
@@ -93,19 +93,19 @@ public class Player extends Entity {
         return uid;
     }
 
-    public boolean hasRangedAtk() {
-        return hasRangedAtk;
-    }
-
-    public void setHasRangedAtk(boolean hasRangedAtk) {
-        this.hasRangedAtk = hasRangedAtk;
-    }
-
     public float getHp() {
         return hp;
     }
 
     public void setHp(float hp) {
         this.hp = hp;
+    }
+
+    public long getLastAttackTime() {
+        return lastAttackTime;
+    }
+
+    public void updateLastAttackTime() {
+        this.lastAttackTime = System.nanoTime();
     }
 }

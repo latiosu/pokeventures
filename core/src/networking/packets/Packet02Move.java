@@ -1,7 +1,7 @@
 package networking.packets;
 
-import networking.ClientThread;
-import networking.ServerThread;
+import networking.threads.ClientThread;
+import networking.threads.ServerThread;
 import objects.Direction;
 import objects.PlayerType;
 import objects.State;

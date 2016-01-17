@@ -13,16 +13,13 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import engine.structs.AttackList;
 import engine.structs.Message;
 import engine.structs.UserList;
-import networking.ClientThread;
-import networking.ServerThread;
-import networking.packets.Packet00Login;
-import networking.packets.Packet01Disconnect;
-import networking.packets.Packet03Chat;
+import networking.threads.ClientThread;
+import networking.threads.ServerThread;
+import networking.packets.*;
 import objects.*;
 import objects.Tiles.Tile;
-import objects.attacks.Attack;
-import objects.attacks.AttackType;
-import objects.attacks.RangedAttack;
+
+import java.util.ArrayList;
 
 
 public class Core extends Game {
@@ -45,7 +42,6 @@ public class Core extends Game {
 
     // Engine classes
     private WorldManager world;
-    private Logic logic;
     private UI ui;
 
     // Networking classes
@@ -103,7 +99,10 @@ public class Core extends Game {
         // Update logic 15 times per second
         if (delta > Config.UPDATE_RATE) {
             if (playMode) {
-                logic.update(players.getMainPlayer());
+                Player mp = getPlayers().getMainPlayer();
+                updateMainPlayer(mp);
+                updateAttackList(mp);
+                updateCamera(mp);
             }
             delta -= Config.UPDATE_RATE;
         }
@@ -134,7 +133,7 @@ public class Core extends Game {
                 sr.setProjectionMatrix(cam.combined);
                 sr.begin(ShapeRenderer.ShapeType.Filled); // BEGIN DEBUG RENDERING
 
-                // Render blocked as red
+                // Render blocked tile as red
                 sr.setColor(1f, 0f, 0f, 0.3f);
                 for (Tile t : world.getBlocked()) {
                     sr.rect(t.getX(), t.getY(), 16, 16);
@@ -149,6 +148,12 @@ public class Core extends Game {
                 sr.set(ShapeRenderer.ShapeType.Line);
                 sr.setColor(Color.YELLOW);
                 sr.rect(mp.getX(), mp.getY(), Config.CHAR_COLL_WIDTH, Config.CHAR_COLL_HEIGHT);
+
+                // Render projectile outline as red
+                sr.setColor(1f, 0f, 0f, 0.3f);
+                for (Attack atk : attacks) {
+                    sr.rect(atk.getPosX(), atk.getPosY(), Config.TILE_SIZE, Config.TILE_SIZE);
+                }
 
                 sr.end(); // END DEBUG RENDERING
             }
@@ -179,7 +184,6 @@ public class Core extends Game {
         }
         // Send packet to server to sync main player
         loginPacket.writeDataFrom(client);
-        logic = new Logic(this, cam);
         playMode = true;
     }
 
@@ -199,7 +203,7 @@ public class Core extends Game {
         }
     }
 
-    public void updateAttack(long id, long uid, PlayerType ptype, Direction dir, float x, float y, AttackType type, boolean isAlive) {
+    public void updateAttack(long id, long uid, PlayerType ptype, Direction dir, float x, float y, boolean isAlive) {
         Attack atk = getAttacks().get(id);
         if (atk != null) {
             if (!atk.isAlive()) { // Remove if not alive
@@ -211,12 +215,126 @@ public class Core extends Game {
                 atk.setAlive(isAlive);
             }
         } else {
-            switch (type) {
-                case RANGED:
-                    atk = new RangedAttack(id, uid, ptype, dir, x, y);
+            atk = new Attack(id, getPlayers().get(uid));
+            attacks.add(id, atk);
+        }
+    }
+
+    private void updateCamera(Player mp) {
+        cam.position.x = mp.getX();
+        cam.position.y = mp.getY();
+        cam.update();
+
+        // This camera algorithm only follows player if camera can be centered.
+        if (cam.position.x > Config.CAM_MAX_X) {
+            cam.position.x = Config.CAM_MAX_X;
+        }
+        if (cam.position.y > Config.CAM_MAX_Y) {
+            cam.position.y = Config.CAM_MAX_Y;
+        }
+        if (cam.position.x < Config.CAM_MIN_X) {
+            cam.position.x = Config.CAM_MIN_X;
+        }
+        if (cam.position.y < Config.CAM_MIN_Y) {
+            cam.position.y = Config.CAM_MIN_Y;
+        }
+        cam.update();
+    }
+
+    private void updateMainPlayer(Player mp) {
+        // Input logic
+        boolean[] arrows = UserInputProcessor.directionKeys;
+        boolean[] attacks = UserInputProcessor.attackKeys;
+        mp.setType(UserInputProcessor.selectedType);
+
+        // Update animation state
+        if (!arrows[0] && !arrows[1] && !arrows[2] && !arrows[3]) {
+            mp.setState(State.IDLE);
+        } else {
+            mp.setState(State.WALK);
+        }
+
+        // Attack / Movement logic
+        if (attacks[1]) {
+            if (Attack.canRangedAttack(mp)) {
+                Attack atk = new Attack(mp);
+                getAttacks().add(atk.getId(), atk);
+                mp.updateLastAttackTime();
+            }
+        }
+        if (mp.getState() == State.WALK) {
+            // Update movement direction flags only during walk state
+            if (arrows[0]) {
+                mp.setDirection(Direction.DOWN);
+            } else if (arrows[1]) {
+                mp.setDirection(Direction.LEFT);
+            } else if (arrows[2]) {
+                mp.setDirection(Direction.UP);
+            } else if (arrows[3]) {
+                mp.setDirection(Direction.RIGHT);
+            }
+            switch (mp.getDirection()) {
+                case DOWN:
+                    if (mp.getY() > 0) {
+                        mp.setY(mp.getY() - Config.WALK_DIST);
+                    }
+                    break;
+                case LEFT:
+                    if (mp.getX() > 0) {
+                        mp.setX(mp.getX() - Config.WALK_DIST);
+                    }
+                    break;
+                case UP:
+                    if (mp.getY() < AssetManager.level.getHeight() - Config.CHAR_COLL_HEIGHT) {
+                        mp.setY(mp.getY() + Config.WALK_DIST);
+                    }
+                    break;
+                case RIGHT:
+                    if (mp.getX() < AssetManager.level.getWidth() - Config.CHAR_COLL_WIDTH) {
+                        mp.setX(mp.getX() + Config.WALK_DIST);
+                    }
                     break;
             }
-            attacks.add(id, atk);
+        }
+
+        // Update player animations immediately for responsiveness
+        mp.getAnim().updateAnim();
+        // <----- Play sounds immediately for responsiveness in the future
+
+        // Handle collision for main player
+        getWorldManager().handleCollision(mp);
+
+        // Send movement packet with freshly updated main player data
+        Packet02Move pk = new Packet02Move(mp.getUID(), mp.getUsername(),
+                mp.getX(), mp.getY(), mp.getState().getNum(),
+                mp.getDirection().getNum(), mp.getType().getNum());
+        pk.writeDataFrom(getClientThread());
+    }
+
+    /**
+     * Each client checks for collisions with their own character and all existing projectiles.
+     * Note: *Need to optimize with quadtree*
+     */
+    private void updateAttackList(Player mp) {
+        ArrayList<Attack> toRemove = new ArrayList<>();
+        // Perform update
+        for (Attack atk : getAttacks()) {
+            if (atk.update(mp)) {
+                // Send a packet if collision is detected
+                Packet04Attack pk = new Packet04Attack(atk.getId(),  atk.getUid(), atk.getPtype().getNum(),
+                        atk.getDirection().getNum(), atk.getX(), atk.getY(), atk.isAliveNum());
+                pk.writeDataFrom(client);
+            }
+
+            // Clean-up check
+            if (!atk.isAlive()) {
+                toRemove.add(atk);
+            }
+        }
+
+        // Perform clean-up
+        for (Attack a : toRemove) {
+            getAttacks().remove(a.getId());
         }
     }
 
