@@ -13,7 +13,9 @@ public class Player extends Entity {
     private String username;
     private float usernameWidth;
     private float hp;
+    private float maxHp;
     private long lastAttackTime;
+    private boolean isAlive;
 
     public Player(long uid, PlayerType type, String username) {
         super(type);
@@ -22,7 +24,9 @@ public class Player extends Entity {
         this.username = username;
         this.usernameWidth = AssetManager.font.getBounds(username).width;
         this.hp = Config.PLAYER_HP;
+        this.maxHp = Config.PLAYER_HP;
         this.lastAttackTime = 0;
+        this.isAlive = true;
     }
 
     /* Note: Using a player list for rendering */
@@ -32,6 +36,15 @@ public class Player extends Entity {
             AssetManager.font.draw(batch, username, getNameX(), getNameY());
         } catch (ArrayIndexOutOfBoundsException e) {
             System.err.printf("Error: Animation not found - %s %s\n", state.name(), direction.name());
+        }
+    }
+
+    public void updateDamage(Attack atk) {
+        if (isAlive()) {
+            setHp(getHp() - atk.getDamage());
+            if (getHp() <= 0) {
+                this.setAlive(false);
+            }
         }
     }
 
@@ -101,11 +114,27 @@ public class Player extends Entity {
         this.hp = hp;
     }
 
+    public float getMaxHp() {
+        return maxHp;
+    }
+
+    public void setMaxHp(float maxHp) {
+        this.maxHp = maxHp;
+    }
+
     public long getLastAttackTime() {
         return lastAttackTime;
     }
 
     public void updateLastAttackTime() {
         this.lastAttackTime = System.nanoTime();
+    }
+
+    public boolean isAlive() {
+        return isAlive;
+    }
+
+    public void setAlive(boolean alive) {
+        isAlive = alive;
     }
 }

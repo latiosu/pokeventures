@@ -14,8 +14,8 @@ public class UserList implements List<PlayerOnline> {
     private PlayerOnline mainPlayer;
 
     public UserList() {
-        map = new ConcurrentHashMap<Long, PlayerOnline>();
-        list = new CopyOnWriteArrayList<PlayerOnline>(); /* <-- Works well for small array lists */
+        map = new ConcurrentHashMap<>();
+        list = new CopyOnWriteArrayList<>(); /* <-- Works well for small array lists */
     }
 
     public PlayerOnline getMainPlayer() {
@@ -29,6 +29,7 @@ public class UserList implements List<PlayerOnline> {
         mainPlayer = p;
     }
 
+    @SuppressWarnings("SuspiciousMethodCalls")
     @Override
     public PlayerOnline remove(int i) {
         return map.remove(list.remove(i));

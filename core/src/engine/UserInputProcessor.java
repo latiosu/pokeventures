@@ -65,6 +65,13 @@ public class UserInputProcessor implements InputProcessor {
             core.getUI().showChat(true);
         }
 
+        // Debug commands
+        if (Config.DEBUG) {
+            if (keycode == Input.Keys.P) {
+                core.getPlayers().getMainPlayer().setAlive(false);
+            }
+        }
+
         return false;
     }
 

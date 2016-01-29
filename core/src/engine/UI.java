@@ -125,6 +125,32 @@ public class UI {
         stage.setKeyboardFocus(field);
     }
 
+    public void triggerRespawnScreen() {
+        // Dim background
+        setupBG = new Image(AssetManager.setupBG);
+        setupBG.setName("setup-bg");
+        stage.addActor(setupBG);
+
+        int count = 5;
+        // Show countdown timer to respawn
+        Label countDown = new Label(Integer.toString(count), skin, "default");
+        countDown.setFontScale(5, 5);
+        countDown.setName("countdown");
+        countDown.setPosition(Config.VIEWPORT_WIDTH - (2 * countDown.getWidth()), Config.VIEWPORT_HEIGHT * (5f / 4f));
+        stage.addActor(countDown);
+
+        long delta = 0;
+        long lastTime = System.nanoTime();
+//        while (count > 0) {
+//            if (delta >= 1e9) {
+//                count -= 1;
+//                countDown.setText(Integer.toString(count));
+//            }
+//            delta += System.nanoTime() - lastTime;
+//            lastTime = System.nanoTime();
+//        }
+    }
+
     public ChatClient getChatClient() {
         return cc;
     }
@@ -134,7 +160,7 @@ public class UI {
     }
 
     private String sanitizeText(String input) {
-        String regex = "[^a-z' ']+";
+        String regex = "[^a-z ]+";
         return input.toLowerCase().replaceAll(regex, "");
     }
 

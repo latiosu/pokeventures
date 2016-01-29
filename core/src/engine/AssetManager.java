@@ -39,6 +39,9 @@ public class AssetManager {
             case ATK_RANGED:
                 animName += "ranged";
                 break;
+            case FAINTED:
+                animName += "fainted";
+                break;
         }
         switch (direction) {
             case DOWN:
@@ -86,7 +89,7 @@ public class AssetManager {
     private Map<String, Animation> generate(TextureAtlas atlas) {
         Map<String, Animation> map = new HashMap<>();
 
-        String[] states = {"idle", "walk", "ranged"};
+        String[] states = {"idle", "walk", "ranged", "fainted"};
         String[] dirs = {"-down", "-left", "-up", "-right"};
         String[] attacks = {"", "-attack"};
         for (String s : states) {

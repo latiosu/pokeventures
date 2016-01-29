@@ -29,7 +29,7 @@ public class PlayerAnimation {
 
     public TextureRegion getFrame(float delta) {
         currentDelta += delta;
-        if(currentAnim.isAnimationFinished(currentDelta)) {
+        if (currentAnim.isAnimationFinished(currentDelta)) {
             currentDelta -= currentAnim.getAnimationDuration();
         }
         return currentAnim.getKeyFrame(currentDelta);

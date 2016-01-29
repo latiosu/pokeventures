@@ -73,7 +73,7 @@ public class ClientThread extends BasicThread {
     }
 
     private void handleMove(Packet02Move pk) {
-        core.updatePlayer(pk.getUID(), pk.getUsername(), pk.getX(), pk.getY(),
+        core.handlePlayerPacket(pk.getUID(), pk.getUsername(), pk.getX(), pk.getY(),
                 pk.getState(), pk.getDir(), pk.getType());
     }
 
@@ -85,7 +85,7 @@ public class ClientThread extends BasicThread {
     }
 
     private void handleAttack(Packet04Attack pk) {
-        core.updateAttack(pk.getId(), pk.getUid(), pk.getPtype(), pk.getDir(), pk.getX(), pk.getY(), pk.isAlive());
+        core.handleAttackPacket(pk.getId(), pk.getUid(), pk.getDir(), pk.getX(), pk.getY(), pk.isAlive());
     }
 
     /**

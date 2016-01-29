@@ -1,6 +1,7 @@
 package objects;
 
 public enum State {
+    FAINTED(-1),
     IDLE(0),
     WALK(1),
     ATK_RANGED(3);
@@ -13,6 +14,8 @@ public enum State {
 
     public static State getState(int i) {
         switch (i) {
+            case -1:
+                return FAINTED;
             case 0:
                 return IDLE;
             case 1:

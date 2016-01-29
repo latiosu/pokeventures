@@ -85,7 +85,7 @@ public class Core extends Game {
     @Override
     public void dispose() {
         // Send disconnect packet to server
-        closeNetworking();
+        new Packet01Disconnect(getPlayers().getMainPlayer().getUID()).writeDataFrom(client);
         batch.dispose();
         tex.dispose();
         ui.dispose();
@@ -99,10 +99,9 @@ public class Core extends Game {
         // Update logic 15 times per second
         if (delta > Config.UPDATE_RATE) {
             if (playMode) {
-                Player mp = getPlayers().getMainPlayer();
-                updateMainPlayer(mp);
-                updateAttackList(mp);
-                updateCamera(mp);
+                updateMainPlayer();
+                updateAttackList();
+                updateCamera();
             }
             delta -= Config.UPDATE_RATE;
         }
@@ -119,8 +118,6 @@ public class Core extends Game {
             }
         }
         batch.end();
-
-        ui.render();
 
         // DEBUG STUFF
         if (Config.DEBUG) {
@@ -159,6 +156,9 @@ public class Core extends Game {
             }
         }
 
+        // Render UI on top of everything else
+        ui.render();
+
         delta += Gdx.graphics.getDeltaTime();
     }
 
@@ -188,8 +188,8 @@ public class Core extends Game {
     }
 
     /* Update values and animation frame */
-    public void updatePlayer(long uid, String username, float x, float y, State state,
-                             Direction dir, PlayerType type) {
+    public void handlePlayerPacket(long uid, String username, float x, float y, State state,
+                                   Direction dir, PlayerType type) {
         Player p = getPlayers().get(uid);
         if (p != null) {
             p.setX(x);
@@ -203,24 +203,24 @@ public class Core extends Game {
         }
     }
 
-    public void updateAttack(long id, long uid, PlayerType ptype, Direction dir, float x, float y, boolean isAlive) {
+    public void handleAttackPacket(long id, long uid, Direction dir, float x, float y, boolean isAlive) {
         Attack atk = getAttacks().get(id);
         if (atk != null) {
-            if (!atk.isAlive()) { // Remove if not alive
+            // Update attack if registered
+            if (!atk.isAlive() || !isAlive) { // Remove if not alive
                 getAttacks().remove(id);
-            } else {
-                atk.setDirection(dir);
-                atk.setX(x);
-                atk.setY(y);
-                atk.setAlive(isAlive);
             }
+            // Else do nothing
         } else {
-            atk = new Attack(id, getPlayers().get(uid));
+            // Store attack if not registered
+            atk = new Attack(id, getPlayers().get(uid), dir, x, y);
             attacks.add(id, atk);
         }
     }
 
-    private void updateCamera(Player mp) {
+    private void updateCamera() {
+        Player mp = getPlayers().getMainPlayer();
+
         cam.position.x = mp.getX();
         cam.position.y = mp.getY();
         cam.update();
@@ -241,7 +241,25 @@ public class Core extends Game {
         cam.update();
     }
 
-    private void updateMainPlayer(Player mp) {
+    private void updateMainPlayer() {
+        Player mp = getPlayers().getMainPlayer();
+
+        // Trigger fainting and respawn
+        if (!mp.isAlive()) {
+            if (mp.getState() != State.FAINTED) {
+                mp.setState(State.FAINTED);
+                Packet02Move pk = new Packet02Move(mp.getUID(), mp.getUsername(),
+                        mp.getX(), mp.getY(), mp.getState().getNum(),
+                        mp.getDirection().getNum(), mp.getType().getNum());
+                pk.writeDataFrom(getClientThread());
+
+                ui.triggerRespawnScreen();
+            }
+
+            // Ignore player input
+            return;
+        }
+
         // Input logic
         boolean[] arrows = UserInputProcessor.directionKeys;
         boolean[] attacks = UserInputProcessor.attackKeys;
@@ -260,6 +278,10 @@ public class Core extends Game {
                 Attack atk = new Attack(mp);
                 getAttacks().add(atk.getId(), atk);
                 mp.updateLastAttackTime();
+                Packet04Attack pk = new Packet04Attack(atk.getId(),  atk.getOwner().getUID(),
+                        atk.getOwner().getType().getNum(), atk.getDirection().getNum(),
+                        atk.getX(), atk.getY(), atk.isAliveNum());
+                pk.writeDataFrom(client);
             }
         }
         if (mp.getState() == State.WALK) {
@@ -313,16 +335,19 @@ public class Core extends Game {
 
     /**
      * Each client checks for collisions with their own character and all existing projectiles.
-     * Note: *Need to optimize with quadtree*
+     * Note: *May need to optimize with quadtree*
      */
-    private void updateAttackList(Player mp) {
+    private void updateAttackList() {
+        Player mp = getPlayers().getMainPlayer();
         ArrayList<Attack> toRemove = new ArrayList<>();
+
         // Perform update
         for (Attack atk : getAttacks()) {
             if (atk.update(mp)) {
                 // Send a packet if collision is detected
-                Packet04Attack pk = new Packet04Attack(atk.getId(),  atk.getUid(), atk.getPtype().getNum(),
-                        atk.getDirection().getNum(), atk.getX(), atk.getY(), atk.isAliveNum());
+                Packet04Attack pk = new Packet04Attack(atk.getId(),  atk.getOwner().getUID(),
+                        atk.getOwner().getType().getNum(), atk.getDirection().getNum(),
+                        atk.getX(), atk.getY(), atk.isAliveNum());
                 pk.writeDataFrom(client);
             }
 
@@ -336,14 +361,6 @@ public class Core extends Game {
         for (Attack a : toRemove) {
             getAttacks().remove(a.getId());
         }
-    }
-
-    /**
-     * Attempts to send a packet to server indicating the
-     * client wants to disconnect.
-     */
-    private void closeNetworking() {
-        new Packet01Disconnect(getPlayers().getMainPlayer().getUID()).writeDataFrom(client);
     }
 
     /**
