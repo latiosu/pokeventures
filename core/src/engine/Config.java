@@ -60,4 +60,7 @@ public class Config {
     public static final double MAX_BULBASAUR_ASPD = 3;
     public static final double MAX_SQUIRTLE_ASPD = 3;
 
+    // Debug Stuff
+    public static final int DEBUG_LOG_RATE = 3; // Rate of which stats are logged to console (seconds)
+
 }

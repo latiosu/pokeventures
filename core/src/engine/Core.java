@@ -20,14 +20,22 @@ import networking.threads.ServerThread;
 import objects.*;
 import objects.Tiles.Tile;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 
 public class Core extends Game {
 
     // Engine variables/constants
-    private static float delta = 0;
+    private float delta = 0;
+    private float debugDelta = 0;
+    private int frames = 0;
+    private long bootTime = System.nanoTime();
 
     public boolean playMode = false;
     public boolean isHost = false;
@@ -56,7 +64,7 @@ public class Core extends Game {
         // Object-related
         players = new UserList();
         attacks = new AttackList();
-        eventQueue = new ArrayList<>();
+        eventQueue = new CopyOnWriteArrayList<>();
 
         // Engine
         new AssetManager();
@@ -159,17 +167,32 @@ public class Core extends Game {
                 }
 
                 sr.end(); // END DEBUG RENDERING
+
+                // Debug Printing
+                if (debugDelta >= Config.DEBUG_LOG_RATE) {
+                    long currentTime = System.nanoTime() - bootTime;
+                    String timeString = String.format("%02d:%02d:%02d",
+                            TimeUnit.NANOSECONDS.toHours(currentTime),
+                            TimeUnit.NANOSECONDS.toMinutes(currentTime),
+                            TimeUnit.NANOSECONDS.toSeconds(currentTime));
+                    System.out.printf("[%s] DEBUG: FPS=%d - Events=%d - Attacks=%d - Users=%d\n",
+                            timeString, frames/3, eventQueue.size(), attacks.size(), players.size());
+                    debugDelta -= Config.DEBUG_LOG_RATE;
+                    frames = 0;
+                }
+                debugDelta += Gdx.graphics.getDeltaTime();
             }
         }
 
         // Render UI on top of everything else
         ui.render();
 
+        frames += 1;
         delta += Gdx.graphics.getDeltaTime();
     }
 
     private void processEvents(float delta) {
-        List<Event> finished = new ArrayList<>();
+        List<Event> finished = new CopyOnWriteArrayList<>();
         // Update queued events first
         for (Event e : eventQueue) {
             // Finished events
@@ -418,5 +441,9 @@ public class Core extends Game {
 
     public synchronized AttackList getAttacks() {
         return this.attacks;
+    }
+
+    public void addEvent(Event e) {
+        eventQueue.add(e);
     }
 }

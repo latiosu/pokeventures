@@ -7,7 +7,11 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import engine.structs.Event;
+import engine.structs.Number;
 import networking.ChatClient;
+import objects.Direction;
+import objects.Player;
 
 public class UI {
 
@@ -131,24 +135,44 @@ public class UI {
         setupBG.setName("setup-bg");
         stage.addActor(setupBG);
 
-        int count = 5;
+        Number count = new Number(5);
         // Show countdown timer to respawn
-        Label countDown = new Label(Integer.toString(count), skin, "default");
+        Label countDown = new Label(count.toString(), skin, "default");
+        countDown.setAlignment(Align.center);
         countDown.setFontScale(5, 5);
         countDown.setName("countdown");
-        countDown.setPosition(Config.VIEWPORT_WIDTH - (2 * countDown.getWidth()), Config.VIEWPORT_HEIGHT * (5f / 4f));
+        countDown.setPosition(Config.VIEWPORT_WIDTH - (countDown.getWidth()), Config.VIEWPORT_HEIGHT * (5f / 4f));
         stage.addActor(countDown);
 
-        long delta = 0;
-        long lastTime = System.nanoTime();
-//        while (count > 0) {
-//            if (delta >= 1e9) {
-//                count -= 1;
-//                countDown.setText(Integer.toString(count));
-//            }
-//            delta += System.nanoTime() - lastTime;
-//            lastTime = System.nanoTime();
-//        }
+        core.addEvent(new Event(5, task -> {
+            count.add(-1);
+            countDown.setText(count.toString());
+            if (count.getValue() == 0) {
+                countDown.setText("Press SPACE to revive!");
+                core.addEvent(new Event(confirm -> {
+                    if (UserInputProcessor.attackKeys[1]) {
+                        // Clear overlay
+                        countDown.remove();
+                        setupBG.remove();
+
+                        // Trigger respawn
+                        Player mp = core.getPlayers().getMainPlayer();
+                        mp.setHp(mp.getMaxHp());
+                        mp.setX(Config.SPAWN_X);
+                        mp.setY(Config.SPAWN_Y);
+                        mp.setAlive(true);
+                        mp.setDirection(Direction.DOWN);
+
+                        // Ignore initial attack
+                        UserInputProcessor.attackKeys[1] = false;
+                        return true;
+                    }
+                    return false;
+                }));
+                return true;
+            }
+            return false;
+        }));
     }
 
     public ChatClient getChatClient() {
