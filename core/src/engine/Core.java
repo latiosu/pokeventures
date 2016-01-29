@@ -11,15 +11,17 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import engine.structs.AttackList;
+import engine.structs.Event;
 import engine.structs.Message;
 import engine.structs.UserList;
+import networking.packets.*;
 import networking.threads.ClientThread;
 import networking.threads.ServerThread;
-import networking.packets.*;
 import objects.*;
 import objects.Tiles.Tile;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class Core extends Game {
@@ -33,6 +35,7 @@ public class Core extends Game {
     // Object classes
     private UserList players;
     private AttackList attacks;
+    private List<Event> eventQueue;
 
     // Rendering classes
     private OrthographicCamera cam;
@@ -53,6 +56,7 @@ public class Core extends Game {
         // Object-related
         players = new UserList();
         attacks = new AttackList();
+        eventQueue = new ArrayList<>();
 
         // Engine
         new AssetManager();
@@ -103,6 +107,7 @@ public class Core extends Game {
                 updateAttackList();
                 updateCamera();
             }
+            processEvents(delta);
             delta -= Config.UPDATE_RATE;
         }
 
@@ -110,8 +115,9 @@ public class Core extends Game {
         batch.begin();
         sprite.draw(batch);
         if (playMode) {
-            for (Player p : players) {
-                p.render(Gdx.graphics.getDeltaTime(), batch);
+            // Reversed loop to render main player last
+            for (int i = players.size() - 1; i >= 0; i--) {
+                players.get(i).render(Gdx.graphics.getDeltaTime(), batch);
             }
             for (Attack a : attacks) {
                 a.render(Gdx.graphics.getDeltaTime(), batch);
@@ -160,6 +166,21 @@ public class Core extends Game {
         ui.render();
 
         delta += Gdx.graphics.getDeltaTime();
+    }
+
+    private void processEvents(float delta) {
+        List<Event> finished = new ArrayList<>();
+        // Update queued events first
+        for (Event e : eventQueue) {
+            // Finished events
+            if (e.update(delta)) {
+                finished.add(e);
+            }
+        }
+        // Clean up finished events
+        for (Event e : finished) {
+            eventQueue.remove(e);
+        }
     }
 
     public void startNetworking(String ip) {
