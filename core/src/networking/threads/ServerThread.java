@@ -7,11 +7,10 @@ import objects.Direction;
 import objects.PlayerOnline;
 import objects.PlayerType;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.io.InputStreamReader;
+import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -153,5 +152,20 @@ public class ServerThread extends BasicThread {
 
     private String getDate(long time) {
         return sdf.format(new Date(time));
+    }
+
+    public String getIpAddress() {
+        String website = "http://checkip.amazonaws.com";
+        try {
+            URL whatIsMyIp = new URL(website);
+            BufferedReader in = new BufferedReader(new InputStreamReader(
+                    whatIsMyIp.openStream()));
+            return in.readLine(); // Website returns HTML of your IP address
+        } catch (MalformedURLException e) {
+            System.err.printf("Are you sure this is a valid web address: %s\n", website);
+        } catch (IOException e) {
+            System.err.println("Couldn't reach the IP checking address properly.");
+        }
+        return null;
     }
 }

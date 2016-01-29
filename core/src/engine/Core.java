@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.sun.corba.se.spi.activation.Server;
 import engine.structs.AttackList;
 import engine.structs.Event;
 import engine.structs.Message;
@@ -173,8 +174,8 @@ public class Core extends Game {
                     long currentTime = System.nanoTime() - bootTime;
                     String timeString = String.format("%02d:%02d:%02d",
                             TimeUnit.NANOSECONDS.toHours(currentTime),
-                            TimeUnit.NANOSECONDS.toMinutes(currentTime),
-                            TimeUnit.NANOSECONDS.toSeconds(currentTime));
+                            TimeUnit.NANOSECONDS.toMinutes(currentTime)%60,
+                            TimeUnit.NANOSECONDS.toSeconds(currentTime)%60);
                     System.out.printf("[%s] DEBUG: FPS=%d - Events=%d - Attacks=%d - Users=%d\n",
                             timeString, frames/3, eventQueue.size(), attacks.size(), players.size());
                     debugDelta -= Config.DEBUG_LOG_RATE;
@@ -429,6 +430,10 @@ public class Core extends Game {
 
     public ClientThread getClientThread() {
         return client;
+    }
+
+    public ServerThread getServerThread() {
+        return server;
     }
 
     public WorldManager getWorldManager() {

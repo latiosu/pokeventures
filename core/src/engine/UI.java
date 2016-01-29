@@ -28,7 +28,6 @@ public class UI {
         skin = AssetManager.skin;
         stage = new Stage(new ScreenViewport());
         runSetup();
-        initLabels();
     }
 
     public void render() {
@@ -43,10 +42,19 @@ public class UI {
     }
 
     private void initLabels() {
+        // Version label
         Label versionNumber = new Label(Config.VERSION, skin, "default");
         versionNumber.setName("version");
         versionNumber.setPosition((Config.VIEWPORT_WIDTH * 2f) - versionNumber.getWidth() - 10, 5);
         stage.addActor(versionNumber);
+
+        // Host IP label (If host)
+        if (core.isHost) {
+            Label ipAddress = new Label("Your IP: " + core.getServerThread().getIpAddress(), skin, "default");
+            ipAddress.setName("ipAddress");
+            ipAddress.setPosition((Config.VIEWPORT_WIDTH * 2f) - ipAddress.getWidth() - 10, 18);
+            stage.addActor(ipAddress);
+        }
     }
 
     /* Contains a start networking call */
@@ -117,6 +125,9 @@ public class UI {
                 setFocus(false);
 
                 setupBG.addAction(Actions.fadeOut(0.4f));
+
+                // Show labels after setup
+                initLabels();
             }
         };
         d2.setMovable(false);
