@@ -27,8 +27,8 @@ public class BasePlayer extends Entity {
                 Direction.DOWN,
                 username,
                 type,
-                Config.PLAYER_HP,
-                Config.PLAYER_HP,
+                Config.PLAYER_MAX_HP,
+                Config.PLAYER_MAX_HP,
                 true);
     }
 

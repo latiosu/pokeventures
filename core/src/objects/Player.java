@@ -104,4 +104,10 @@ public class Player extends BasePlayer {
         return anim;
     }
 
+    /**
+     * Note: Will return false if HP is zero.
+     */
+    public boolean isAlive() {
+        return !(hp <= 0 || !isAlive);
+    }
 }

@@ -90,6 +90,15 @@ public class ClientThread extends BasicThread {
                         ap.getY(),
                         ap.isAlive());
                 break;
+
+            case PLAYER_STATE:
+                PacketPlayerState psp = new PacketPlayerState(data);
+                Player p = (Player) clientCore.getPlayers().get(psp.getUid());
+                p.setHp(psp.getHp());
+                p.setMaxHp(psp.getMaxHp());
+                p.setState(psp.getState());
+                p.setDirection(psp.getDir());
+                p.setType(psp.getType());
         }
     }
 

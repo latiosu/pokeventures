@@ -10,12 +10,12 @@ public class Config {
     public static final boolean USE_EXTERNAL_ANIMS = false;
     public static final boolean PACK_TEXTURES = true;
 
-    public static final String VERSION = "Pre-alpha v0.60: Combat";
+    public static final String VERSION = "Pre-alpha v0.70: Cool battle stuff!";
     public static final PlayerType DEFAULT_TYPE = PlayerType.CHARMANDER;
     public static final String MAP = "overworld.png";
     public static final float SPAWN_X = 865;
     public static final float SPAWN_Y = 550;
-    public static final float PLAYER_HP = 100;
+    public static final float PLAYER_MAX_HP = 100;
 
     // Networking
     public static final int GAME_PORT = 5284; // Default: 5284, Skype: 37425

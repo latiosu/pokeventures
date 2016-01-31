@@ -56,14 +56,25 @@ public class BaseAttack extends GameObject {
     }
 
     /**
-     * Returns true if collision is detected with main player, false otherwise.
+     * Returns true if collision is detected with player, false otherwise.
      */
-    public boolean update(BasePlayer p) {
+    public boolean checkForCollision(BasePlayer p) {
         // Skip update if projectile is not alive
         if (!isAlive()) {
             return false;
+        } else if (p.getBounds().overlaps(this.getBounds()) && p.getUid() != owner.getUid() && p.isAlive()) {
+            // Collision resolution
+            p.updateDamage(this);
+            setAlive(false);
+            return true;
         }
+        return false;
+    }
 
+    /**
+     * Updates attack to it's next position. Will be marked as dead if exceeds maximum range.
+     */
+    public void updatePosition() {
         // Position updates
         switch (direction) {
             case DOWN:
@@ -83,24 +94,7 @@ public class BaseAttack extends GameObject {
         // Kill projectile if out of range
         if (Math.abs(offsetX) > MAX_RANGE || Math.abs(offsetY) > MAX_RANGE) {
             setAlive(false);
-            return false;
-        } else if (p.getBounds().overlaps(this.getBounds()) && p.getUid() != owner.getUid() && p.isAlive()) {
-            // Collision resolution
-            p.updateDamage(this);
-
-            if (Config.DEBUG) {
-                Logger.log(Logger.Level.INFO,
-                        "You (%s) have been hit for %s (%s/%s)\n",
-                        p.getUsername(),
-                        DAMAGE,
-                        p.getHp(),
-                        p.getMaxHp());
-            }
-
-            setAlive(false);
-            return true;
         }
-        return false;
     }
 
     /**
@@ -113,6 +107,7 @@ public class BaseAttack extends GameObject {
     public static boolean canRangedAttack(Player mp) {
         double attackDeltaTime = (System.nanoTime() - mp.getLastAttackTime()) / 1e9;
         switch (mp.getType()) {
+            // TODO: Make ASPD + TRAVEL_RATE local to class and change based on player type
             case CHARMANDER:
                 if (attackDeltaTime > 1.0 / Config.MAX_CHARMANDER_ASPD) {
                     return true;

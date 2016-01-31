@@ -269,7 +269,9 @@ public class ClientCore extends Game {
                         mp.getMaxHp(),
                         mp.getState().getNum(),
                         mp.getDirection().getNum(),
-                        mp.getType().getNum());
+                        mp.getType().getNum(),
+                        mp.isAlive()
+                );
                 client.sendDataToServer(pk);
 
                 ui.triggerRespawnScreen();
@@ -360,7 +362,9 @@ public class ClientCore extends Game {
                 mp.getMaxHp(),
                 mp.getState().getNum(),
                 mp.getDirection().getNum(),
-                mp.getType().getNum());
+                mp.getType().getNum(),
+                mp.isAlive()
+        );
         client.sendDataToServer(pk);
     }
 
@@ -389,8 +393,12 @@ public class ClientCore extends Game {
             // Update attack if registered
             if (!atk.isAlive() || !isAlive) { // Remove if not alive
                 getAttacks().remove(id);
+            } else {
+                atk.setX(x);
+                atk.setY(y);
+                atk.setDirection(dir);
+                atk.setAlive(isAlive);
             }
-            // Else do nothing
         } else {
             // Store attack if not registered
             atk = new Attack(id, (Player) getPlayers().get(uid), dir, x, y);

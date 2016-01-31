@@ -6,7 +6,9 @@ import engine.structs.AttackList;
 import engine.structs.Event;
 import engine.structs.Message;
 import engine.structs.UserList;
+import networking.packets.PacketAttack;
 import networking.packets.PacketChat;
+import networking.packets.PacketPlayerState;
 import server.ServerThread;
 import objects.BaseAttack;
 import objects.BasePlayer;
@@ -59,11 +61,11 @@ public class ServerCore extends Thread {
     public void run() {
         while (isRunning) {
             long start = System.nanoTime();
-            if (TimeUnit.NANOSECONDS.toSeconds(delta) > Config.UPDATE_RATE) {
+            if (TimeUnit.NANOSECONDS.toSeconds(delta) > 1/30f) {
                 checkConnections(); // Remove AFK players before updating game state
                 updateAttacks();
                 updateEvents(delta);
-                delta -= TimeUnit.SECONDS.toNanos(1) * Config.UPDATE_RATE;
+                delta -= TimeUnit.SECONDS.toNanos(1) * (1/30f);
             }
             delta += System.nanoTime() - start;
         }
@@ -95,22 +97,42 @@ public class ServerCore extends Thread {
      * Note: *May need to optimize with quadtree*
      */
     private void updateAttacks() {
-//        Player mp = getPlayers().getMainPlayer();
         ArrayList<BaseAttack> toRemove = new ArrayList<>();
 
-        // TODO: Optimize attack collision detection
+        // TODO: Optimize attack collision detection (Currently O(nm) runtime)
         for (BaseAttack atk : getAttacks()) {
-//            if (atk.update(mp)) {
-//                // Send a packet if collision is detected
-//                Packet04Attack pk = new Packet04Attack(atk.getId(),
-//                        atk.getOwner().getUid(),
-//                        atk.getOwner().getType().getNum(),
-//                        atk.getDirection().getNum(),
-//                        atk.getX(),
-//                        atk.getY(),
-//                        atk.isAliveNum());
-//                server.sendDataToAllClients(pk);
-//            }
+            // Update position first
+            atk.updatePosition();
+            // Check for collisions with ALL PLAYERS
+            for (BasePlayer p : getPlayers()) {
+                if (atk.checkForCollision(p)) {
+                    // Send update player state TO ALL PLAYERS
+                    server.sendDataToAllClients(new PacketPlayerState(p.getUid(),
+                            p.getUsername(),
+                            p.getHp(),
+                            p.getMaxHp(),
+                            p.getState().getNum(),
+                            p.getDirection().getNum(),
+                            p.getType().getNum())
+                    );
+                    Logger.log(Logger.Level.INFO,
+                            "%s was hit for %s damage (%s/%s)\n",
+                            p.getUsername(),
+                            atk.getDamage(),
+                            p.getHp(),
+                            p.getMaxHp());
+                }
+            }
+
+            // Send updated attack state
+            server.sendDataToAllClients(new PacketAttack(atk.getId(),
+                    atk.getOwner().getUid(),
+                    atk.getOwner().getType().getNum(),
+                    atk.getDirection().getNum(),
+                    atk.getPosX(),
+                    atk.getPosY(),
+                    atk.isAliveNum())
+            );
 
             // Clean-up check
             if (!atk.isAlive()) {

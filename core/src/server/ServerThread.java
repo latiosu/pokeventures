@@ -5,6 +5,7 @@ import engine.Logger;
 import engine.structs.Message;
 import networking.BasicThread;
 import networking.packets.*;
+import objects.BaseAttack;
 import objects.BasePlayer;
 import objects.structs.PlayerType;
 
@@ -149,6 +150,8 @@ public class ServerThread extends BasicThread {
                     newPlayer.setDirection(mp.getDir());
                     newPlayer.setState(mp.getState());
                     newPlayer.setType(mp.getType());
+                    newPlayer.setAlive(mp.isAlive());
+
                     PacketMove newPacket = new PacketMove(newPlayer.getUid(),
                             newPlayer.getUsername(),
                             newPlayer.getX(),
@@ -157,7 +160,8 @@ public class ServerThread extends BasicThread {
                             newPlayer.getMaxHp(),
                             newPlayer.getState().getNum(),
                             newPlayer.getDirection().getNum(),
-                            newPlayer.getType().getNum()
+                            newPlayer.getType().getNum(),
+                            newPlayer.isAlive()
                     );
                     sendDataToAllClients(newPacket); // Notify all users of new POSITION DATA
                 }
@@ -175,6 +179,22 @@ public class ServerThread extends BasicThread {
 
             case ATTACK:
                 PacketAttack ap = new PacketAttack(data);
+                BaseAttack atk;
+                if (core.getAttacks().contains(ap.getId())) { // Then update
+                    atk = core.getAttacks().get(ap.getId());
+                    atk.setX(ap.getX());
+                    atk.setY(ap.getY());
+                    atk.setAlive(ap.isAlive());
+                    atk.setDirection(ap.getDir());
+                } else {
+                    atk = new BaseAttack(ap.getId(),
+                            core.getPlayers().get(ap.getUid()),
+                            ap.getDir(),
+                            ap.getX(),
+                            ap.getY()
+                    );
+                }
+                core.getAttacks().add(ap.getId(), atk);
                 sendDataToAllClients(ap);
                 break;
         }

@@ -12,6 +12,7 @@ import engine.structs.Number;
 import networking.ChatClient;
 import objects.structs.Direction;
 import objects.Player;
+import objects.structs.State;
 
 public class UI {
 
@@ -114,7 +115,7 @@ public class UI {
         Dialog d2 = new Dialog("", skin, "dialog") {
             protected void result(Object object) {
                 setText(field.getText());
-                initChat(); // Instantiate Chat client
+                cc = new ChatClient(clientCore); // Instantiate Chat client
                 clientCore.initMainPlayer(sanitizeText(text)); // Define main player for client
                 setFocus(false);
 
@@ -168,6 +169,7 @@ public class UI {
                         mp.setY(Config.SPAWN_Y);
                         mp.setAlive(true);
                         mp.setDirection(Direction.DOWN);
+                        mp.setState(State.IDLE);
 
                         // Ignore initial attack
                         UserInputProcessor.attackKeys[1] = false;
@@ -183,11 +185,6 @@ public class UI {
 
     public ChatClient getChatClient() {
         return cc;
-    }
-
-    private void initChat() {
-        cc = new ChatClient(clientCore); // Instantiate Chat client
-        System.out.printf("CHAT CLIENT INITIALIZED: %s\n", cc); // TODO: Remove
     }
 
     private String sanitizeText(String input) {

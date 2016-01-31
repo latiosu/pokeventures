@@ -43,7 +43,8 @@ public abstract class Packet {
         DISCONNECT(2),
         MOVE(3),
         ATTACK(4),
-        CHAT(5);
+        PLAYER_STATE(5),
+        CHAT(6);
 
         private int packetId;
 
