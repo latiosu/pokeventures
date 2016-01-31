@@ -1,8 +1,10 @@
 package networking.packets;
 
+import engine.Logger;
 
 public abstract class Packet {
 
+    protected String DL = "`";
     public byte packetId;
 
     public Packet(int packetId) {
@@ -13,7 +15,7 @@ public abstract class Packet {
         try {
             return lookupPacket(Integer.parseInt(packetId));
         } catch (NumberFormatException e) {
-            System.err.println("Error: Invalid packet type request.");
+            Logger.log(Logger.Level.ERROR, "Invalid packet type request\n");
             return PacketType.INVALID;
         }
     }
@@ -27,8 +29,6 @@ public abstract class Packet {
         return PacketType.INVALID;
     }
 
-    public abstract void writeDataFrom(Thread thread);
-
     public abstract byte[] getData();
 
     public String readData(byte[] data) {
@@ -36,22 +36,27 @@ public abstract class Packet {
         return message.substring(2).trim(); // excludes packet id
     }
 
-    public static enum PacketType {
+    public enum PacketType {
         INVALID(-1),
-        LOGIN(0),
-        DISCONNECT(1),
-        MOVE(2),
-        CHAT(3),
-        ATTACK(4);
+        CLIENT_LOGIN(0),
+        SERVER_LOGIN(1),
+        DISCONNECT(2),
+        MOVE(3),
+        ATTACK(4),
+        CHAT(5);
 
         private int packetId;
 
-        private PacketType(int packetId) {
+        PacketType(int packetId) {
             this.packetId = packetId;
         }
 
         public int getId() {
             return packetId;
+        }
+
+        public String getIdString() {
+            return "0" + packetId;
         }
     }
 }

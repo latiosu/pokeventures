@@ -1,17 +1,17 @@
 package objects.Tiles;
 
+import engine.Logger;
 import objects.Player;
 
 public class WalkableTile extends Tile {
-
+    /**
+     * Ignores collisions.
+     */
     public WalkableTile(float x, float y) {
         super(x, y);
     }
 
     @Override
-    /**
-     * Ignores collisions.
-     */
     public void handleCollision(Player mp) {
         switch (mp.getDirection()) {
             case DOWN:
@@ -23,7 +23,9 @@ public class WalkableTile extends Tile {
                 mp.getY();
                 break;
             default:
-                System.err.printf("Error: Invalid direction");
+                Logger.log(Logger.Level.ERROR,
+                        "Invalid direction (%s)\n",
+                        mp.getDirection());
                 break;
         }
     }

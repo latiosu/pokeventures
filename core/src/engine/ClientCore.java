@@ -10,27 +10,29 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.sun.corba.se.spi.activation.Server;
 import engine.structs.AttackList;
 import engine.structs.Event;
 import engine.structs.Message;
 import engine.structs.UserList;
-import networking.packets.*;
-import networking.threads.ClientThread;
-import networking.threads.ServerThread;
-import objects.*;
+import networking.packets.PacketAttack;
+import networking.packets.PacketDisconnect;
+import networking.packets.PacketMove;
+import networking.packets.PacketServerLogin;
+import networking.ClientThread;
+import objects.Attack;
+import objects.BaseAttack;
+import objects.Player;
 import objects.Tiles.Tile;
+import objects.structs.Direction;
+import objects.structs.PlayerType;
+import objects.structs.State;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 
-public class Core extends Game {
+public class ClientCore extends Game {
 
     // Engine variables/constants
     private float delta = 0;
@@ -42,9 +44,9 @@ public class Core extends Game {
     public boolean isHost = false;
 
     // Object classes
-    private UserList players;
-    private AttackList attacks;
-    private List<Event> eventQueue;
+    protected UserList players;
+    protected AttackList attacks;
+    protected List<Event> events;
 
     // Rendering classes
     private OrthographicCamera cam;
@@ -57,7 +59,6 @@ public class Core extends Game {
     private UI ui;
 
     // Networking classes
-    private ServerThread server;
     private ClientThread client;
 
     @Override
@@ -65,7 +66,7 @@ public class Core extends Game {
         // Object-related
         players = new UserList();
         attacks = new AttackList();
-        eventQueue = new CopyOnWriteArrayList<>();
+        events = new CopyOnWriteArrayList<>();
 
         // Engine
         new AssetManager();
@@ -98,10 +99,11 @@ public class Core extends Game {
     @Override
     public void dispose() {
         // Send disconnect packet to server
-        new Packet01Disconnect(getPlayers().getMainPlayer().getUID()).writeDataFrom(client);
+        client.sendDataToServer(new PacketDisconnect(getPlayers().getMainPlayer().getUid()));
         batch.dispose();
         tex.dispose();
         ui.dispose();
+        Logger.log(Logger.Level.INFO, "----- Client thread has shutdown -----\n");
     }
 
     @Override
@@ -109,37 +111,39 @@ public class Core extends Game {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-        // Update logic 15 times per second
+        // Game heartbeat
         if (delta > Config.UPDATE_RATE) {
             if (playMode) {
                 updateMainPlayer();
-                updateAttackList();
                 updateCamera();
             }
-            processEvents(delta);
+            updateEvents(delta);
             delta -= Config.UPDATE_RATE;
         }
 
+        // Render game world
         batch.setProjectionMatrix(cam.combined);
         batch.begin();
         sprite.draw(batch);
         if (playMode) {
             // Reversed loop to render main player last
             for (int i = players.size() - 1; i >= 0; i--) {
-                players.get(i).render(Gdx.graphics.getDeltaTime(), batch);
+                // Render Player sprites
+                Player p = (Player) players.get(i);
+                p.render(Gdx.graphics.getDeltaTime(), batch);
             }
-            for (Attack a : attacks) {
-                a.render(Gdx.graphics.getDeltaTime(), batch);
+            for (BaseAttack a : attacks) {
+                ((Attack)a).render(Gdx.graphics.getDeltaTime(), batch);
             }
         }
         batch.end();
 
-        // DEBUG STUFF
+        // Debug stuff
         if (Config.DEBUG) {
             if (playMode) {
                 Gdx.gl.glEnable(GL20.GL_BLEND);
                 Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-                PlayerOnline mp = players.getMainPlayer();
+                Player mp = players.getMainPlayer();
                 ShapeRenderer sr = new ShapeRenderer();
                 sr.setAutoShapeType(true);
                 sr.setProjectionMatrix(cam.combined);
@@ -163,7 +167,7 @@ public class Core extends Game {
 
                 // Render projectile outline as red
                 sr.setColor(1f, 0f, 0f, 0.3f);
-                for (Attack atk : attacks) {
+                for (BaseAttack atk : attacks) {
                     sr.rect(atk.getPosX(), atk.getPosY(), Config.TILE_SIZE, Config.TILE_SIZE);
                 }
 
@@ -176,8 +180,13 @@ public class Core extends Game {
                             TimeUnit.NANOSECONDS.toHours(currentTime),
                             TimeUnit.NANOSECONDS.toMinutes(currentTime)%60,
                             TimeUnit.NANOSECONDS.toSeconds(currentTime)%60);
-                    System.out.printf("[%s] DEBUG: FPS=%d - Events=%d - Attacks=%d - Users=%d\n",
-                            timeString, frames/3, eventQueue.size(), attacks.size(), players.size());
+                    Logger.log(Logger.Level.INFO,
+                            "FPS=%d - Events=%d - Attacks=%d - Users=%d (%s)\n",
+                            frames/3,
+                            events.size(),
+                            attacks.size(),
+                            players.size(),
+                            timeString);
                     debugDelta -= Config.DEBUG_LOG_RATE;
                     frames = 0;
                 }
@@ -192,10 +201,10 @@ public class Core extends Game {
         delta += Gdx.graphics.getDeltaTime();
     }
 
-    private void processEvents(float delta) {
+    private void updateEvents(float delta) {
         List<Event> finished = new CopyOnWriteArrayList<>();
         // Update queued events first
-        for (Event e : eventQueue) {
+        for (Event e : events) {
             // Finished events
             if (e.update(delta)) {
                 finished.add(e);
@@ -203,64 +212,23 @@ public class Core extends Game {
         }
         // Clean up finished events
         for (Event e : finished) {
-            eventQueue.remove(e);
+            events.remove(e);
         }
     }
 
     public void startNetworking(String ip) {
-        if (isHost) {
-            System.out.println("Running as server.");
-            server = new ServerThread();
-            server.start();
-        }
-        System.out.println("Running as client.");
+        Logger.log(Logger.Level.INFO, "----- Client thread started -----\n");
         client = new ClientThread(this, ip);
         client.start();
     }
 
     public void initMainPlayer(String username) {
-        PlayerOnline p = new PlayerOnline(username);
+        Player p = new Player(Config.DEFAULT_TYPE, username); // <----- NOTE DEFAULT TYPE USED HERE
         players.setMainPlayer(p);
-        players.add(p.getUID(), p);
-        Packet00Login loginPacket = new Packet00Login(p.getUID(), p.getUsername(),
-                p.getX(), p.getY(), p.getDirection().getNum(), p.getType().getNum());
-        if (server != null) {
-            server.addConnection(p, loginPacket);
-        }
-        // Send packet to server to sync main player
-        loginPacket.writeDataFrom(client);
+        players.add(p.getUid(), p);
+        PacketServerLogin pk = new PacketServerLogin(p.getUid(), p.getUsername(), p.getType().getNum());
+        client.sendDataToServer(pk); // Send packet to server to sync main player
         playMode = true;
-    }
-
-    /* Update values and animation frame */
-    public void handlePlayerPacket(long uid, String username, float x, float y, State state,
-                                   Direction dir, PlayerType type) {
-        Player p = getPlayers().get(uid);
-        if (p != null) {
-            p.setX(x);
-            p.setY(y);
-            p.setState(state);
-            p.setDirection(dir);
-            p.setType(type);
-            p.getAnim().updateAnim();
-        } else {
-            System.err.println("Error: User not found - " + username);
-        }
-    }
-
-    public void handleAttackPacket(long id, long uid, Direction dir, float x, float y, boolean isAlive) {
-        Attack atk = getAttacks().get(id);
-        if (atk != null) {
-            // Update attack if registered
-            if (!atk.isAlive() || !isAlive) { // Remove if not alive
-                getAttacks().remove(id);
-            }
-            // Else do nothing
-        } else {
-            // Store attack if not registered
-            atk = new Attack(id, getPlayers().get(uid), dir, x, y);
-            attacks.add(id, atk);
-        }
     }
 
     private void updateCamera() {
@@ -293,10 +261,16 @@ public class Core extends Game {
         if (!mp.isAlive()) {
             if (mp.getState() != State.FAINTED) {
                 mp.setState(State.FAINTED);
-                Packet02Move pk = new Packet02Move(mp.getUID(), mp.getUsername(),
-                        mp.getX(), mp.getY(), mp.getState().getNum(),
-                        mp.getDirection().getNum(), mp.getType().getNum());
-                pk.writeDataFrom(getClientThread());
+                PacketMove pk = new PacketMove(mp.getUid(),
+                        mp.getUsername(),
+                        mp.getX(),
+                        mp.getY(),
+                        mp.getHp(),
+                        mp.getMaxHp(),
+                        mp.getState().getNum(),
+                        mp.getDirection().getNum(),
+                        mp.getType().getNum());
+                client.sendDataToServer(pk);
 
                 ui.triggerRespawnScreen();
             }
@@ -323,12 +297,17 @@ public class Core extends Game {
                 Attack atk = new Attack(mp);
                 getAttacks().add(atk.getId(), atk);
                 mp.updateLastAttackTime();
-                Packet04Attack pk = new Packet04Attack(atk.getId(),  atk.getOwner().getUID(),
-                        atk.getOwner().getType().getNum(), atk.getDirection().getNum(),
-                        atk.getX(), atk.getY(), atk.isAliveNum());
-                pk.writeDataFrom(client);
+                PacketAttack pk = new PacketAttack(atk.getId(),
+                        atk.getOwner().getUid(),
+                        atk.getOwner().getType().getNum(),
+                        atk.getDirection().getNum(),
+                        atk.getX(),
+                        atk.getY(),
+                        atk.isAliveNum());
+                client.sendDataToServer(pk);
             }
         }
+
         if (mp.getState() == State.WALK) {
             // Update movement direction flags only during walk state
             if (arrows[0]) {
@@ -366,58 +345,61 @@ public class Core extends Game {
 
         // Update player animations immediately for responsiveness
         mp.getAnim().updateAnim();
+
         // <----- Play sounds immediately for responsiveness in the future
 
         // Handle collision for main player
         getWorldManager().handleCollision(mp);
 
         // Send movement packet with freshly updated main player data
-        Packet02Move pk = new Packet02Move(mp.getUID(), mp.getUsername(),
-                mp.getX(), mp.getY(), mp.getState().getNum(),
-                mp.getDirection().getNum(), mp.getType().getNum());
-        pk.writeDataFrom(getClientThread());
+        PacketMove pk = new PacketMove(mp.getUid(),
+                mp.getUsername(),
+                mp.getX(),
+                mp.getY(),
+                mp.getHp(),
+                mp.getMaxHp(),
+                mp.getState().getNum(),
+                mp.getDirection().getNum(),
+                mp.getType().getNum());
+        client.sendDataToServer(pk);
     }
 
-    /**
-     * Each client checks for collisions with their own character and all existing projectiles.
-     * Note: *May need to optimize with quadtree*
-     */
-    private void updateAttackList() {
-        Player mp = getPlayers().getMainPlayer();
-        ArrayList<Attack> toRemove = new ArrayList<>();
-
-        // Perform update
-        for (Attack atk : getAttacks()) {
-            if (atk.update(mp)) {
-                // Send a packet if collision is detected
-                Packet04Attack pk = new Packet04Attack(atk.getId(),  atk.getOwner().getUID(),
-                        atk.getOwner().getType().getNum(), atk.getDirection().getNum(),
-                        atk.getX(), atk.getY(), atk.isAliveNum());
-                pk.writeDataFrom(client);
-            }
-
-            // Clean-up check
-            if (!atk.isAlive()) {
-                toRemove.add(atk);
-            }
-        }
-
-        // Perform clean-up
-        for (Attack a : toRemove) {
-            getAttacks().remove(a.getId());
+    public void handlePlayerPacket(long uid, String username, float x, float y, float hp, float maxHp,
+                                            State state, Direction dir, PlayerType type) {
+        Player p = (Player) getPlayers().get(uid);
+        if (p != null) {
+            p.setX(x);
+            p.setY(y);
+            p.setHp(hp);
+            p.setMaxHp(maxHp);
+            p.setState(state);
+            p.setDirection(dir);
+            p.setType(type);
+            p.getAnim().updateAnim();
+        } else {
+            Logger.log(Logger.Level.ERROR,
+                    "User not found - %s\n",
+                    username);
         }
     }
 
-    /**
-     * Attempts to send a packet to server to synchronize
-     * new chat message.
-     */
-    public void registerMsg(Packet03Chat packet) {
-        packet.writeDataFrom(client);
+    public void handleAttackPacket(long id, long uid, Direction dir, float x, float y, boolean isAlive) {
+        Attack atk = (Attack) getAttacks().get(id);
+        if (atk != null) {
+            // Update attack if registered
+            if (!atk.isAlive() || !isAlive) { // Remove if not alive
+                getAttacks().remove(id);
+            }
+            // Else do nothing
+        } else {
+            // Store attack if not registered
+            atk = new Attack(id, (Player) getPlayers().get(uid), dir, x, y);
+            attacks.add(id, atk);
+        }
     }
 
     /**
-     * Stores message inside chat client and updates ui components.
+     * Stores message inside chat client and updates UI components.
      * Note: DOES NOT COMMUNICATE WITH SERVER.
      */
     public void storeMsg(Message msg) {
@@ -432,12 +414,12 @@ public class Core extends Game {
         return client;
     }
 
-    public ServerThread getServerThread() {
-        return server;
-    }
-
     public WorldManager getWorldManager() {
         return world;
+    }
+
+    public void addEvent(Event e) {
+        events.add(e);
     }
 
     public synchronized UserList getPlayers() {
@@ -446,9 +428,5 @@ public class Core extends Game {
 
     public synchronized AttackList getAttacks() {
         return this.attacks;
-    }
-
-    public void addEvent(Event e) {
-        eventQueue.add(e);
     }
 }

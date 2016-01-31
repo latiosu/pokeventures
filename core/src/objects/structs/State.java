@@ -1,4 +1,6 @@
-package objects;
+package objects.structs;
+
+import engine.Logger;
 
 public enum State {
     FAINTED(-1),
@@ -23,7 +25,7 @@ public enum State {
             case 3:
                 return ATK_RANGED;
             default:
-                System.err.println("Error: State not found.");
+                Logger.log(Logger.Level.ERROR, "State not found\n");
                 return null;
         }
     }

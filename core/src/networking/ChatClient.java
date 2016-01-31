@@ -7,18 +7,19 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import engine.Config;
-import engine.Core;
+import engine.ClientCore;
+import engine.Logger;
 import engine.UI;
 import engine.structs.Message;
 import engine.structs.TimeComparator;
-import networking.packets.Packet03Chat;
+import networking.packets.PacketChat;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class ChatClient {
 
-    private Core core;
+    private ClientCore clientCore;
     private UI ui;
     private SimpleDateFormat dateFormat;
     private Queue<Message> messages;
@@ -27,11 +28,12 @@ public class ChatClient {
     private TextField chatField;
     private TextArea chatArea;
     private TextArea chatAreaHL;
-    public ChatClient(Core core) {
-        this.core = core;
-        this.ui = core.getUI();
+
+    public ChatClient(ClientCore clientCore) {
+        this.clientCore = clientCore;
+        this.ui = clientCore.getUI();
         this.dateFormat = new SimpleDateFormat(Config.DATE_FORMAT_CHAT);
-        messages = new PriorityQueue<Message>(Config.MESSAGES_INIT, new TimeComparator());
+        messages = new PriorityQueue<>(Config.MESSAGES_INIT, new TimeComparator());
         buffer = new MessageBuffer();
 
         initUI();
@@ -52,20 +54,17 @@ public class ChatClient {
         chatField.setBounds(x, y, width, height);
         chatField.setVisible(false);
         chatField.setMaxLength(Config.MAX_MSG_LENGTH);
-        chatField.setTextFieldListener(new TextField.TextFieldListener() {
-            @Override
-            public void keyTyped(TextField textField, char c) {
-                String trimmed = textField.getText().trim();
-                switch (c) {
-                    case '\r':
-                        if (trimmed.length() == 0) { // Ignore input
-                            return;
-                        }
-                        // ==== Send message to server here ====
-                        registerMsg(core.getPlayers().getMainPlayer().getUsername(), trimmed);
-                        showChat(false);
-                        break;
-                }
+        chatField.setTextFieldListener((textField, c) -> {
+            String trimmed = textField.getText().trim();
+            switch (c) {
+                case '\r':
+                    if (trimmed.length() == 0) { // Ignore input
+                        return;
+                    }
+                    // ==== Send message to server here ====
+                    registerMsg(clientCore.getPlayers().getMainPlayer().getUsername(), trimmed);
+                    showChat(false);
+                    break;
             }
         });
         ui.getStage().addActor(chatField);
@@ -123,7 +122,7 @@ public class ChatClient {
      * the time of creation.
      */
     public void registerMsg(String username, String msg) {
-        core.registerMsg(new Packet03Chat(new Message(username, msg)));
+        clientCore.getClientThread().sendDataToServer(new PacketChat(new Message(username, msg)));
     }
 
     /**
@@ -135,10 +134,12 @@ public class ChatClient {
             if (messages.add(msg)) {
                 updateChatUI(msg);
             } else {
-                System.err.printf("Error: Failed to store message %s", msg.message);
+                Logger.log(Logger.Level.ERROR,
+                        "Failed to store message %s\n",
+                        msg.message);
             }
         } else {
-            System.err.printf("Error: Message already exists in message bank.");
+            Logger.log(Logger.Level.ERROR, "Error: Message already exists in message bank\n");
         }
     }
 
@@ -168,7 +169,7 @@ public class ChatClient {
 
         MessageBuffer() {
             MAX_SIZE = Config.MAX_CHAT_ROWS;
-            buffer = new ArrayDeque<String>(MAX_SIZE);
+            buffer = new ArrayDeque<>(MAX_SIZE);
         }
 
         /**

@@ -1,46 +1,40 @@
 package networking.packets;
 
 import engine.structs.Message;
-import networking.threads.ClientThread;
-import networking.threads.ServerThread;
 
-public class Packet03Chat extends Packet {
+public class PacketChat extends Packet {
 
     private long time;
     private String username;
     private String message;
 
-    public Packet03Chat(byte[] data) {
-        super(3);
-        String[] dataArray = readData(data).split("`");
+    public PacketChat(byte[] data) {
+        super(PacketType.CHAT.getId());
+        String[] dataArray = readData(data).split(DL);
         this.time = Long.parseLong(dataArray[0]);
         this.username = dataArray[1];
         this.message = dataArray[2];
     }
 
-    public Packet03Chat(Message msg) {
+    public PacketChat(Message msg) {
         this(msg.time, msg.username, msg.message);
     }
 
-    public Packet03Chat(long time, String username, String message) {
-        super(3);
+    public PacketChat(long time, String username, String message) {
+        super(PacketType.CHAT.getId());
         this.time = time;
         this.username = username;
         this.message = message;
     }
 
     @Override
-    public void writeDataFrom(Thread thread) {
-        if (thread instanceof ClientThread)
-            ((ClientThread) thread).sendData(getData());
-        else if (thread instanceof ServerThread)
-            ((ServerThread) thread).sendDataToAllClients(getData());
-    }
-
-    @Override
     /* Reminder: Update this when changing packet structure */
     public byte[] getData() {
-        return ("03" + this.time + "`" + this.username + "`" + this.message).getBytes();
+        return (PacketType.CHAT.getIdString() +
+                this.time +
+                DL + this.username +
+                DL + this.message
+        ).getBytes();
     }
 
     public long getTime() {

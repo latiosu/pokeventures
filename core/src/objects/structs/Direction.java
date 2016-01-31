@@ -1,4 +1,6 @@
-package objects;
+package objects.structs;
+
+import engine.Logger;
 
 public enum Direction {
     DOWN(1),
@@ -23,7 +25,7 @@ public enum Direction {
             case 4:
                 return RIGHT;
             default:
-                System.err.println("Error: Direction not found.");
+                Logger.log(Logger.Level.ERROR, "Direction not found\n");
                 return null;
         }
     }

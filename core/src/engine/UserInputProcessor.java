@@ -2,7 +2,7 @@ package engine;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
-import objects.PlayerType;
+import objects.structs.PlayerType;
 
 public class UserInputProcessor implements InputProcessor {
 
@@ -11,10 +11,10 @@ public class UserInputProcessor implements InputProcessor {
     public static boolean[] directionKeys; // Down-Left-Up-Right
     public static boolean[] attackKeys; // None-Ranged
     public static PlayerType selectedType;
-    private Core core;
+    private ClientCore clientCore;
 
-    public UserInputProcessor(Core core) {
-        this.core = core;
+    public UserInputProcessor(ClientCore clientCore) {
+        this.clientCore = clientCore;
         selectedType = Config.DEFAULT_TYPE;
         directionKeys = new boolean[4];
         attackKeys = new boolean[2];
@@ -23,7 +23,7 @@ public class UserInputProcessor implements InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
         // Capture keystrokes in chat
-        if (core.getUI().hasFocus()) {
+        if (clientCore.getUI().hasFocus()) {
             return false;
         }
 
@@ -49,26 +49,26 @@ public class UserInputProcessor implements InputProcessor {
         // Change characters
         if (keycode == Input.Keys.NUM_1) {
             selectedType = PlayerType.CHARMANDER;
-            core.getPlayers().getMainPlayer().getAnim().updateAnim();
+            clientCore.getPlayers().getMainPlayer().getAnim().updateAnim();
         }
         if (keycode == Input.Keys.NUM_2) {
             selectedType = PlayerType.BULBASAUR;
-            core.getPlayers().getMainPlayer().getAnim().updateAnim();
+            clientCore.getPlayers().getMainPlayer().getAnim().updateAnim();
         }
         if (keycode == Input.Keys.NUM_3) {
             selectedType = PlayerType.SQUIRTLE;
-            core.getPlayers().getMainPlayer().getAnim().updateAnim();
+            clientCore.getPlayers().getMainPlayer().getAnim().updateAnim();
         }
 
         // Chat
         if (keycode == Input.Keys.ENTER) {
-            core.getUI().showChat(true);
+            clientCore.getUI().showChat(true);
         }
 
         // Debug commands
         if (Config.DEBUG) {
             if (keycode == Input.Keys.P) {
-                core.getPlayers().getMainPlayer().setAlive(false);
+                clientCore.getPlayers().getMainPlayer().setAlive(false);
             }
         }
 
@@ -77,7 +77,7 @@ public class UserInputProcessor implements InputProcessor {
 
     @Override
     public boolean keyUp(int keycode) {
-        if (core.getUI().hasFocus()) {
+        if (clientCore.getUI().hasFocus()) {
             return false;
         }
 
@@ -102,7 +102,7 @@ public class UserInputProcessor implements InputProcessor {
 
         // Chat
         if (keycode == Input.Keys.ENTER) {
-            core.getUI().showChat(false);
+            clientCore.getUI().showChat(false);
         }
         return false;
     }

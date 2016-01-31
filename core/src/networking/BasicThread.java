@@ -1,4 +1,4 @@
-package networking.threads;
+package networking;
 
 import engine.Config;
 

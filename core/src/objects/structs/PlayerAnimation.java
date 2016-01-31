@@ -1,9 +1,12 @@
-package objects;
+package objects.structs;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import engine.AssetManager;
-import engine.UserInputProcessor;
+import objects.Player;
+import objects.structs.Direction;
+import objects.structs.PlayerType;
+import objects.structs.State;
 
 public class PlayerAnimation {
 
@@ -20,8 +23,8 @@ public class PlayerAnimation {
      * Ensures new animations start from first frame.
      */
     public void updateAnim() {
-        if (player.isNewState) {
-            player.isNewState = false;
+        if (player.isNewState()) {
+            player.setNewState(false);
             currentDelta = 0;
         }
         currentAnim = AssetManager.getAnimation(player.getType(), player.getState(), player.getDirection(), false);

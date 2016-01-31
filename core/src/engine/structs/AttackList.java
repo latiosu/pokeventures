@@ -1,16 +1,18 @@
 package engine.structs;
 
+import engine.Logger;
 import objects.Attack;
+import objects.BaseAttack;
 
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class AttackList implements List<Attack> {
+public class AttackList implements List<BaseAttack> {
 
-    private Map<Long, Attack> map;
-    private java.util.List<Attack> list;
+    private Map<Long, BaseAttack> map;
+    private java.util.List<BaseAttack> list;
 
     public AttackList() {
         map = new ConcurrentHashMap<>();
@@ -19,35 +21,37 @@ public class AttackList implements List<Attack> {
 
     @SuppressWarnings("SuspiciousMethodCalls")
     @Override
-    public Attack remove(int i) {
+    public BaseAttack remove(int i) {
         return map.remove(list.remove(i));
     }
 
     @SuppressWarnings("SuspiciousMethodCalls")
     @Override
-    public Attack remove(long uid) {
-        Attack result = get(uid);
+    public BaseAttack remove(long uid) {
+        BaseAttack result = get(uid);
         map.remove(list.remove(result));
         return result;
     }
 
     @Override
-    public Attack get(int i) {
+    public BaseAttack get(int i) {
         return list.get(i);
     }
 
     @Override
-    public Attack get(long id) {
+    public BaseAttack get(long id) {
         return map.get(id);
     }
 
     @Override
-    public boolean add(long id, Attack atk) {
+    public boolean add(long id, BaseAttack atk) {
         if (!contains(id)) {
             map.put(id, atk);
             list.add(atk);
         } else {
-            System.err.println("Error: Attack already exists - " + atk.getId());
+            Logger.log(Logger.Level.ERROR,
+                    "Attack already exists - %s\n",
+                    atk.getId());
             return false;
         }
         return true;
@@ -64,7 +68,7 @@ public class AttackList implements List<Attack> {
     }
 
     @Override
-    public Iterator<Attack> iterator() {
+    public Iterator<BaseAttack> iterator() {
         return list.iterator();
     }
 }

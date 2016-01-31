@@ -14,18 +14,18 @@ import java.util.ArrayList;
 
 public class WorldManager {
 
-    static final int BLACK = Color.rgba8888(0f, 0f, 0f, 1f);
+//    static final int BLACK = Color.rgba8888(0f, 0f, 0f, 1f);
     static final int WHITE = Color.rgba8888(1f, 1f, 1f, 1f);
     static final int RED = Color.rgba8888(1f, 0f, 0f, 1f);
-    static final int GREEN = Color.rgba8888(0f, 1f, 0f, 1f);
-    static final int BLUE = Color.rgba8888(0f, 0f, 1f, 1f);
+//    static final int GREEN = Color.rgba8888(0f, 1f, 0f, 1f);
+//    static final int BLUE = Color.rgba8888(0f, 0f, 1f, 1f);
 
     private int tileSize, mapWidth, mapHeight;
     private Tile[][] tiles; // Uses i=y, j=x
     private ArrayList<Tile> blocked;
 
     public WorldManager() {
-        blocked = new ArrayList<Tile>();
+        blocked = new ArrayList<>();
     }
 
     public Texture loadWorld(String map) {
@@ -40,10 +40,10 @@ public class WorldManager {
     /**
      * Note: The map should be fully divisible by the tile size.
      */
-    private Tile[][] parseWorld(String cmap) {
+    private Tile[][] parseWorld(String collisionMap) {
         Tile[][] tiles = new Tile[mapWidth / tileSize][mapHeight / tileSize];
         Tile t;
-        Pixmap pixmap = new Pixmap(Gdx.files.internal(cmap)); /* Warning: Need to optimize this process */
+        Pixmap pixmap = new Pixmap(Gdx.files.internal(collisionMap)); /* Warning: Need to optimize this process */
         for (int y = 1; y < mapHeight; y += tileSize) {
             for (int x = 1; x < mapWidth; x += tileSize) { // <--- Start at (1,1) to ignore grid lines
 
@@ -61,7 +61,9 @@ public class WorldManager {
                     }
                 } else {
                     t = null;
-                    System.err.printf("Error: Could not find colour: %d\n", colour);
+                    Logger.log(Logger.Level.ERROR,
+                            "Could not find colour: %d\n",
+                            colour);
                 }
                 tiles[toTileX(x)][toTileY(mapHeight - y)] = t; // Covert origin to (bottom left) pixel-by-pixel grid
             }
@@ -88,9 +90,17 @@ public class WorldManager {
         }
     }
 
-    /* DEBUGGING METHOD */
+    /**
+     * For debugging use only.
+     *
+     * Returns list of tiles which players cannot pass through.
+     * */
     public ArrayList<Tile> getBlocked() {
         return blocked;
+    }
+
+    public Tile getTile(float px, float py) {
+        return tiles[toTileX(px)][toTileY(py)];
     }
 
     private boolean validTile(int x, int y) {
@@ -99,10 +109,6 @@ public class WorldManager {
 
     private boolean validBlockedTile(int x, int y) {
         return validTile(x, y) && tiles[x][y] instanceof BlockedTile;
-    }
-
-    public Tile getTile(float px, float py) {
-        return tiles[toTileX(px)][toTileY(py)];
     }
 
     /**

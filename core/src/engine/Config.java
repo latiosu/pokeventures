@@ -1,7 +1,7 @@
 package engine;
 
 import com.badlogic.gdx.Gdx;
-import objects.PlayerType;
+import objects.structs.PlayerType;
 
 public class Config {
     /* ====== General ====== */
@@ -18,7 +18,7 @@ public class Config {
     public static final float PLAYER_HP = 100;
 
     // Networking
-    public static final int GAME_PORT = 5284;
+    public static final int GAME_PORT = 5284; // Default: 5284, Skype: 37425
     public static final int PACKET_SIZE = 512;
     public static final String SERVER_IP = "localhost";
 

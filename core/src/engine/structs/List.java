@@ -4,13 +4,13 @@ import java.util.Iterator;
 
 public interface List<E> extends Iterable<E> {
 
-    public E remove(int i);
+    E remove(int i);
 
-    public E remove(long uid);
+    E remove(long uid);
 
-    public E get(int i);
+    E get(int i);
 
-    public E get(long uid);
+    E get(long uid);
 
     /**
      * Attempts to add user to list. Will print an error and return false if
@@ -18,11 +18,11 @@ public interface List<E> extends Iterable<E> {
      *
      * @return - true if successful, false otherwise
      */
-    public boolean add(long uid, E e);
+    boolean add(long uid, E e);
 
-    public int size();
+    int size();
 
-    public boolean contains(long uid);
+    boolean contains(long uid);
 
-    public Iterator<E> iterator();
+    Iterator<E> iterator();
 }

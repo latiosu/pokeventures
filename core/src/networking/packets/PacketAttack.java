@@ -1,19 +1,17 @@
 package networking.packets;
 
-import networking.threads.ClientThread;
-import networking.threads.ServerThread;
-import objects.Direction;
-import objects.PlayerType;
+import objects.structs.Direction;
+import objects.structs.PlayerType;
 
-public class Packet04Attack extends Packet {
+public class PacketAttack extends Packet {
 
     private long id, uid;
     private float x, y;
     private int ptype, dir, alive;
 
-    public Packet04Attack(byte[] data) {
-        super(4);
-        String[] dataArray = readData(data).split("`");
+    public PacketAttack(byte[] data) {
+        super(PacketType.ATTACK.getId());
+        String[] dataArray = readData(data).split(DL);
         this.id = Long.parseLong(dataArray[0]);
         this.uid = Long.parseLong(dataArray[1]);
         this.ptype = Integer.parseInt(dataArray[2]);
@@ -23,8 +21,8 @@ public class Packet04Attack extends Packet {
         this.alive = Integer.parseInt(dataArray[6]);
     }
 
-    public Packet04Attack(long id, long uid, int ptype, int dir, float x, float y, int alive) {
-        super(4);
+    public PacketAttack(long id, long uid, int ptype, int dir, float x, float y, int alive) {
+        super(PacketType.ATTACK.getId());
         this.id = id;
         this.uid = uid;
         this.ptype = ptype;
@@ -35,18 +33,17 @@ public class Packet04Attack extends Packet {
     }
 
     @Override
-    public void writeDataFrom(Thread thread) {
-        if (thread instanceof ClientThread) {
-            ((ClientThread) thread).sendData(getData());
-        } else if (thread instanceof ServerThread)
-            ((ServerThread) thread).sendDataToAllClients(getData());
-    }
-
-    @Override
     /* Reminder: Update this when changing packet structure */
     public byte[] getData() {
-        return ("04" + this.id + "`" + this.uid + "`" + this.ptype + "`" + this.dir + "`" + this.x + "`" + this.y + "`"
-                + this.alive).getBytes();
+        return (PacketType.ATTACK.getIdString()
+                + this.id +
+                DL + this.uid +
+                DL + this.ptype +
+                DL + this.dir +
+                DL + this.x +
+                DL + this.y +
+                DL + this.alive
+        ).getBytes();
     }
 
     public long getId() {

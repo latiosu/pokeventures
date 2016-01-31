@@ -10,12 +10,12 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import engine.structs.Event;
 import engine.structs.Number;
 import networking.ChatClient;
-import objects.Direction;
+import objects.structs.Direction;
 import objects.Player;
 
 public class UI {
 
-    private Core core;
+    private ClientCore clientCore;
     private Skin skin;
     private Stage stage;
     private String text = ""; /* Possibly used for keyboard input */
@@ -23,8 +23,8 @@ public class UI {
     private ChatClient cc;
     private Image setupBG;
 
-    public UI(Core core) {
-        this.core = core;
+    public UI(ClientCore clientCore) {
+        this.clientCore = clientCore;
         skin = AssetManager.skin;
         stage = new Stage(new ScreenViewport());
         runSetup();
@@ -47,14 +47,6 @@ public class UI {
         versionNumber.setName("version");
         versionNumber.setPosition((Config.VIEWPORT_WIDTH * 2f) - versionNumber.getWidth() - 10, 5);
         stage.addActor(versionNumber);
-
-        // Host IP label (If host)
-        if (core.isHost) {
-            Label ipAddress = new Label("Your IP: " + core.getServerThread().getIpAddress(), skin, "default");
-            ipAddress.setName("ipAddress");
-            ipAddress.setPosition((Config.VIEWPORT_WIDTH * 2f) - ipAddress.getWidth() - 10, 18);
-            stage.addActor(ipAddress);
-        }
     }
 
     /* Contains a start networking call */
@@ -68,8 +60,8 @@ public class UI {
         Dialog d1 = new Dialog("", skin, "dialog") {
             protected void result(Object object) {
                 // Determine if hosting server
-                if (core.isHost = object.toString().equals("true")) {
-                    core.startNetworking("localhost");
+                if (clientCore.isHost = object.toString().equals("true")) {
+                    clientCore.startNetworking("localhost"); // <--- Networking call
                     requestUsername();
                 } else {
                     requestServer();
@@ -83,7 +75,9 @@ public class UI {
                 .key(Input.Keys.ESCAPE, false).show(stage);
     }
 
-    /* Requests server IP if isHost is true */
+    /**
+     *  Requests server IP if player is not hosting (joining) a game.
+     */
     public void requestServer() {
         // Request server IP dialog
         final TextField field = new TextField(Config.SERVER_IP, skin, "plain");
@@ -95,7 +89,7 @@ public class UI {
         Dialog d2 = new Dialog("", skin, "dialog") {
             protected void result(Object object) {
                 setText(field.getText());
-                core.startNetworking(text); // Start networking connections
+                clientCore.startNetworking(text); // Start networking connections
                 requestUsername();
             }
         };
@@ -120,8 +114,8 @@ public class UI {
         Dialog d2 = new Dialog("", skin, "dialog") {
             protected void result(Object object) {
                 setText(field.getText());
-                core.initMainPlayer(sanitizeText(text)); // Define main player for client
                 initChat(); // Instantiate Chat client
+                clientCore.initMainPlayer(sanitizeText(text)); // Define main player for client
                 setFocus(false);
 
                 setupBG.addAction(Actions.fadeOut(0.4f));
@@ -155,19 +149,20 @@ public class UI {
         countDown.setPosition(Config.VIEWPORT_WIDTH - (countDown.getWidth()), Config.VIEWPORT_HEIGHT * (5f / 4f));
         stage.addActor(countDown);
 
-        core.addEvent(new Event(5, task -> {
+        // Confirm respawn screen
+        clientCore.addEvent(new Event(5, task -> {
             count.add(-1);
             countDown.setText(count.toString());
             if (count.getValue() == 0) {
                 countDown.setText("Press SPACE to revive!");
-                core.addEvent(new Event(confirm -> {
+                clientCore.addEvent(new Event(confirm -> {
                     if (UserInputProcessor.attackKeys[1]) {
                         // Clear overlay
                         countDown.remove();
-                        setupBG.remove();
+                        setupBG.addAction(Actions.fadeOut(0.4f));
 
                         // Trigger respawn
-                        Player mp = core.getPlayers().getMainPlayer();
+                        Player mp = clientCore.getPlayers().getMainPlayer();
                         mp.setHp(mp.getMaxHp());
                         mp.setX(Config.SPAWN_X);
                         mp.setY(Config.SPAWN_Y);
@@ -191,7 +186,8 @@ public class UI {
     }
 
     private void initChat() {
-        cc = new ChatClient(core); // Instantiate Chat client
+        cc = new ChatClient(clientCore); // Instantiate Chat client
+        System.out.printf("CHAT CLIENT INITIALIZED: %s\n", cc); // TODO: Remove
     }
 
     private String sanitizeText(String input) {

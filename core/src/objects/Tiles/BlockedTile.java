@@ -1,5 +1,6 @@
 package objects.Tiles;
 
+import engine.Logger;
 import objects.Player;
 
 public class BlockedTile extends Tile {
@@ -24,7 +25,9 @@ public class BlockedTile extends Tile {
                 mp.setX(getLeft());
                 break;
             default:
-                System.err.printf("Error: Invalid direction");
+                Logger.log(Logger.Level.ERROR,
+                        "Invalid direction (%s)\n",
+                        mp.getDirection());
                 break;
         }
     }

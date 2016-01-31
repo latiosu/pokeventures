@@ -1,4 +1,4 @@
-package objects;
+package objects.structs;
 
 public enum PlayerType {
     CHARMANDER("charmander", 1),

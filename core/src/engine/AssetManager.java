@@ -7,9 +7,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import objects.Direction;
-import objects.PlayerType;
-import objects.State;
+import objects.structs.Direction;
+import objects.structs.PlayerType;
+import objects.structs.State;
 
 import java.util.HashMap;
 import java.util.Map;
