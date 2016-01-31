@@ -55,10 +55,27 @@ public class Config {
     public static final String DATE_FORMAT = "h:mm:ss a";
     public static final String DATE_FORMAT_CHAT = "h:mm a";
 
-    // Character Stuff
-    public static final double MAX_CHARMANDER_ASPD = 3; // Attacks per second
-    public static final double MAX_BULBASAUR_ASPD = 3;
-    public static final double MAX_SQUIRTLE_ASPD = 3;
+    // Character Stats
+    public static final double CHARMANDER_MAXASPD = 3; // Attacks per second
+    public static final double BULBASAUR_MAXASPD = 3;
+    public static final double SQUIRTLE_MAXASPD = 3;
+
+    public static final float CHARMANDER_ATKRANGE = 85;
+    public static final float BULBASAUR_ATKRANGE = 85;
+    public static final float SQUIRTLE_ATKRANGE = 85;
+
+    public static final float CHARMANDER_ATKMSPD = 10;
+    public static final float BULBASAUR_ATKMSPD = 10;
+    public static final float SQUIRTLE_ATKMSPD = 10;
+
+    public static final float CHARMANDER_ATKOFFSET = 4;
+    public static final float BULBASAUR_ATKOFFSET = 4;
+    public static final float SQUIRTLE_ATKOFFSET = 4;
+
+    public static final float CHARMANDER_ATKDMG = 12.5f;
+    public static final float BULBASAUR_ATKDMG = 12.5f;
+    public static final float SQUIRTLE_ATKDMG = 12.5f;
+
 
     // Debug Stuff
     public static final int DEBUG_LOG_RATE = 3; // Rate of which stats are logged to console (seconds)
