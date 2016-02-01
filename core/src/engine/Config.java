@@ -6,9 +6,9 @@ import objects.structs.PlayerType;
 public class Config {
     /* ====== General ====== */
     // Game
-    public static final boolean DEBUG = true;
-    public static final boolean USE_EXTERNAL_ANIMS = false;
-    public static final boolean PACK_TEXTURES = true;
+    public static boolean DEBUG = false;
+    public static boolean PACK_TEXTURES = false;
+    public static String ASSETS_PATH = "";
 
     public static final String VERSION = "Pre-alpha v0.70: Cool battle stuff!";
     public static final PlayerType DEFAULT_TYPE = PlayerType.CHARMANDER;
@@ -26,8 +26,7 @@ public class Config {
     // Engine
     public static final float WALK_DIST = 5f;
     public static final int TILE_SIZE = 16;
-    public static final float VIEWPORT_WIDTH = Gdx.graphics.getWidth() / 2f;
-    public static final float VIEWPORT_HEIGHT = Gdx.graphics.getHeight() / 2f;
+
     public static final float UPDATE_RATE = 1 / 15f;
     public static final float CHAR_WIDTH = 11f;
     public static final float CHAR_HEIGHT = 14f;
@@ -43,10 +42,14 @@ public class Config {
     public static final float FONT_HEIGHT = 8f;
 
     // Camera
-    public static final float CAM_MIN_X = (VIEWPORT_WIDTH / 2f);
-    public static final float CAM_MIN_Y = (VIEWPORT_HEIGHT / 2f);
-    public static final float CAM_MAX_X = AssetManager.level.getWidth() - (VIEWPORT_WIDTH / 2f);
-    public static final float CAM_MAX_Y = AssetManager.level.getHeight() - (VIEWPORT_HEIGHT / 2f);
+    public static class Camera {
+        public static final float VIEWPORT_WIDTH = Gdx.graphics.getWidth() / 2f;
+        public static final float VIEWPORT_HEIGHT = Gdx.graphics.getHeight() / 2f;
+        public static final float CAM_MIN_X = (VIEWPORT_WIDTH / 2f);
+        public static final float CAM_MIN_Y = (VIEWPORT_HEIGHT / 2f);
+        public static final float CAM_MAX_X = AssetManager.level.getWidth() - (VIEWPORT_WIDTH / 2f);
+        public static final float CAM_MAX_Y = AssetManager.level.getHeight() - (VIEWPORT_HEIGHT / 2f);
+    }
 
     // Chat System
     public static final int MAX_CHAT_ROWS = 6;

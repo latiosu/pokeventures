@@ -33,7 +33,7 @@ public class WorldManager {
         tileSize = Config.TILE_SIZE;
         mapWidth = worldBG.getWidth();
         mapHeight = worldBG.getHeight();
-        tiles = parseWorld("assets/collision-" + map);
+        tiles = parseWorld(Config.ASSETS_PATH + "collision-" + map);
         return worldBG;
     }
 

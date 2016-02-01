@@ -45,7 +45,7 @@ public class ChatClient {
         chatField = new TextField("", ui.getSkin(), "chat");
         float x = 0; // (Centered)=Config.GAME_WIDTH / 4f
         float y = 0;
-        final float width = Config.VIEWPORT_WIDTH;
+        final float width = Config.Camera.VIEWPORT_WIDTH;
         float height = 30;
         chatField.setX(x);
         chatField.setY(y);
@@ -105,7 +105,7 @@ public class ChatClient {
 
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                ui.showChat(chatField.hit(x - Config.VIEWPORT_WIDTH / 2f, y, true) != null);
+                ui.showChat(chatField.hit(x - Config.Camera.VIEWPORT_WIDTH / 2f, y, true) != null);
                 return false;
             }
         });

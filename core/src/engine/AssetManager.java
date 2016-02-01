@@ -65,23 +65,21 @@ public class AssetManager {
 
     private void loadAssets() {
         // Load UI components
-        skin = new Skin(Gdx.files.internal("assets/uiskin.json"));
-        setupBG = new Texture(Gdx.files.internal("assets/setup-bg.png"));
+        skin = new Skin(Gdx.files.internal(Config.ASSETS_PATH + "uiskin.json"));
+        setupBG = new Texture(Gdx.files.internal(Config.ASSETS_PATH + "setup-bg.png"));
         // Load Fonts
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("assets/text.ttf"));
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(Config.ASSETS_PATH + "text.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 12;
         font = generator.generateFont(parameter);
         generator.dispose();
         // Load overworld
-        level = new Texture(Gdx.files.internal("assets/" + Config.MAP));
+        level = new Texture(Gdx.files.internal(Config.ASSETS_PATH + Config.MAP));
         // Load character animations
         for (PlayerType pt : PlayerType.values()) {
-            if (Config.USE_EXTERNAL_ANIMS) {
-                animations.put(pt, generate(new TextureAtlas(Gdx.files.internal("packed/" + pt.getName() + ".atlas"))));
-            } else {
-                animations.put(pt, generate(new TextureAtlas(Gdx.files.internal("assets/packed/" + pt.getName() + ".atlas"))));
-            }
+            animations.put(pt, generate(new TextureAtlas(Gdx.files.internal(
+                    Config.ASSETS_PATH + "packed/" + pt.getName() + ".atlas"
+            ))));
         }
     }
 

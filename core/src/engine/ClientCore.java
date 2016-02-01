@@ -70,7 +70,7 @@ public class ClientCore extends Game {
 
         // Engine
         new AssetManager();
-        cam = new OrthographicCamera(Config.VIEWPORT_WIDTH, Config.VIEWPORT_HEIGHT);
+        cam = new OrthographicCamera(Config.Camera.VIEWPORT_WIDTH, Config.Camera.VIEWPORT_HEIGHT);
         ui = new UI(this);
         world = new WorldManager();
 
@@ -239,17 +239,17 @@ public class ClientCore extends Game {
         cam.update();
 
         // This camera algorithm only follows player if camera can be centered.
-        if (cam.position.x > Config.CAM_MAX_X) {
-            cam.position.x = Config.CAM_MAX_X;
+        if (cam.position.x > Config.Camera.CAM_MAX_X) {
+            cam.position.x = Config.Camera.CAM_MAX_X;
         }
-        if (cam.position.y > Config.CAM_MAX_Y) {
-            cam.position.y = Config.CAM_MAX_Y;
+        if (cam.position.y > Config.Camera.CAM_MAX_Y) {
+            cam.position.y = Config.Camera.CAM_MAX_Y;
         }
-        if (cam.position.x < Config.CAM_MIN_X) {
-            cam.position.x = Config.CAM_MIN_X;
+        if (cam.position.x < Config.Camera.CAM_MIN_X) {
+            cam.position.x = Config.Camera.CAM_MIN_X;
         }
-        if (cam.position.y < Config.CAM_MIN_Y) {
-            cam.position.y = Config.CAM_MIN_Y;
+        if (cam.position.y < Config.Camera.CAM_MIN_Y) {
+            cam.position.y = Config.Camera.CAM_MIN_Y;
         }
         cam.update();
     }

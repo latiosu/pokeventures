@@ -46,7 +46,7 @@ public class UI {
         // Version label
         Label versionNumber = new Label(Config.VERSION, skin, "default");
         versionNumber.setName("version");
-        versionNumber.setPosition((Config.VIEWPORT_WIDTH * 2f) - versionNumber.getWidth() - 10, 5);
+        versionNumber.setPosition((Config.Camera.VIEWPORT_WIDTH * 2f) - versionNumber.getWidth() - 10, 5);
         stage.addActor(versionNumber);
     }
 
@@ -147,7 +147,7 @@ public class UI {
         countDown.setAlignment(Align.center);
         countDown.setFontScale(5, 5);
         countDown.setName("countdown");
-        countDown.setPosition(Config.VIEWPORT_WIDTH - (countDown.getWidth()), Config.VIEWPORT_HEIGHT * (5f / 4f));
+        countDown.setPosition(Config.Camera.VIEWPORT_WIDTH - (countDown.getWidth()), Config.Camera.VIEWPORT_HEIGHT * (5f / 4f));
         stage.addActor(countDown);
 
         // Confirm respawn screen
