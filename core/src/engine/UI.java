@@ -42,70 +42,12 @@ public class UI {
         skin.dispose();
     }
 
-    private void initLabels() {
-        // Version label
-        Label versionNumber = new Label(Config.Engine.VERSION, skin, "default");
-        versionNumber.setName("version");
-        versionNumber.setPosition((Config.Camera.VIEWPORT_WIDTH * 2f) - versionNumber.getWidth() - 10, 5);
-        stage.addActor(versionNumber);
-    }
-
-    /* Contains a start networking call */
     private void runSetup() {
         // Render setup background
         setupBG = new Image(AssetManager.setupBG);
         setupBG.setName("setup-bg");
         stage.addActor(setupBG);
 
-        // Become host dialog
-        Dialog d1 = new Dialog("", skin, "dialog") {
-            protected void result(Object object) {
-                // Determine if hosting server
-                if (clientCore.isHost = object.toString().equals("true")) {
-                    clientCore.startNetworking("localhost"); // <--- Networking call
-                    requestUsername();
-                } else {
-                    requestServer();
-                }
-            }
-        };
-        d1.setMovable(false);
-        d1.getContentTable().pad(10, 60, 0, 60);
-        d1.getButtonTable().pad(0, 0, 20, 0);
-        d1.text("Hosting a game or joining?").button("Host", true).button("Join", false).key(Input.Keys.ENTER, true)
-                .key(Input.Keys.ESCAPE, false).show(stage);
-    }
-
-    /**
-     *  Requests server IP if player is not hosting (joining) a game.
-     */
-    public void requestServer() {
-        // Request server IP dialog
-        final TextField field = new TextField(Config.Networking.SERVER_IP, skin, "plain");
-        field.setMaxLength(15);
-        field.setWidth(150);
-        field.setAlignment(Align.center);
-        field.setSelection(0, field.getText().length());
-
-        Dialog d2 = new Dialog("", skin, "dialog") {
-            protected void result(Object object) {
-                setText(field.getText());
-                clientCore.startNetworking(text); // Start networking connections
-                requestUsername();
-            }
-        };
-        d2.setMovable(false);
-        d2.row();
-        d2.pad(10, 60, 10, 60);
-        d2.add(field);
-        d2.text("Enter Server IP:").key(Input.Keys.ENTER, null).show(stage);
-
-        setFocus(true);
-        stage.setKeyboardFocus(field);
-    }
-
-    /* Initializes main player and game UI */
-    private void requestUsername() {
         // Request username dialog
         final TextField field = new TextField("", skin, "plain");
         field.setMaxLength(15);
@@ -122,7 +64,13 @@ public class UI {
                 setupBG.addAction(Actions.fadeOut(0.4f));
 
                 // Show labels after setup
-                initLabels();
+                if (Config.DEBUG) {
+                    // Version label
+                    Label versionNumber = new Label(Config.Engine.VERSION, skin, "default");
+                    versionNumber.setName("version");
+                    versionNumber.setPosition((Config.Camera.VIEWPORT_WIDTH * 2f) - versionNumber.getWidth() - 10, 5);
+                    stage.addActor(versionNumber);
+                }
             }
         };
         d2.setMovable(false);

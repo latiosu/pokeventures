@@ -44,7 +44,8 @@ public abstract class Packet {
         MOVE(3),
         ATTACK(4),
         PLAYER_STATE(5),
-        CHAT(6);
+        CHAT(6),
+        HEARTBEAT(7);
 
         private int packetId;
 

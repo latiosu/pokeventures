@@ -102,7 +102,7 @@ public class ServerThread extends BasicThread {
                     core.getPlayers().add(newPlayer.getUid(), newPlayer);
                 }
                 Logger.log(Logger.Level.INFO,
-                        "[%s:%d] %s has connected. Online: %d\n",
+                        "(%s:%d) %s has connected. Online: %d\n",
                         address.getHostAddress(),
                         port,
                         newPlayer.getUsername(),
@@ -112,7 +112,7 @@ public class ServerThread extends BasicThread {
                 // Send welcome message to new player
                 sendDataToClient(new PacketChat(
                                 new Message("SERVER", String.format(
-                                        "Welcome to Pokeventures! You can chat with the Enter key. (%d online)\n",
+                                        "Welcome to Pokeventures!\n<< Chat with the Enter key >>",
                                         core.getPlayers().size())
                                 )),
                         newPlayer.getAddress(),
@@ -131,7 +131,7 @@ public class ServerThread extends BasicThread {
                 );
 
                 Logger.log(Logger.Level.INFO,
-                        "[%s:%d] %s has disconnected. Online: %d\n",
+                        "(%s:%d) %s has fled. Online: %d\n",
                         address.getHostAddress(),
                         port,
                         core.getPlayers().get(dp.getUid()).getUsername(),
@@ -196,6 +196,11 @@ public class ServerThread extends BasicThread {
                 }
                 core.getAttacks().add(ap.getId(), atk);
                 sendDataToAllClients(ap);
+                break;
+
+            case HEARTBEAT:
+                PacketHeartbeat hp = new PacketHeartbeat(data);
+                core.getPlayers().get(hp.getUid()).updateLastPacketTime();
                 break;
         }
     }

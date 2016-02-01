@@ -1,5 +1,6 @@
 package engine.desktop;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
@@ -35,6 +36,9 @@ public class DesktopLauncher {
             config.width = 480 * 2;
             config.height = 320 * 2;
             config.resizable = false;
+            config.addIcon(Config.ASSETS_PATH + "pokeventures_128x128.png", Files.FileType.Internal);
+            config.addIcon(Config.ASSETS_PATH + "pokeventures_32x32.png", Files.FileType.Internal);
+            config.addIcon(Config.ASSETS_PATH + "pokeventures_16x16.png", Files.FileType.Internal);
 
             try {
                 // Pack textures

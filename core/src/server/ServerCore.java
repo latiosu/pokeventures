@@ -1,5 +1,6 @@
 package server;
 
+import engine.Config;
 import engine.Logger;
 import engine.structs.AttackList;
 import engine.structs.Event;
@@ -7,6 +8,7 @@ import engine.structs.Message;
 import engine.structs.UserList;
 import networking.packets.PacketAttack;
 import networking.packets.PacketChat;
+import networking.packets.PacketDisconnect;
 import networking.packets.PacketPlayerState;
 import objects.BaseAttack;
 import objects.BasePlayer;
@@ -59,11 +61,11 @@ public class ServerCore extends Thread {
     public void run() {
         while (isRunning) {
             long start = System.nanoTime();
-            if (TimeUnit.NANOSECONDS.toSeconds(delta) > 1/30f) {
+            if (TimeUnit.NANOSECONDS.toSeconds(delta) > Config.Engine.SERVER_UPDATE_RATE) {
                 checkConnections(); // Remove AFK players before updating game state
                 updateAttacks();
                 updateEvents(delta);
-                delta -= TimeUnit.SECONDS.toNanos(1) * (1/30f);
+                delta -= TimeUnit.SECONDS.toNanos(1) * Config.Engine.SERVER_UPDATE_RATE;
             }
             delta += System.nanoTime() - start;
         }
@@ -71,7 +73,26 @@ public class ServerCore extends Thread {
 
     private void checkConnections() {
         for (BasePlayer p : players) {
-            // TODO: Check last packet received was not too long ago
+            long now = System.nanoTime();
+            if (now - p.getLastPacketTime() >= Config.Networking.HEARTBEAT_WAIT_TIME) {
+                // Disconnect players who have not sent a packet in a while
+                PacketDisconnect dp = new PacketDisconnect(p.getUid());
+                BasePlayer dcPlayer = getPlayers().remove(dp.getUid());
+
+                // Notify all other players
+                server.sendDataToAllClients(dp);
+                server.sendDataToAllClients(new PacketChat(
+                        new Message("SERVER", dcPlayer.getUsername() + " has disconnected."))
+                );
+
+                Logger.log(Logger.Level.INFO,
+                        "(%s:%d) %s has disconnected. Online: %d\n",
+                        p.getAddress().getHostAddress(),
+                        p.getPort(),
+                        getPlayers().get(dp.getUid()).getUsername(),
+                        getPlayers().size()
+                );
+            }
         }
     }
 

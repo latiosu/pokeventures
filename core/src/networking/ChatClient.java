@@ -45,7 +45,7 @@ public class ChatClient {
         chatField = new TextField("", ui.getSkin(), "chat");
         float x = 0; // (Centered)=Config.GAME_WIDTH / 4f
         float y = 0;
-        final float width = Config.Camera.VIEWPORT_WIDTH;
+        final float width = Config.Camera.VIEWPORT_WIDTH * (3f/4f);
         float height = 30;
         chatField.setX(x);
         chatField.setY(y);
@@ -70,7 +70,7 @@ public class ChatClient {
         ui.getStage().addActor(chatField);
 
         // Text Area Highlight (On when chatting)
-        chatAreaHL = new TextArea("", ui.getSkin(), "chat-faded");
+        chatAreaHL = new TextArea("", ui.getSkin(), "default");
         chatAreaHL.setX(x);
         chatAreaHL.setY(30);
         height = 130;
@@ -78,11 +78,11 @@ public class ChatClient {
         chatAreaHL.setHeight(height);
         chatAreaHL.setDisabled(true);
         chatAreaHL.setVisible(false);
-        chatAreaHL.setTouchable(Touchable.disabled);
+//        chatAreaHL.setTouchable(Touchable.disabled);
         ui.getStage().addActor(chatAreaHL);
 
         // Text Area (Always on)
-        chatArea = new TextArea("", ui.getSkin(), "chat-very-faded");
+        chatArea = new TextArea("", ui.getSkin(), "chat");
         chatArea.setX(x);
         chatArea.setY(30);
         chatArea.setWidth(width);
@@ -90,24 +90,24 @@ public class ChatClient {
         chatArea.setPrefRows(Config.Chat.MAX_CHAT_ROWS);
         chatArea.setDisabled(true);
         chatArea.setVisible(true);
-        chatArea.setTouchable(Touchable.disabled); // Should this really by untouchable??
+//        chatArea.setTouchable(Touchable.disabled); // Should this really by untouchable??
         ui.getStage().addActor(chatArea);
 
         // Chat control listener
         ui.getStage().addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                if (keycode == Input.Keys.ESCAPE) {
+                if (keycode == Input.Keys.ESCAPE || (keycode == Input.Keys.ENTER && chatField.getText().isEmpty())) {
                     showChat(false);
                 }
                 return false;
             }
 
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                ui.showChat(chatField.hit(x - Config.Camera.VIEWPORT_WIDTH / 2f, y, true) != null);
-                return false;
-            }
+//            @Override
+//            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+//                ui.showChat(chatField.hit(x - Config.Camera.VIEWPORT_WIDTH / 2f, y, true) != null);
+//                return false;
+//            }
         });
     }
 

@@ -15,6 +15,7 @@ public class BasePlayer extends Entity {
     protected String username;
     protected float hp, maxHp;
 
+    private long lastPacketTime;
     private long lastAttackTime; // TODO: Refactor to elsewhere (Maybe InputProcessor)
 
     /**
@@ -49,6 +50,7 @@ public class BasePlayer extends Entity {
         this.address = null;
         this.port = -1;
 
+        this.lastPacketTime = System.nanoTime();
         this.lastAttackTime = 0;
     }
 
@@ -99,6 +101,14 @@ public class BasePlayer extends Entity {
 
     public void updateLastAttackTime() {
         this.lastAttackTime = System.nanoTime();
+    }
+
+    public long getLastPacketTime() {
+        return lastPacketTime;
+    }
+
+    public void updateLastPacketTime() {
+        this.lastPacketTime = System.nanoTime();
     }
 
     public InetAddress getAddress() {

@@ -3,6 +3,8 @@ package engine;
 import com.badlogic.gdx.Gdx;
 import objects.structs.PlayerType;
 
+import java.util.concurrent.TimeUnit;
+
 public class Config {
 
     public static boolean DEBUG = false;
@@ -11,7 +13,8 @@ public class Config {
 
     public static class Engine {
         public static final String VERSION = "Pre-alpha v0.70: Cool battle stuff!";
-        public static final float UPDATE_RATE = 1 / 15f;
+        public static final float CLIENT_UPDATE_RATE = 1 / 15f;
+        public static final float SERVER_UPDATE_RATE = 1 / 40f;
         public static final int DEBUG_LOG_RATE = 3; // Rate of which stats are logged to console (seconds)
     }
 
@@ -26,6 +29,8 @@ public class Config {
         public static final int GAME_PORT = 5284; // Default: 5284
         public static final int PACKET_SIZE = 512;
         public static final String SERVER_IP = "localhost";
+        public static final long HEARTBEAT_WAIT_TIME = TimeUnit.SECONDS.toNanos(5);
+        public static final float HEARTBEAT_RATE = 1; // Send heartbeat each second
     }
 
     public static class Rendering {
@@ -64,21 +69,21 @@ public class Config {
         public static final float CHAR_COLL_WIDTH = 11f;
         public static final float CHAR_COLL_HEIGHT = 12f;
 
-        public static final double CHARMANDER_MAXASPD = 3; // Attacks per second
-        public static final double BULBASAUR_MAXASPD = 3;
-        public static final double SQUIRTLE_MAXASPD = 3;
+        public static final double CHARMANDER_MAXASPD = 1.5; // Attacks per second
+        public static final double BULBASAUR_MAXASPD = 1.5;
+        public static final double SQUIRTLE_MAXASPD = 1.5;
 
         public static final float CHARMANDER_ATKRANGE = 85;
         public static final float BULBASAUR_ATKRANGE = 85;
         public static final float SQUIRTLE_ATKRANGE = 85;
 
-        public static final float CHARMANDER_ATKMSPD = 10;
-        public static final float BULBASAUR_ATKMSPD = 10;
-        public static final float SQUIRTLE_ATKMSPD = 10;
+        public static final float CHARMANDER_ATKMSPD = 8;
+        public static final float BULBASAUR_ATKMSPD = 8;
+        public static final float SQUIRTLE_ATKMSPD = 8;
 
-        public static final float CHARMANDER_ATKOFFSET = 4;
-        public static final float BULBASAUR_ATKOFFSET = 4;
-        public static final float SQUIRTLE_ATKOFFSET = 4;
+        public static final float CHARMANDER_ATKOFFSET = 12;
+        public static final float BULBASAUR_ATKOFFSET = 12;
+        public static final float SQUIRTLE_ATKOFFSET = 12;
 
         public static final float CHARMANDER_ATKDMG = 12.5f;
         public static final float BULBASAUR_ATKDMG = 12.5f;

@@ -14,10 +14,7 @@ import engine.structs.AttackList;
 import engine.structs.Event;
 import engine.structs.Message;
 import engine.structs.UserList;
-import networking.packets.PacketAttack;
-import networking.packets.PacketDisconnect;
-import networking.packets.PacketMove;
-import networking.packets.PacketServerLogin;
+import networking.packets.*;
 import networking.ClientThread;
 import objects.Attack;
 import objects.BaseAttack;
@@ -37,9 +34,11 @@ public class ClientCore extends Game {
     // Engine variables/constants
     private float delta = 0;
     private float debugDelta = 0;
+    private float heartbeatDelta = 0;
     private int frames = 0;
     private long bootTime = System.nanoTime();
 
+    public boolean isOnline = false;
     public boolean playMode = false;
     public boolean isHost = false;
 
@@ -74,6 +73,8 @@ public class ClientCore extends Game {
         ui = new UI(this);
         world = new WorldManager();
 
+        // Start networking
+        startNetworking();
 
         // Input handling
         InputMultiplexer multiplexer = new InputMultiplexer();
@@ -112,13 +113,13 @@ public class ClientCore extends Game {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         // Game heartbeat
-        if (delta > Config.Engine.UPDATE_RATE) {
+        if (delta > Config.Engine.CLIENT_UPDATE_RATE) {
             if (playMode) {
                 updateMainPlayer();
                 updateCamera();
             }
             updateEvents(delta);
-            delta -= Config.Engine.UPDATE_RATE;
+            delta -= Config.Engine.CLIENT_UPDATE_RATE;
         }
 
         // Render game world
@@ -133,10 +134,19 @@ public class ClientCore extends Game {
                 p.render(Gdx.graphics.getDeltaTime(), batch);
             }
             for (BaseAttack a : attacks) {
-                ((Attack)a).render(Gdx.graphics.getDeltaTime(), batch);
+                ((Attack) a).render(Gdx.graphics.getDeltaTime(), batch);
             }
         }
         batch.end();
+
+        // Networking heartbeat
+        if (playMode) {
+            if (heartbeatDelta >= Config.Networking.HEARTBEAT_RATE) {
+                client.sendDataToServer(new PacketHeartbeat(getPlayers().getMainPlayer().getUid()));
+                heartbeatDelta -= Config.Networking.HEARTBEAT_RATE;
+            }
+            heartbeatDelta += Gdx.graphics.getDeltaTime();
+        }
 
         // Debug stuff
         if (Config.DEBUG) {
@@ -178,11 +188,11 @@ public class ClientCore extends Game {
                     long currentTime = System.nanoTime() - bootTime;
                     String timeString = String.format("%02d:%02d:%02d",
                             TimeUnit.NANOSECONDS.toHours(currentTime),
-                            TimeUnit.NANOSECONDS.toMinutes(currentTime)%60,
-                            TimeUnit.NANOSECONDS.toSeconds(currentTime)%60);
+                            TimeUnit.NANOSECONDS.toMinutes(currentTime) % 60,
+                            TimeUnit.NANOSECONDS.toSeconds(currentTime) % 60);
                     Logger.log(Logger.Level.INFO,
                             "FPS=%d - Events=%d - Attacks=%d - Users=%d (%s)\n",
-                            frames/3,
+                            frames / 3,
                             events.size(),
                             attacks.size(),
                             players.size(),
@@ -216,10 +226,11 @@ public class ClientCore extends Game {
         }
     }
 
-    public void startNetworking(String ip) {
+    public void startNetworking() {
         Logger.log(Logger.Level.INFO, "----- Client thread started -----\n");
-        client = new ClientThread(this, ip);
+        client = new ClientThread(this, Config.Networking.SERVER_IP);
         client.start();
+        isOnline = true;
     }
 
     public void initMainPlayer(String username) {
@@ -369,7 +380,7 @@ public class ClientCore extends Game {
     }
 
     public void handlePlayerPacket(long uid, String username, float x, float y, float hp, float maxHp,
-                                            State state, Direction dir, PlayerType type) {
+                                   State state, Direction dir, PlayerType type) {
         Player p = (Player) getPlayers().get(uid);
         if (p != null) {
             p.setX(x);
