@@ -12,7 +12,7 @@ public class WalkableTile extends Tile {
     }
 
     @Override
-    public void handleCollision(Player mp) {
+    public void resolveCollision(Player mp) {
         switch (mp.getDirection()) {
             case DOWN:
             case UP:

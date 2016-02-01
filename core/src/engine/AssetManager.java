@@ -36,6 +36,9 @@ public class AssetManager {
             case WALK:
                 animName += "walk";
                 break;
+            case JUMP:
+                animName += "jump";
+                break;
             case ATK_RANGED:
                 animName += "ranged";
                 break;
@@ -60,7 +63,15 @@ public class AssetManager {
         if (isAttack) {
             animName += "-attack";
         }
-        return animations.get(type).get(animName);
+
+        // Log error if null
+        Animation result = animations.get(type).get(animName);
+        if (result == null) {
+            Logger.log(Logger.Level.ERROR,
+                    "Animation could not be found (%s)\n",
+                    animName);
+        }
+        return result;
     }
 
     private void loadAssets() {
@@ -87,7 +98,7 @@ public class AssetManager {
     private Map<String, Animation> generate(TextureAtlas atlas) {
         Map<String, Animation> map = new HashMap<>();
 
-        String[] states = {"idle", "walk", "ranged", "fainted"};
+        String[] states = {"idle", "walk", "jump", "ranged", "fainted"};
         String[] dirs = {"-down", "-left", "-up", "-right"};
         String[] attacks = {"", "-attack"};
         for (String s : states) {

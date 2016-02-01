@@ -12,7 +12,7 @@ public class Config {
     public static String ASSETS_PATH = "";
 
     public static class Engine {
-        public static final String VERSION = "Pre-alpha v0.70: Cool battle stuff!";
+        public static final String VERSION = "Pre-alpha v0.80: Cool battle stuff!";
         public static final float CLIENT_UPDATE_RATE = 1 / 15f;
         public static final float SERVER_UPDATE_RATE = 1 / 40f;
         public static final int DEBUG_LOG_RATE = 3; // Rate of which stats are logged to console (seconds)
@@ -20,8 +20,8 @@ public class Config {
 
     public static class World {
         public static final String MAP = "overworld.png";
-        public static final float SPAWN_X = 865;
-        public static final float SPAWN_Y = 550;
+        public static final float SPAWN_X = 299;
+        public static final float SPAWN_Y = 370;
         public static final int TILE_SIZE = 16;
     }
 

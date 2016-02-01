@@ -3,6 +3,9 @@ package engine;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.assets.loaders.SoundLoader;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -19,6 +22,7 @@ import networking.ClientThread;
 import objects.Attack;
 import objects.BaseAttack;
 import objects.Player;
+import objects.Tiles.JumpableTile;
 import objects.Tiles.Tile;
 import objects.structs.Direction;
 import objects.structs.PlayerType;
@@ -160,15 +164,34 @@ public class ClientCore extends Game {
                 sr.begin(ShapeRenderer.ShapeType.Filled); // BEGIN DEBUG RENDERING
 
                 // Render blocked tile as red
-                sr.setColor(1f, 0f, 0f, 0.3f);
+                sr.setColor(1f, 0, 0, 0.3f);
                 for (Tile t : world.getBlocked()) {
-                    sr.rect(t.getX(), t.getY(), 16, 16);
+                    sr.rect(t.getX(), t.getY(), Config.World.TILE_SIZE, Config.World.TILE_SIZE);
                 }
+
+                // Render jumpable tiles as respective colours
+                for (JumpableTile t : world.getJumpable()) {
+                    switch (t.getValidDir()) {
+                        case DOWN:
+                            sr.setColor(0, 1f, 0, 0.3f); // DOWN = green
+                            break;
+                        case LEFT:
+                            sr.setColor(0, 0, 1f, 0.3f); // LEFT = blue
+                            break;
+                        default:
+                            Logger.log(Logger.Level.ERROR,
+                                    "Colour has not been set for this JumpableTile direction! (%s)\n",
+                                    t.getValidDir());
+                            break;
+                    }
+                    sr.rect(t.getX(), t.getY(), Config.World.TILE_SIZE, Config.World.TILE_SIZE);
+                }
+
 
                 // Render player centre tile as white
                 Tile a = world.getTile(mp.getX(), mp.getY());
                 sr.setColor(1f, 1f, 1f, 0.4f);
-                sr.rect(a.getX(), a.getY(), 16, 16);
+                sr.rect(a.getX(), a.getY(), Config.World.TILE_SIZE, Config.World.TILE_SIZE);
 
                 // Render player outline as yellow
                 sr.set(ShapeRenderer.ShapeType.Line);
@@ -176,7 +199,7 @@ public class ClientCore extends Game {
                 sr.rect(mp.getX(), mp.getY(), Config.Character.CHAR_COLL_WIDTH, Config.Character.CHAR_COLL_HEIGHT);
 
                 // Render projectile outline as red
-                sr.setColor(1f, 0f, 0f, 0.3f);
+                sr.setColor(1f, 0, 0, 0.3f);
                 for (BaseAttack atk : attacks) {
                     sr.rect(atk.getPosX(), atk.getPosY(), Config.World.TILE_SIZE, Config.World.TILE_SIZE);
                 }
@@ -292,6 +315,29 @@ public class ClientCore extends Game {
             return;
         }
 
+        // Resolve player jump movement
+        if (mp.getState() == State.JUMP) {
+            switch (mp.getDirection()) {
+                case DOWN:
+                    if (mp.getY() > 0) {
+                        mp.setY(mp.getY() - (Config.Character.WALK_DIST / 2f));
+                    }
+                    break;
+                case LEFT:
+                    if (mp.getX() > 0) {
+                        mp.setX(mp.getX() - (Config.Character.WALK_DIST / 2f));
+                    }
+                    break;
+                default:
+                    Logger.log(Logger.Level.ERROR,
+                            "This jump movement has not been implemented yet (%s)\n",
+                            mp.getDirection());
+            }
+
+            // Ignore player input
+            return;
+        }
+
         // Input logic
         boolean[] arrows = UserInputProcessor.directionKeys;
         boolean[] attacks = UserInputProcessor.attackKeys;
@@ -361,8 +407,9 @@ public class ClientCore extends Game {
 
         // <----- Play sounds immediately for responsiveness in the future
 
+
         // Handle collision for main player
-        getWorldManager().handleCollision(mp);
+        Tile collidedTile = getWorldManager().handleCollision(mp);
 
         // Send movement packet with freshly updated main player data
         PacketMove pk = new PacketMove(mp.getUid(),

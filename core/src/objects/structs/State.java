@@ -6,6 +6,7 @@ public enum State {
     FAINTED(-1),
     IDLE(0),
     WALK(1),
+    JUMP(2),
     ATK_RANGED(3);
 
     private int num;
@@ -22,10 +23,14 @@ public enum State {
                 return IDLE;
             case 1:
                 return WALK;
+            case 2:
+                return JUMP;
             case 3:
                 return ATK_RANGED;
             default:
-                Logger.log(Logger.Level.ERROR, "State not found\n");
+                Logger.log(Logger.Level.ERROR,
+                        "State not found (%s)\n",
+                        i);
                 return null;
         }
     }

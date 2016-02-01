@@ -11,6 +11,7 @@ public class UserInputProcessor implements InputProcessor {
     public static boolean[] directionKeys; // Down-Left-Up-Right
     public static boolean[] attackKeys; // None-Ranged
     public static PlayerType selectedType;
+
     private ClientCore clientCore;
 
     public UserInputProcessor(ClientCore clientCore) {

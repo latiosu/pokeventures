@@ -3,6 +3,8 @@ package objects.structs;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import engine.AssetManager;
+import engine.Logger;
+import engine.UserInputProcessor;
 import objects.Player;
 import objects.structs.Direction;
 import objects.structs.PlayerType;
@@ -30,11 +32,36 @@ public class PlayerAnimation {
         currentAnim = AssetManager.getAnimation(player.getType(), player.getState(), player.getDirection(), false);
     }
 
+
     public TextureRegion getFrame(float delta) {
         currentDelta += delta;
         if (currentAnim.isAnimationFinished(currentDelta)) {
             currentDelta -= currentAnim.getAnimationDuration();
+
+            // Remove Jump state upon animation completing
+            if (player.getState() == State.JUMP) {
+                player.setState(State.IDLE);
+            }
         }
         return currentAnim.getKeyFrame(currentDelta);
+    }
+
+
+    public void triggerJump(Direction dir) {
+        switch (dir) {
+            case DOWN:
+                player.setDirection(Direction.DOWN);
+                break;
+            case LEFT:
+                player.setDirection(Direction.LEFT);
+                break;
+            default:
+                Logger.log(Logger.Level.ERROR,
+                        "No animation has been created for this jump direction (%s)\n",
+                        dir);
+                break;
+        }
+        player.setState(State.JUMP);
+        updateAnim();
     }
 }

@@ -4,7 +4,9 @@ import com.badlogic.gdx.math.Rectangle;
 import engine.Config;
 import objects.Player;
 
-/* Collision Handling Entity */
+/**
+ * Collision Handling Entity
+ */
 public abstract class Tile {
 
     protected float x, y;
@@ -18,7 +20,7 @@ public abstract class Tile {
         this.bounds = new Rectangle(x, y, tileSize, tileSize);
     }
 
-    public abstract void handleCollision(Player mp);
+    public abstract void resolveCollision(Player mp);
 
     public Rectangle getBounds() {
         return bounds;
