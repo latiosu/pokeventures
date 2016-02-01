@@ -15,7 +15,7 @@ public abstract class BasicThread extends Thread {
     @Override
     public void run() {
         while (true) {
-            byte[] data = new byte[Config.PACKET_SIZE];
+            byte[] data = new byte[Config.Networking.PACKET_SIZE];
             DatagramPacket packet = new DatagramPacket(data, data.length);
             try {
                 socket.receive(packet); // Warning: will wait indefinitely

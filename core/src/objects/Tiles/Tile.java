@@ -14,7 +14,7 @@ public abstract class Tile {
     public Tile(float x, float y) {
         this.x = x;
         this.y = y;
-        this.tileSize = Config.TILE_SIZE;
+        this.tileSize = Config.World.TILE_SIZE;
         this.bounds = new Rectangle(x, y, tileSize, tileSize);
     }
 
@@ -29,7 +29,7 @@ public abstract class Tile {
     }
 
     protected float getBottom() {
-        return (y - Config.CHAR_COLL_HEIGHT);
+        return (y - Config.Character.CHAR_COLL_HEIGHT);
     }
 
     protected float getRight() {
@@ -37,7 +37,7 @@ public abstract class Tile {
     }
 
     protected float getLeft() {
-        return (x) - Config.CHAR_COLL_WIDTH;
+        return (x) - Config.Character.CHAR_COLL_WIDTH;
     }
 
     public float getX() {

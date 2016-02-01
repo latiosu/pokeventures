@@ -74,7 +74,7 @@ public class AssetManager {
         font = generator.generateFont(parameter);
         generator.dispose();
         // Load overworld
-        level = new Texture(Gdx.files.internal(Config.ASSETS_PATH + Config.MAP));
+        level = new Texture(Gdx.files.internal(Config.ASSETS_PATH + Config.World.MAP));
         // Load character animations
         for (PlayerType pt : PlayerType.values()) {
             animations.put(pt, generate(new TextureAtlas(Gdx.files.internal(
@@ -93,7 +93,7 @@ public class AssetManager {
         for (String s : states) {
             for (String d : dirs) {
                 for (String a : attacks) {
-                    map.put(s + d + a, new Animation(Config.ANIM_DURATION, atlas.findRegions(s + d + a)));
+                    map.put(s + d + a, new Animation(Config.Rendering.ANIM_DURATION, atlas.findRegions(s + d + a)));
                 }
             }
         }

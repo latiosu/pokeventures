@@ -66,7 +66,7 @@ public class Player extends BasePlayer {
         switch (direction) {
             case LEFT:
             case RIGHT:
-                return x - Config.RENDER_OFFSET_X;
+                return x - Config.Rendering.RENDER_OFFSET_X;
             default:
                 return x;
         }
@@ -85,7 +85,7 @@ public class Player extends BasePlayer {
      * automatically adjusted based on username length to appear center-justified.
      */
     public float getNameX() {
-        return x - (usernameWidth / 2f - (Config.CHAR_WIDTH / 2f));
+        return x - (usernameWidth / 2f - (Config.Character.CHAR_WIDTH / 2f));
     }
 
     /**
@@ -93,7 +93,7 @@ public class Player extends BasePlayer {
      * automatically adjusted based on username length to appear center-justified.
      */
     public float getNameY() {
-        return y + (Config.CHAR_HEIGHT + Config.FONT_HEIGHT) + Config.USERNAME_PADDING_Y;
+        return y + (Config.Character.CHAR_HEIGHT + Config.Rendering.FONT_HEIGHT) + Config.Rendering.USERNAME_PADDING_Y;
     }
 
     public TextureRegion getFrame(float delta) {

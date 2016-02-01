@@ -21,14 +21,14 @@ public class ServerThread extends BasicThread {
     public ServerThread(ServerCore core) {
         this.core = core;
         try {
-            this.socket = new DatagramSocket(Config.GAME_PORT);
+            this.socket = new DatagramSocket(Config.Networking.GAME_PORT);
         } catch (SocketException e) {
             e.printStackTrace();
         }
         Logger.log(Logger.Level.INFO,
                 "Server is running on: %s:%s\n",
                 getIpAddress(),
-                Config.GAME_PORT);
+                Config.Networking.GAME_PORT);
     }
 
     protected void parsePacket(byte[] data, InetAddress address, int port) {

@@ -23,33 +23,33 @@ public class BaseAttack extends GameObject {
         super(dir, x, y);
         this.id = id;
         this.owner = p;
-        this.width = Config.TILE_SIZE;
-        this.height = Config.TILE_SIZE;
+        this.width = Config.World.TILE_SIZE;
+        this.height = Config.World.TILE_SIZE;
         this.isAlive = true;
         this.currentDelta = 0;
 
         // Adjust attack base values baed on player type
         switch (p.getType()) {
             case CHARMANDER:
-                maxRange = Config.CHARMANDER_ATKRANGE;
-                moveSpeed = Config.CHARMANDER_ATKMSPD;
-                offset = Config.CHARMANDER_ATKOFFSET;
-                damage = Config.CHARMANDER_ATKDMG;
-                maxAspd = Config.CHARMANDER_MAXASPD;
+                maxRange = Config.Character.CHARMANDER_ATKRANGE;
+                moveSpeed = Config.Character.CHARMANDER_ATKMSPD;
+                offset = Config.Character.CHARMANDER_ATKOFFSET;
+                damage = Config.Character.CHARMANDER_ATKDMG;
+                maxAspd = Config.Character.CHARMANDER_MAXASPD;
                 break;
             case BULBASAUR:
-                maxRange = Config.BULBASAUR_ATKRANGE;
-                moveSpeed = Config.BULBASAUR_ATKMSPD;
-                offset = Config.BULBASAUR_ATKOFFSET;
-                damage = Config.BULBASAUR_ATKDMG;
-                maxAspd = Config.BULBASAUR_MAXASPD;
+                maxRange = Config.Character.BULBASAUR_ATKRANGE;
+                moveSpeed = Config.Character.BULBASAUR_ATKMSPD;
+                offset = Config.Character.BULBASAUR_ATKOFFSET;
+                damage = Config.Character.BULBASAUR_ATKDMG;
+                maxAspd = Config.Character.BULBASAUR_MAXASPD;
                 break;
             case SQUIRTLE:
-                maxRange = Config.SQUIRTLE_ATKRANGE;
-                moveSpeed = Config.SQUIRTLE_ATKMSPD;
-                offset = Config.SQUIRTLE_ATKOFFSET;
-                damage = Config.SQUIRTLE_ATKDMG;
-                maxAspd = Config.SQUIRTLE_MAXASPD;
+                maxRange = Config.Character.SQUIRTLE_ATKRANGE;
+                moveSpeed = Config.Character.SQUIRTLE_ATKMSPD;
+                offset = Config.Character.SQUIRTLE_ATKOFFSET;
+                damage = Config.Character.SQUIRTLE_ATKDMG;
+                maxAspd = Config.Character.SQUIRTLE_MAXASPD;
                 break;
         }
 
@@ -133,11 +133,11 @@ public class BaseAttack extends GameObject {
         double attackDeltaTime = (System.nanoTime() - p.getLastAttackTime()) / 1e9;
         switch (p.getType()) {
             case CHARMANDER:
-                return attackDeltaTime > 1.0 / Config.CHARMANDER_MAXASPD;
+                return attackDeltaTime > 1.0 / Config.Character.CHARMANDER_MAXASPD;
             case BULBASAUR:
-                return attackDeltaTime > 1.0 / Config.BULBASAUR_MAXASPD;
+                return attackDeltaTime > 1.0 / Config.Character.BULBASAUR_MAXASPD;
             case SQUIRTLE:
-                return attackDeltaTime > 1.0 / Config.SQUIRTLE_MAXASPD ;
+                return attackDeltaTime > 1.0 / Config.Character.SQUIRTLE_MAXASPD ;
         }
         return false;
     }

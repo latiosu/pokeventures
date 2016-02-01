@@ -30,7 +30,7 @@ public class WorldManager {
 
     public Texture loadWorld(String map) {
         Texture worldBG = AssetManager.level;
-        tileSize = Config.TILE_SIZE;
+        tileSize = Config.World.TILE_SIZE;
         mapWidth = worldBG.getWidth();
         mapHeight = worldBG.getHeight();
         tiles = parseWorld(Config.ASSETS_PATH + "collision-" + map);

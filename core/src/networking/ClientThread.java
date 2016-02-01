@@ -3,7 +3,6 @@ package networking;
 import engine.ClientCore;
 import engine.Config;
 import engine.structs.Message;
-import networking.BasicThread;
 import networking.packets.*;
 import objects.BasePlayer;
 import objects.Player;
@@ -103,7 +102,7 @@ public class ClientThread extends BasicThread {
     }
 
     public void sendDataToServer(Packet pk) {
-        DatagramPacket packet = new DatagramPacket(pk.getData(), pk.getData().length, address, Config.GAME_PORT);
+        DatagramPacket packet = new DatagramPacket(pk.getData(), pk.getData().length, address, Config.Networking.GAME_PORT);
         try {
             socket.send(packet);
         } catch (IOException e) {

@@ -44,7 +44,7 @@ public class UI {
 
     private void initLabels() {
         // Version label
-        Label versionNumber = new Label(Config.VERSION, skin, "default");
+        Label versionNumber = new Label(Config.Engine.VERSION, skin, "default");
         versionNumber.setName("version");
         versionNumber.setPosition((Config.Camera.VIEWPORT_WIDTH * 2f) - versionNumber.getWidth() - 10, 5);
         stage.addActor(versionNumber);
@@ -81,7 +81,7 @@ public class UI {
      */
     public void requestServer() {
         // Request server IP dialog
-        final TextField field = new TextField(Config.SERVER_IP, skin, "plain");
+        final TextField field = new TextField(Config.Networking.SERVER_IP, skin, "plain");
         field.setMaxLength(15);
         field.setWidth(150);
         field.setAlignment(Align.center);
@@ -165,8 +165,8 @@ public class UI {
                         // Trigger respawn
                         Player mp = clientCore.getPlayers().getMainPlayer();
                         mp.setHp(mp.getMaxHp());
-                        mp.setX(Config.SPAWN_X);
-                        mp.setY(Config.SPAWN_Y);
+                        mp.setX(Config.World.SPAWN_X);
+                        mp.setY(Config.World.SPAWN_Y);
                         mp.setAlive(true);
                         mp.setDirection(Direction.DOWN);
                         mp.setState(State.IDLE);

@@ -30,7 +30,7 @@ public class HealthBar extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         float progress = parent.getHp()/parent.getMaxHp();
-        hpBarBackground.draw(batch, parent.getX() - 7, parent.getY() + Config.CHAR_HEIGHT + 5, 24 , 1);
-        hpBar.draw(batch, parent.getX() - 7, parent.getY() + Config.CHAR_HEIGHT + 5, progress * 24 , 1);
+        hpBarBackground.draw(batch, parent.getX() - 7, parent.getY() + Config.Character.CHAR_HEIGHT + 5, 24 , 1);
+        hpBar.draw(batch, parent.getX() - 7, parent.getY() + Config.Character.CHAR_HEIGHT + 5, progress * 24 , 1);
     }
 }

@@ -84,15 +84,15 @@ public class ClientCore extends Game {
 
         // Overworld data
         batch = new SpriteBatch();
-        tex = world.loadWorld(Config.MAP);
+        tex = world.loadWorld(Config.World.MAP);
         tex.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
 
         sprite = new Sprite(tex);
         sprite.setOrigin(0, 0);
 
         // Player spawn position
-        cam.position.x = Config.SPAWN_X;
-        cam.position.y = Config.SPAWN_Y;
+        cam.position.x = Config.World.SPAWN_X;
+        cam.position.y = Config.World.SPAWN_Y;
         cam.update();
     }
 
@@ -112,13 +112,13 @@ public class ClientCore extends Game {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         // Game heartbeat
-        if (delta > Config.UPDATE_RATE) {
+        if (delta > Config.Engine.UPDATE_RATE) {
             if (playMode) {
                 updateMainPlayer();
                 updateCamera();
             }
             updateEvents(delta);
-            delta -= Config.UPDATE_RATE;
+            delta -= Config.Engine.UPDATE_RATE;
         }
 
         // Render game world
@@ -163,18 +163,18 @@ public class ClientCore extends Game {
                 // Render player outline as yellow
                 sr.set(ShapeRenderer.ShapeType.Line);
                 sr.setColor(Color.YELLOW);
-                sr.rect(mp.getX(), mp.getY(), Config.CHAR_COLL_WIDTH, Config.CHAR_COLL_HEIGHT);
+                sr.rect(mp.getX(), mp.getY(), Config.Character.CHAR_COLL_WIDTH, Config.Character.CHAR_COLL_HEIGHT);
 
                 // Render projectile outline as red
                 sr.setColor(1f, 0f, 0f, 0.3f);
                 for (BaseAttack atk : attacks) {
-                    sr.rect(atk.getPosX(), atk.getPosY(), Config.TILE_SIZE, Config.TILE_SIZE);
+                    sr.rect(atk.getPosX(), atk.getPosY(), Config.World.TILE_SIZE, Config.World.TILE_SIZE);
                 }
 
                 sr.end(); // END DEBUG RENDERING
 
                 // Debug Printing
-                if (debugDelta >= Config.DEBUG_LOG_RATE) {
+                if (debugDelta >= Config.Engine.DEBUG_LOG_RATE) {
                     long currentTime = System.nanoTime() - bootTime;
                     String timeString = String.format("%02d:%02d:%02d",
                             TimeUnit.NANOSECONDS.toHours(currentTime),
@@ -187,7 +187,7 @@ public class ClientCore extends Game {
                             attacks.size(),
                             players.size(),
                             timeString);
-                    debugDelta -= Config.DEBUG_LOG_RATE;
+                    debugDelta -= Config.Engine.DEBUG_LOG_RATE;
                     frames = 0;
                 }
                 debugDelta += Gdx.graphics.getDeltaTime();
@@ -223,7 +223,7 @@ public class ClientCore extends Game {
     }
 
     public void initMainPlayer(String username) {
-        Player p = new Player(Config.DEFAULT_TYPE, username); // <----- NOTE DEFAULT TYPE USED HERE
+        Player p = new Player(Config.Character.DEFAULT_TYPE, username); // <----- NOTE DEFAULT TYPE USED HERE
         players.setMainPlayer(p);
         players.add(p.getUid(), p);
         PacketServerLogin pk = new PacketServerLogin(p.getUid(), p.getUsername(), p.getType().getNum());
@@ -324,22 +324,22 @@ public class ClientCore extends Game {
             switch (mp.getDirection()) {
                 case DOWN:
                     if (mp.getY() > 0) {
-                        mp.setY(mp.getY() - Config.WALK_DIST);
+                        mp.setY(mp.getY() - Config.Character.WALK_DIST);
                     }
                     break;
                 case LEFT:
                     if (mp.getX() > 0) {
-                        mp.setX(mp.getX() - Config.WALK_DIST);
+                        mp.setX(mp.getX() - Config.Character.WALK_DIST);
                     }
                     break;
                 case UP:
-                    if (mp.getY() < AssetManager.level.getHeight() - Config.CHAR_COLL_HEIGHT) {
-                        mp.setY(mp.getY() + Config.WALK_DIST);
+                    if (mp.getY() < AssetManager.level.getHeight() - Config.Character.CHAR_COLL_HEIGHT) {
+                        mp.setY(mp.getY() + Config.Character.WALK_DIST);
                     }
                     break;
                 case RIGHT:
-                    if (mp.getX() < AssetManager.level.getWidth() - Config.CHAR_COLL_WIDTH) {
-                        mp.setX(mp.getX() + Config.WALK_DIST);
+                    if (mp.getX() < AssetManager.level.getWidth() - Config.Character.CHAR_COLL_WIDTH) {
+                        mp.setX(mp.getX() + Config.Character.WALK_DIST);
                     }
                     break;
             }

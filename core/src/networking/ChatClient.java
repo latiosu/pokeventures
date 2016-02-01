@@ -32,8 +32,8 @@ public class ChatClient {
     public ChatClient(ClientCore clientCore) {
         this.clientCore = clientCore;
         this.ui = clientCore.getUI();
-        this.dateFormat = new SimpleDateFormat(Config.DATE_FORMAT_CHAT);
-        messages = new PriorityQueue<>(Config.MESSAGES_INIT, new TimeComparator());
+        this.dateFormat = new SimpleDateFormat(Config.Chat.DATE_FORMAT_CHAT);
+        messages = new PriorityQueue<>(Config.Chat.MESSAGES_INIT, new TimeComparator());
         buffer = new MessageBuffer();
 
         initUI();
@@ -53,7 +53,7 @@ public class ChatClient {
         chatField.setHeight(height);
         chatField.setBounds(x, y, width, height);
         chatField.setVisible(false);
-        chatField.setMaxLength(Config.MAX_MSG_LENGTH);
+        chatField.setMaxLength(Config.Chat.MAX_MSG_LENGTH);
         chatField.setTextFieldListener((textField, c) -> {
             String trimmed = textField.getText().trim();
             switch (c) {
@@ -87,7 +87,7 @@ public class ChatClient {
         chatArea.setY(30);
         chatArea.setWidth(width);
         chatArea.setHeight(height);
-        chatArea.setPrefRows(Config.MAX_CHAT_ROWS);
+        chatArea.setPrefRows(Config.Chat.MAX_CHAT_ROWS);
         chatArea.setDisabled(true);
         chatArea.setVisible(true);
         chatArea.setTouchable(Touchable.disabled); // Should this really by untouchable??
@@ -168,7 +168,7 @@ public class ChatClient {
         private Deque<String> buffer;
 
         MessageBuffer() {
-            MAX_SIZE = Config.MAX_CHAT_ROWS;
+            MAX_SIZE = Config.Chat.MAX_CHAT_ROWS;
             buffer = new ArrayDeque<>(MAX_SIZE);
         }
 

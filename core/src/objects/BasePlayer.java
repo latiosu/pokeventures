@@ -22,13 +22,13 @@ public class BasePlayer extends Entity {
      */
     public BasePlayer(long uid, String username, PlayerType type) {
         this(uid,
-                Config.SPAWN_X,
-                Config.SPAWN_Y,
+                Config.World.SPAWN_X,
+                Config.World.SPAWN_Y,
                 Direction.DOWN,
                 username,
                 type,
-                Config.PLAYER_MAX_HP,
-                Config.PLAYER_MAX_HP,
+                Config.Character.PLAYER_MAX_HP,
+                Config.Character.PLAYER_MAX_HP,
                 true);
     }
 
@@ -62,7 +62,7 @@ public class BasePlayer extends Entity {
     }
 
     public Rectangle getBounds() {
-        return new Rectangle(x, y, Config.CHAR_COLL_WIDTH, Config.CHAR_COLL_HEIGHT);
+        return new Rectangle(x, y, Config.Character.CHAR_COLL_WIDTH, Config.Character.CHAR_COLL_HEIGHT);
     }
 
     public String getUsername() {

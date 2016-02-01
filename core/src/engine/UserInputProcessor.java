@@ -15,7 +15,7 @@ public class UserInputProcessor implements InputProcessor {
 
     public UserInputProcessor(ClientCore clientCore) {
         this.clientCore = clientCore;
-        selectedType = Config.DEFAULT_TYPE;
+        selectedType = Config.Character.DEFAULT_TYPE;
         directionKeys = new boolean[4];
         attackKeys = new boolean[2];
     }
