@@ -1,6 +1,5 @@
 package server;
 
-import engine.Config;
 import engine.Logger;
 import engine.structs.AttackList;
 import engine.structs.Event;
@@ -9,7 +8,6 @@ import engine.structs.UserList;
 import networking.packets.PacketAttack;
 import networking.packets.PacketChat;
 import networking.packets.PacketPlayerState;
-import server.ServerThread;
 import objects.BaseAttack;
 import objects.BasePlayer;
 import objects.structs.Direction;
