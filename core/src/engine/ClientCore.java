@@ -319,7 +319,6 @@ public class ClientCore extends Game {
         if (mp.getState() == State.JUMP) {
             switch (mp.getDirection()) {
                 case DOWN:
-                    System.out.println(mp.getFrame(0f).);
                     if (mp.getY() > 0) {
                         mp.setY(mp.getY() - (Config.Character.WALK_DIST / 2f));
                     }
