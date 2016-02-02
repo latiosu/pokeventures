@@ -17,12 +17,11 @@ import objects.structs.State;
 
 public class UI {
 
-    private ClientCore clientCore;
+    ClientCore clientCore;
     private Skin skin;
     private Stage stage;
     private String text = ""; /* Possibly used for keyboard input */
     private boolean hasFocus = false;
-    private ChatClient cc;
     private Scoreboard sb;
     private Image setupBG;
 
@@ -59,7 +58,6 @@ public class UI {
         Dialog d2 = new Dialog("", skin, "dialog") {
             protected void result(Object object) {
                 setText(field.getText());
-                cc = new ChatClient(clientCore); // Instantiate Chat client
                 sb = new Scoreboard(clientCore); // Instantiate Scoreboard
                 clientCore.initMainPlayer(sanitizeText(text)); // Define main player for client
                 setFocus(false);
@@ -135,10 +133,6 @@ public class UI {
         }));
     }
 
-    public ChatClient getChatClient() {
-        return cc;
-    }
-
     public Scoreboard getScoreboard() {
         return sb;
     }
@@ -168,7 +162,4 @@ public class UI {
         return hasFocus;
     }
 
-    public void showChat(boolean b) {
-        cc.showChat(b);
-    }
 }

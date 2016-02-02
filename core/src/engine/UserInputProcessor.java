@@ -64,7 +64,7 @@ public class UserInputProcessor implements InputProcessor {
 
         // Chat
         if (keycode == Input.Keys.ENTER) {
-            clientCore.getUI().showChat(true);
+            clientCore.getUI().clientCore.showChat(true);
         }
 
         // Debug commands
@@ -104,7 +104,7 @@ public class UserInputProcessor implements InputProcessor {
 
         // Chat
         if (keycode == Input.Keys.ENTER) {
-            clientCore.getUI().showChat(false);
+            clientCore.getUI().clientCore.showChat(false);
         }
         return false;
     }

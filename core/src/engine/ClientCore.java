@@ -14,6 +14,7 @@ import engine.structs.AttackList;
 import engine.structs.Event;
 import engine.structs.Message;
 import engine.structs.UserList;
+import networking.ChatClient;
 import networking.ClientThread;
 import networking.packets.*;
 import objects.Attack;
@@ -32,19 +33,21 @@ import java.util.concurrent.TimeUnit;
 
 public class ClientCore extends Game {
 
-    public boolean isOnline = false;
     public boolean playMode = false;
     public boolean isHost = false;
+
     // Object classes
     protected UserList players;
     protected AttackList attacks;
     protected List<Event> events;
+
     // Engine variables/constants
     private float delta = 0;
     private float debugDelta = 0;
     private float heartbeatDelta = 0;
     private int frames = 0;
     private long bootTime = System.nanoTime();
+
     // Rendering classes
     private OrthographicCamera cam;
     private SpriteBatch batch;
@@ -55,6 +58,7 @@ public class ClientCore extends Game {
     private WorldManager world;
     private EventManager eventManager;
     private UI ui;
+    private ChatClient cc;
 
     // Networking classes
     private ClientThread client;
@@ -72,9 +76,18 @@ public class ClientCore extends Game {
         ui = new UI(this);
         world = new WorldManager();
         eventManager = new EventManager();
+        cc = new ChatClient(this); // Instantiate Chat client
 
-        // Start networking
-        startNetworking();
+
+        // Try to start networking
+        if (!startNetworking()) {
+            // Log error to console and chat box
+            storeMsg(new Message("ERROR", "Could not connect to server: " + Config.Networking.SERVER_IP));
+
+            Logger.log(Logger.Level.ERROR,
+                    "Could not connect to server (%s)\n",
+                    Config.Networking.SERVER_IP);
+        }
 
         // Input handling
         InputMultiplexer multiplexer = new InputMultiplexer();
@@ -247,11 +260,13 @@ public class ClientCore extends Game {
         }
     }
 
-    public void startNetworking() {
+    public boolean startNetworking() {
         Logger.log(Logger.Level.INFO, "----- Client thread started -----\n");
         client = new ClientThread(this, Config.Networking.SERVER_IP);
         client.start();
-        isOnline = true;
+
+        // Confirm connection was successful
+        return client.isConnected();
     }
 
     public void initMainPlayer(String username) {
@@ -467,7 +482,7 @@ public class ClientCore extends Game {
      * Note: DOES NOT COMMUNICATE WITH SERVER.
      */
     public void storeMsg(Message msg) {
-        ui.getChatClient().storeMsg(msg);
+        ui.clientCore.getChatClient().storeMsg(msg);
     }
 
     public UI getUI() {
@@ -496,5 +511,13 @@ public class ClientCore extends Game {
 
     public synchronized AttackList getAttacks() {
         return this.attacks;
+    }
+
+    public ChatClient getChatClient() {
+        return cc;
+    }
+
+    public void showChat(boolean b) {
+        cc.showChat(b);
     }
 }

@@ -25,7 +25,9 @@ public class ClientThread extends BasicThread {
             socket = new DatagramSocket();
             address = InetAddress.getByName(ip);
         } catch (UnknownHostException | SocketException e) {
-            e.printStackTrace();
+            Logger.log(Logger.Level.ERROR,
+                    "Couldn't resolve server address (%s)\n",
+                    Config.Networking.SERVER_IP);
         }
     }
 
@@ -139,9 +141,16 @@ public class ClientThread extends BasicThread {
     public void sendDataToServer(Packet pk) {
         DatagramPacket packet = new DatagramPacket(pk.getData(), pk.getData().length, address, Config.Networking.GAME_PORT);
         try {
-            socket.send(packet);
+            if (isConnected()) {
+                socket.send(packet);
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.log(Logger.Level.ERROR,
+                    "Couldn't send packet to server (IOException)\n");
         }
+    }
+
+    public boolean isConnected() {
+        return !(socket == null || address == null);
     }
 }
