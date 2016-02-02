@@ -1,0 +1,90 @@
+
+squirtle.png
+size: 128,32
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+idle-down
+  rotate: false
+  xy: 70, 2
+  size: 11, 15
+  orig: 11, 15
+  offset: 0, 0
+  index: 0
+walk-down
+  rotate: false
+  xy: 70, 2
+  size: 11, 15
+  orig: 11, 15
+  offset: 0, 0
+  index: 1
+idle-left
+  rotate: false
+  xy: 2, 2
+  size: 15, 15
+  orig: 15, 15
+  offset: 0, 0
+  index: 0
+walk-left
+  rotate: false
+  xy: 2, 2
+  size: 15, 15
+  orig: 15, 15
+  offset: 0, 0
+  index: 1
+idle-right
+  rotate: false
+  xy: 19, 2
+  size: 15, 15
+  orig: 15, 15
+  offset: 0, 0
+  index: 0
+walk-right
+  rotate: false
+  xy: 19, 2
+  size: 15, 15
+  orig: 15, 15
+  offset: 0, 0
+  index: 1
+idle-up
+  rotate: false
+  xy: 83, 2
+  size: 11, 15
+  orig: 11, 15
+  offset: 0, 0
+  index: 0
+walk-up
+  rotate: false
+  xy: 83, 2
+  size: 11, 15
+  orig: 11, 15
+  offset: 0, 0
+  index: 0
+walk-down
+  rotate: false
+  xy: 96, 2
+  size: 11, 15
+  orig: 11, 15
+  offset: 0, 0
+  index: 0
+walk-left
+  rotate: false
+  xy: 36, 2
+  size: 15, 15
+  orig: 15, 15
+  offset: 0, 0
+  index: 0
+walk-right
+  rotate: false
+  xy: 53, 2
+  size: 15, 15
+  orig: 15, 15
+  offset: 0, 0
+  index: 0
+walk-up
+  rotate: false
+  xy: 109, 2
+  size: 11, 15
+  orig: 11, 15
+  offset: 0, 0
+  index: 1

@@ -3,33 +3,35 @@ package objects;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import engine.AssetManager;
+import engine.UserInputProcessor;
 
 public class PlayerAnimation {
 
     private Player player;
-    private Animation currentAnimation;
-    private boolean playing = false;
+    private Animation currentAnim;
+    private float currentDelta;
 
-    public PlayerAnimation(Player p, Player.Type t) {
+    public PlayerAnimation(Player p, PlayerType t) {
         player = p;
-        currentAnimation = AssetManager.getAnimation(t, Entity.Direction.DOWN);
+        currentAnim = AssetManager.getAnimation(t, State.IDLE, Direction.DOWN, false);
     }
 
-    public void play(){
-        playing = true;
-        currentAnimation = AssetManager.getAnimation(player.getType(), player.getDirection());
-    }
-
-    public void stop(){
-        playing = false;
-    }
-
-    public TextureRegion getFrame(float delta){
-        if(playing && !currentAnimation.isAnimationFinished(delta)){
-            return currentAnimation.getKeyFrame(delta,false);
-        } else {
-            stop();
-            return currentAnimation.getKeyFrame(0);
+    /**
+     * Ensures new animations start from first frame.
+     */
+    public void updateAnim() {
+        if (player.isNewState) {
+            player.isNewState = false;
+            currentDelta = 0;
         }
+        currentAnim = AssetManager.getAnimation(player.getType(), player.getState(), player.getDirection(), false);
+    }
+
+    public TextureRegion getFrame(float delta) {
+        currentDelta += delta;
+        if (currentAnim.isAnimationFinished(currentDelta)) {
+            currentDelta -= currentAnim.getAnimationDuration();
+        }
+        return currentAnim.getKeyFrame(currentDelta);
     }
 }

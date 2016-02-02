@@ -2,76 +2,107 @@ package engine;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import objects.Entity;
-import objects.Player;
+import objects.PlayerType;
 
 public class UserInputProcessor implements InputProcessor {
 
     /* Note: These values must be read another class
      * to update the values for the main player. */
-    public static boolean[] directionKeys; // Down Left Up Right
-    public static Player.Type selectedType;
+    public static boolean[] directionKeys; // Down-Left-Up-Right
+    public static boolean[] attackKeys; // None-Ranged
+    public static PlayerType selectedType;
     private Core core;
 
     public UserInputProcessor(Core core) {
         this.core = core;
         selectedType = Config.DEFAULT_TYPE;
         directionKeys = new boolean[4];
+        attackKeys = new boolean[2];
     }
 
     @Override
     public boolean keyDown(int keycode) {
-        if(core.getUI().hasFocus()) {
+        // Capture keystrokes in chat
+        if (core.getUI().hasFocus()) {
             return false;
         }
-        switch (keycode) {
-            case Input.Keys.DOWN:
-                directionKeys[0] = true;
-                break;
-            case Input.Keys.LEFT:
-                directionKeys[1] = true;
-                break;
-            case Input.Keys.UP:
-                directionKeys[2] = true;
-                break;
-            case Input.Keys.RIGHT:
-                directionKeys[3] = true;
-                break;
-            case Input.Keys.NUM_1:
-                selectedType = Entity.Type.CHARMANDER;
-                break;
-            case Input.Keys.NUM_2:
-                selectedType = Entity.Type.BULBASAUR;
-                break;
-            case Input.Keys.NUM_3:
-                selectedType = Entity.Type.SQUIRTLE;
-                break;
-            case Input.Keys.ENTER:
-                core.getUI().showChat(true);
-                break;
+
+        // Movement
+        if (keycode == Input.Keys.DOWN) {
+            directionKeys[0] = true;
         }
+        if (keycode == Input.Keys.LEFT) {
+            directionKeys[1] = true;
+        }
+        if (keycode == Input.Keys.UP) {
+            directionKeys[2] = true;
+        }
+        if (keycode == Input.Keys.RIGHT) {
+            directionKeys[3] = true;
+        }
+
+        // Attack
+        if (keycode == Input.Keys.SPACE) {
+            attackKeys[1] = true;
+        }
+
+        // Change characters
+        if (keycode == Input.Keys.NUM_1) {
+            selectedType = PlayerType.CHARMANDER;
+            core.getPlayers().getMainPlayer().getAnim().updateAnim();
+        }
+        if (keycode == Input.Keys.NUM_2) {
+            selectedType = PlayerType.BULBASAUR;
+            core.getPlayers().getMainPlayer().getAnim().updateAnim();
+        }
+        if (keycode == Input.Keys.NUM_3) {
+            selectedType = PlayerType.SQUIRTLE;
+            core.getPlayers().getMainPlayer().getAnim().updateAnim();
+        }
+
+        // Chat
+        if (keycode == Input.Keys.ENTER) {
+            core.getUI().showChat(true);
+        }
+
+        // Debug commands
+        if (Config.DEBUG) {
+            if (keycode == Input.Keys.P) {
+                core.getPlayers().getMainPlayer().setAlive(false);
+            }
+        }
+
         return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        if(core.getUI().hasFocus()) {
+        if (core.getUI().hasFocus()) {
             return false;
         }
-        switch (keycode) {
-            case Input.Keys.DOWN:
-                directionKeys[0] = false;
-                break;
-            case Input.Keys.LEFT:
-                directionKeys[1] = false;
-                break;
-            case Input.Keys.UP:
-                directionKeys[2] = false;
-                break;
-            case Input.Keys.RIGHT:
-                directionKeys[3] = false;
-                break;
+
+        // Movement
+        if (keycode == Input.Keys.DOWN) {
+            directionKeys[0] = false;
+        }
+        if (keycode == Input.Keys.LEFT) {
+            directionKeys[1] = false;
+        }
+        if (keycode == Input.Keys.UP) {
+            directionKeys[2] = false;
+        }
+        if (keycode == Input.Keys.RIGHT) {
+            directionKeys[3] = false;
+        }
+
+        // Attack
+        if (keycode == Input.Keys.SPACE) {
+            attackKeys[1] = false;
+        }
+
+        // Chat
+        if (keycode == Input.Keys.ENTER) {
+            core.getUI().showChat(false);
         }
         return false;
     }
@@ -86,18 +117,22 @@ public class UserInputProcessor implements InputProcessor {
     public boolean keyTyped(char character) {
         return false;
     }
+
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
         return false;
     }
+
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         return false;
     }
+
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         return false;
     }
+
     @Override
     public boolean scrolled(int amount) {
         return false;

@@ -1,25 +1,25 @@
 package engine.structs;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
 import objects.PlayerOnline;
 
-public class UserList implements List {
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+public class UserList implements List<PlayerOnline> {
 
     private Map<Long, PlayerOnline> map;
     private java.util.List<PlayerOnline> list;
     private PlayerOnline mainPlayer;
 
     public UserList() {
-        map = new HashMap<Long, PlayerOnline>();
-        list = new CopyOnWriteArrayList<PlayerOnline>(); /* <-- Works well for small array lists */
+        map = new ConcurrentHashMap<>();
+        list = new CopyOnWriteArrayList<>(); /* <-- Works well for small array lists */
     }
 
     public PlayerOnline getMainPlayer() {
-        if(mainPlayer == null){
+        if (mainPlayer == null) {
             System.err.println("Error: Main player has not been set.");
         }
         return mainPlayer;
@@ -29,6 +29,7 @@ public class UserList implements List {
         mainPlayer = p;
     }
 
+    @SuppressWarnings("SuspiciousMethodCalls")
     @Override
     public PlayerOnline remove(int i) {
         return map.remove(list.remove(i));
@@ -42,12 +43,6 @@ public class UserList implements List {
     }
 
     @Override
-    public void clear() {
-        map = new HashMap<Long, PlayerOnline>();
-        list = new ArrayList<PlayerOnline>();
-    }
-
-    @Override
     public PlayerOnline get(int i) {
         return list.get(i);
     }
@@ -58,10 +53,8 @@ public class UserList implements List {
     }
 
     @Override
-    /* Can consider making non-parametric UserList
-     * to get better error info. */
     public boolean add(long uid, PlayerOnline player) {
-        if(!contains(uid)){
+        if (!contains(uid)) {
             map.put(uid, player);
             list.add(player);
         } else {
@@ -77,11 +70,6 @@ public class UserList implements List {
     }
 
     @Override
-    public boolean isEmpty() {
-        return list.isEmpty();
-    }
-
-    @Override
     public boolean contains(long uid) {
         return map.get(uid) != null;
     }
@@ -89,10 +77,5 @@ public class UserList implements List {
     @Override
     public Iterator<PlayerOnline> iterator() {
         return list.iterator();
-    }
-
-    @Override
-    public Iterator<String> usernameIterator() {
-        return null;
     }
 }

@@ -18,50 +18,15 @@ import java.util.*;
 
 public class ChatClient {
 
-    private class MessageBuffer {
-
-        private final int MAX_SIZE;
-        private Deque<String> buffer;
-
-        MessageBuffer() {
-            MAX_SIZE = Config.MAX_CHAT_ROWS;
-            buffer = new ArrayDeque<String>(MAX_SIZE);
-        }
-
-        /**
-         * Will return the contents of buffer as a complete String
-         * after inserting new message.
-         * Note: Each message is already delimited by newline characters
-         * due to the nature of input.
-         */
-        String handle(String msg) {
-            if(buffer.size() == MAX_SIZE) {
-                buffer.removeFirst();
-            }
-            buffer.addLast(msg);
-            return getText();
-        }
-
-        private String getText() {
-            String text = "";
-            for(String s : buffer){
-                text += s;
-            }
-            return text;
-        }
-    }
-
     private Core core;
     private UI ui;
     private SimpleDateFormat dateFormat;
     private Queue<Message> messages;
     private MessageBuffer buffer;
-
     // Part of UI
     private TextField chatField;
     private TextArea chatArea;
     private TextArea chatAreaHL;
-
     public ChatClient(Core core) {
         this.core = core;
         this.ui = core.getUI();
@@ -76,16 +41,16 @@ public class ChatClient {
     private void initUI() {
         // Text Field
         chatField = new TextField("", ui.getSkin(), "chat");
-        float x = Config.GAME_WIDTH / 4f;
+        float x = 0; // (Centered)=Config.GAME_WIDTH / 4f
         float y = 0;
-        final float width = (Config.GAME_WIDTH / 2f);
+        final float width = Config.VIEWPORT_WIDTH;
         float height = 30;
         chatField.setX(x);
         chatField.setY(y);
         chatField.setWidth(width);
         chatField.setHeight(height);
         chatField.setBounds(x, y, width, height);
-        chatField.setVisible(true);
+        chatField.setVisible(false);
         chatField.setMaxLength(Config.MAX_MSG_LENGTH);
         chatField.setTextFieldListener(new TextField.TextFieldListener() {
             @Override
@@ -93,12 +58,12 @@ public class ChatClient {
                 String trimmed = textField.getText().trim();
                 switch (c) {
                     case '\r':
-                        if(trimmed.length() == 0){ // Ignore input
+                        if (trimmed.length() == 0) { // Ignore input
                             return;
                         }
                         // ==== Send message to server here ====
                         registerMsg(core.getPlayers().getMainPlayer().getUsername(), trimmed);
-                        textField.setText("");
+                        showChat(false);
                         break;
                 }
             }
@@ -107,7 +72,7 @@ public class ChatClient {
 
         // Text Area Highlight (On when chatting)
         chatAreaHL = new TextArea("", ui.getSkin(), "chat-faded");
-        chatAreaHL.setX(Config.GAME_WIDTH / 4f);
+        chatAreaHL.setX(x);
         chatAreaHL.setY(30);
         height = 130;
         chatAreaHL.setWidth(width);
@@ -119,7 +84,7 @@ public class ChatClient {
 
         // Text Area (Always on)
         chatArea = new TextArea("", ui.getSkin(), "chat-very-faded");
-        chatArea.setX(Config.GAME_WIDTH / 4f);
+        chatArea.setX(x);
         chatArea.setY(30);
         chatArea.setWidth(width);
         chatArea.setHeight(height);
@@ -130,10 +95,10 @@ public class ChatClient {
         ui.getStage().addActor(chatArea);
 
         // Chat control listener
-        ui.getStage().addListener(new InputListener(){
+        ui.getStage().addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                if(keycode == Input.Keys.ESCAPE){
+                if (keycode == Input.Keys.ESCAPE) {
                     showChat(false);
                 }
                 return false;
@@ -141,7 +106,7 @@ public class ChatClient {
 
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                ui.showChat(chatField.hit(x - Config.VIEWPORT_WIDTH /2f, y, true) != null);
+                ui.showChat(chatField.hit(x - Config.VIEWPORT_WIDTH / 2f, y, true) != null);
                 return false;
             }
         });
@@ -165,19 +130,16 @@ public class ChatClient {
      * Stores message inside client's message bank and logs result if successful.
      * Note: Does NOT send a reply to the server.
      */
-    public boolean storeMsg(Message msg) {
-        if(!messages.contains(msg)){
-            if(messages.add(msg)){
+    public void storeMsg(Message msg) {
+        if (!messages.contains(msg)) {
+            if (messages.add(msg)) {
                 updateChatUI(msg);
-//                System.out.printf("CLIENT=[%s] %s: %s\n", getDate(msg.time), msg.username, msg.message);
-                return true;
             } else {
                 System.err.printf("Error: Failed to store message %s", msg.message);
             }
         } else {
             System.err.printf("Error: Message already exists in message bank.");
         }
-        return false;
     }
 
     /**
@@ -185,8 +147,10 @@ public class ChatClient {
      */
     public void showChat(boolean b) {
         ui.setFocus(b);
+        chatField.setText("");
+        chatField.setVisible(b); // Show input area
         chatAreaHL.setVisible(b); // Highlight chat area
-        if(b){
+        if (b) {
             ui.getStage().setKeyboardFocus(chatField);
         } else {
             ui.getStage().unfocusAll();
@@ -195,5 +159,38 @@ public class ChatClient {
 
     private String getDate(long time) {
         return dateFormat.format(new Date(time));
+    }
+
+    private class MessageBuffer {
+
+        private final int MAX_SIZE;
+        private Deque<String> buffer;
+
+        MessageBuffer() {
+            MAX_SIZE = Config.MAX_CHAT_ROWS;
+            buffer = new ArrayDeque<String>(MAX_SIZE);
+        }
+
+        /**
+         * Will return the contents of buffer as a complete String
+         * after inserting new message.
+         * Note: Each message is already delimited by newline characters
+         * due to the nature of input.
+         */
+        String handle(String msg) {
+            if (buffer.size() == MAX_SIZE) {
+                buffer.removeFirst();
+            }
+            buffer.addLast(msg);
+            return getText();
+        }
+
+        private String getText() {
+            String text = "";
+            for (String s : buffer) {
+                text += s;
+            }
+            return text;
+        }
     }
 }

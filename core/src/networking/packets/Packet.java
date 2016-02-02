@@ -3,33 +3,10 @@ package networking.packets;
 
 public abstract class Packet {
 
-    public static enum PacketType {
-        INVALID(-1),
-        LOGIN(00),
-        DISCONNECT(01),
-        MOVE(02),
-        CHAT(03);
-
-        private int packetId;
-        private PacketType(int packetId) {
-            this.packetId = packetId;
-        }
-        public int getId() {
-            return packetId;
-        }
-    }
-
     public byte packetId;
+
     public Packet(int packetId) {
         this.packetId = (byte) packetId;
-    }
-
-    public abstract void writeDataFrom(Thread thread);
-    public abstract byte[] getData();
-
-    public String readData(byte[] data) {
-        String message = new String(data);
-        return message.substring(2).trim(); // excludes packet id
     }
 
     public static PacketType lookupPacket(String packetId) {
@@ -42,11 +19,39 @@ public abstract class Packet {
     }
 
     public static PacketType lookupPacket(int id) {
-        for(PacketType t : PacketType.values()) {
-            if(t.getId() == id){
+        for (PacketType t : PacketType.values()) {
+            if (t.getId() == id) {
                 return t;
             }
         }
         return PacketType.INVALID;
+    }
+
+    public abstract void writeDataFrom(Thread thread);
+
+    public abstract byte[] getData();
+
+    public String readData(byte[] data) {
+        String message = new String(data);
+        return message.substring(2).trim(); // excludes packet id
+    }
+
+    public static enum PacketType {
+        INVALID(-1),
+        LOGIN(0),
+        DISCONNECT(1),
+        MOVE(2),
+        CHAT(3),
+        ATTACK(4);
+
+        private int packetId;
+
+        private PacketType(int packetId) {
+            this.packetId = packetId;
+        }
+
+        public int getId() {
+            return packetId;
+        }
     }
 }

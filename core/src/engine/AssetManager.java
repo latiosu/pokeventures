@@ -7,27 +7,66 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import objects.Entity;
-import objects.Player;
+import objects.Direction;
+import objects.PlayerType;
+import objects.State;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class AssetManager {
 
-    public static Map<Player.Type, Map<Entity.Direction, Animation>> animations;
+    public static Map<PlayerType, Map<String, Animation>> animations;
     public static Skin skin;
     public static Texture level;
     public static BitmapFont font;
+    public static Texture setupBG;
 
     public AssetManager() {
-        animations = new HashMap<Player.Type, Map<Entity.Direction, Animation>>();
+        animations = new HashMap<>();
         loadAssets();
+    }
+
+    public static Animation getAnimation(PlayerType type, State state, Direction direction, boolean isAttack) {
+        String animName = "";
+        switch (state) {
+            case IDLE:
+                animName += "idle";
+                break;
+            case WALK:
+                animName += "walk";
+                break;
+            case ATK_RANGED:
+                animName += "ranged";
+                break;
+            case FAINTED:
+                animName += "fainted";
+                break;
+        }
+        switch (direction) {
+            case DOWN:
+                animName += "-down";
+                break;
+            case LEFT:
+                animName += "-left";
+                break;
+            case UP:
+                animName += "-up";
+                break;
+            case RIGHT:
+                animName += "-right";
+                break;
+        }
+        if (isAttack) {
+            animName += "-attack";
+        }
+        return animations.get(type).get(animName);
     }
 
     private void loadAssets() {
         // Load UI components
         skin = new Skin(Gdx.files.internal("assets/uiskin.json"));
+        setupBG = new Texture(Gdx.files.internal("assets/setup-bg.png"));
         // Load Fonts
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("assets/text.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -35,26 +74,31 @@ public class AssetManager {
         font = generator.generateFont(parameter);
         generator.dispose();
         // Load overworld
-        level = new Texture(Gdx.files.internal("assets/overworld.png"));
+        level = new Texture(Gdx.files.internal("assets/" + Config.MAP));
         // Load character animations
-        animations.put(Entity.Type.CHARMANDER, generate(new TextureAtlas(Gdx.files.internal("assets/charmander.atlas"))));
-        animations.put(Entity.Type.BULBASAUR, generate(new TextureAtlas(Gdx.files.internal("assets/bulbasaur.atlas"))));
-        animations.put(Entity.Type.SQUIRTLE, generate(new TextureAtlas(Gdx.files.internal("assets/squirtle.atlas"))));
+        for (PlayerType pt : PlayerType.values()) {
+            if (Config.USE_EXTERNAL_ANIMS) {
+                animations.put(pt, generate(new TextureAtlas(Gdx.files.internal("packed/" + pt.getName() + ".atlas"))));
+            } else {
+                animations.put(pt, generate(new TextureAtlas(Gdx.files.internal("assets/packed/" + pt.getName() + ".atlas"))));
+            }
+        }
     }
 
-    private Map<Entity.Direction, Animation> generate(TextureAtlas atlas){
-        Map<Entity.Direction, Animation> map = new HashMap<Entity.Direction, Animation>();
+    // PlayerType > State > Direction > Null/Attack
+    private Map<String, Animation> generate(TextureAtlas atlas) {
+        Map<String, Animation> map = new HashMap<>();
 
-        // Generate animations types (down, left, up, right)
-        map.put(Entity.Direction.DOWN, new Animation(Config.ANIM_DURATION, atlas.findRegion("down1"), atlas.findRegion("down2")));
-        map.put(Entity.Direction.LEFT, new Animation(Config.ANIM_DURATION, atlas.findRegion("left1"), atlas.findRegion("left2")));
-        map.put(Entity.Direction.UP, new Animation(Config.ANIM_DURATION, atlas.findRegion("up1"), atlas.findRegion("up2")));
-        map.put(Entity.Direction.RIGHT, new Animation(Config.ANIM_DURATION, atlas.findRegion("right1"), atlas.findRegion("right2")));
-
+        String[] states = {"idle", "walk", "ranged", "fainted"};
+        String[] dirs = {"-down", "-left", "-up", "-right"};
+        String[] attacks = {"", "-attack"};
+        for (String s : states) {
+            for (String d : dirs) {
+                for (String a : attacks) {
+                    map.put(s + d + a, new Animation(Config.ANIM_DURATION, atlas.findRegions(s + d + a)));
+                }
+            }
+        }
         return map;
-    }
-
-    public static Animation getAnimation(Player.Type type, Entity.Direction direction) {
-        return animations.get(type).get(direction);
     }
 }

@@ -2,10 +2,9 @@ package objects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import engine.AssetManager;
 import engine.Config;
-
-import java.util.Date;
 
 public class Player extends Entity {
 
@@ -13,46 +12,44 @@ public class Player extends Entity {
     private PlayerAnimation anim;
     private String username;
     private float usernameWidth;
-    public boolean isMain;
+    private float hp;
+    private float maxHp;
+    private long lastAttackTime;
+    private boolean isAlive;
 
-    public Player(String username) {
-        this(new Date().getTime(), Entity.Type.CHARMANDER, true, username);
-    }
-
-    public Player(long uid, Entity.Type type, boolean isMain, String username){
-        super(type, Direction.DOWN);
-        anim = new PlayerAnimation(this, type);
-        this.isMain = isMain;
-        this.username = username;
-        usernameWidth = AssetManager.font.getBounds(username).width;
+    public Player(long uid, PlayerType type, String username) {
+        super(type);
         this.uid = uid;
+        this.anim = new PlayerAnimation(this, type);
+        this.username = username;
+        this.usernameWidth = AssetManager.font.getBounds(username).width;
+        this.hp = Config.PLAYER_HP;
+        this.maxHp = Config.PLAYER_HP;
+        this.lastAttackTime = 0;
+        this.isAlive = true;
     }
 
     /* Note: Using a player list for rendering */
     public void render(float delta, SpriteBatch batch) {
-        batch.draw(getFrame(delta), getRenderX(), getRenderY());
-        AssetManager.font.draw(batch, username, getNameX(), getNameY());
+        try {
+            batch.draw(getFrame(delta), getRenderX(), getRenderY());
+            AssetManager.font.draw(batch, username, getNameX(), getNameY());
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.err.printf("Error: Animation not found - %s %s\n", state.name(), direction.name());
+        }
     }
 
-    public void move(Direction d){
-        this.setMoving(true);
-        this.setDirection(d);
+    public void updateDamage(Attack atk) {
+        if (isAlive()) {
+            setHp(getHp() - atk.getDamage());
+            if (getHp() <= 0) {
+                this.setAlive(false);
+            }
+        }
     }
 
-    /**
-     * Returns x-coordinate of collision box origin. Note: The collision box
-     * is the user's sensation of the character's physical shape.
-     */
-    public float getCollisionX() {
-        return x + Config.RENDER_OFFSET_X;
-    }
-
-    /**
-     * Returns y-coordinate of collision box origin. Note: The collision box
-     * is the user's sensation of the character's physical shape.
-     */
-    public float getCollsionY() {
-        return y;
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, Config.CHAR_COLL_WIDTH, Config.CHAR_COLL_HEIGHT);
     }
 
     /**
@@ -60,10 +57,13 @@ public class Player extends Entity {
      * VARY depending on the character's direction.
      */
     public float getRenderX() {
-        if(direction == Direction.DOWN || direction == Direction.UP){
-            return x + Config.RENDER_OFFSET_X;
+        switch (direction) {
+            case LEFT:
+            case RIGHT:
+                return x - Config.RENDER_OFFSET_X;
+            default:
+                return x;
         }
-        return x;
     }
 
     /**
@@ -71,7 +71,7 @@ public class Player extends Entity {
      * VARY depending on the character's direction.
      */
     public float getRenderY() {
-        return y;
+        return y - 1;
     }
 
     /**
@@ -79,7 +79,7 @@ public class Player extends Entity {
      * automatically adjusted based on username length to appear center-justified.
      */
     public float getNameX() {
-        return x - (usernameWidth/2f - (Config.CHAR_WIDTH/2f)) + Config.RENDER_OFFSET_X;
+        return x - (usernameWidth / 2f - (Config.CHAR_WIDTH / 2f));
     }
 
     /**
@@ -89,25 +89,52 @@ public class Player extends Entity {
     public float getNameY() {
         return y + (Config.CHAR_HEIGHT + Config.FONT_HEIGHT) + Config.USERNAME_PADDING_Y;
     }
-    public TextureRegion getFrame(float delta){
+
+    public TextureRegion getFrame(float delta) {
         return anim.getFrame(delta);
     }
+
     public PlayerAnimation getAnim() {
         return anim;
     }
-    public void setUsername(String name) {
-        username = name;
-    }
+
     public String getUsername() {
         return username;
     }
-    public void setMoving(int bool) {
-        isMoving = bool==1;
-    }
-    public int isMovingInt() {
-        return (isMoving)? 1:0;
-    }
+
     public long getUID() {
         return uid;
+    }
+
+    public float getHp() {
+        return hp;
+    }
+
+    public void setHp(float hp) {
+        this.hp = hp;
+    }
+
+    public float getMaxHp() {
+        return maxHp;
+    }
+
+    public void setMaxHp(float maxHp) {
+        this.maxHp = maxHp;
+    }
+
+    public long getLastAttackTime() {
+        return lastAttackTime;
+    }
+
+    public void updateLastAttackTime() {
+        this.lastAttackTime = System.nanoTime();
+    }
+
+    public boolean isAlive() {
+        return isAlive;
+    }
+
+    public void setAlive(boolean alive) {
+        isAlive = alive;
     }
 }

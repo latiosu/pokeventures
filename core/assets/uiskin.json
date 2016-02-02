@@ -4,9 +4,9 @@ com.badlogic.gdx.graphics.Color: {
 	light_grey: { r: 0.8, g: 0.8, b: 0.8, a: 1 },
 	white: { r: 1, g: 1, b: 1, a: 1 },
 	red: { r: 1, a: 1 },
-	grey: { r: 0.7, g: 0.7, b: 0.7, a: 1 },
+	black: { a: 1 },
 	light_yellow: { r: 1, g: 1, b: 0.6, a: 1 },
-	black: { a: 1 }
+	grey: { r: 0.7, g: 0.7, b: 0.7, a: 1 }
 },
 com.badlogic.gdx.graphics.g2d.BitmapFont: {
 	font_pokemon__dppt_16pt: { file: font_pokemon__dppt_16pt.fnt },
@@ -15,7 +15,7 @@ com.badlogic.gdx.graphics.g2d.BitmapFont: {
 com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 	dialogDim: {
 		name: white,
-		color: { a: 0.45, b: 0, g: 0, r: 0 }
+		color: { a: 1, b: 0.2, g: 0.2, r: 0.2 }
 	}
 },
 com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
@@ -55,7 +55,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Touchpad$TouchpadStyle: {
 	default: { background: default-pane, knob: default-round-large }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
-	default: { up: default-round, down: default-round-down },
+	default: { up: default-round, down: textbox2 },
 	toggle: { up: default-round, down: default-round-down, checked: default-round-down }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
@@ -67,8 +67,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 	dialog: {
 		background: window-plain,
 		titleFont: font_pokemon__dppt_16pt,
-		titleFontColor: { a: 1, b: 1, g: 1, r: 1 },
-		stageBackground: dialogDim
+		titleFontColor: { a: 1, b: 1, g: 1, r: 1 }
 	}
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
