@@ -5,8 +5,8 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import engine.Config;
 import engine.ClientCore;
+import engine.Config;
 import engine.Logger;
 import engine.UI;
 import engine.structs.Message;
@@ -44,7 +44,7 @@ public class ChatClient {
         chatField = new TextField("", ui.getSkin(), "chat");
         float x = 0; // (Centered)=Config.GAME_WIDTH / 4f
         float y = 0;
-        final float width = Config.Camera.VIEWPORT_WIDTH * (3f/4f);
+        final float width = Config.Camera.VIEWPORT_WIDTH * (3f / 4f);
         float height = 30;
         chatField.setX(x);
         chatField.setY(y);

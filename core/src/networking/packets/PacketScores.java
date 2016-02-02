@@ -16,7 +16,7 @@ public class PacketScores extends Packet {
         // Parse compressed score data (uid DL score) * players
         for (int i = 0; i < dataArray.length; i += 2) {
             long uid = Long.parseLong(dataArray[i]);
-            int score  = Integer.parseInt(dataArray[i + 1]);
+            int score = Integer.parseInt(dataArray[i + 1]);
             scores.addScore(new Score(uid, score));
         }
     }

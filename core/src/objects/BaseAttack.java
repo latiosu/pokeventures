@@ -81,6 +81,26 @@ public class BaseAttack extends GameObject {
     }
 
     /**
+     * Computes whether enough time has passed since the last attack.
+     * Attack speed differs between player types and can be set within Config class.
+     *
+     * @param p - target player to check
+     * @return true if player can attack, false otherwise
+     */
+    public static boolean canRangedAttack(Player p) {
+        double attackDeltaTime = (System.nanoTime() - p.getLastAttackTime()) / 1e9;
+        switch (p.getType()) {
+            case CHARMANDER:
+                return attackDeltaTime > 1.0 / Config.Character.CHARMANDER_MAXASPD;
+            case BULBASAUR:
+                return attackDeltaTime > 1.0 / Config.Character.BULBASAUR_MAXASPD;
+            case SQUIRTLE:
+                return attackDeltaTime > 1.0 / Config.Character.SQUIRTLE_MAXASPD;
+        }
+        return false;
+    }
+
+    /**
      * Returns true if collision is detected with player, false otherwise.
      */
     public boolean checkForCollision(BasePlayer p) {
@@ -120,26 +140,6 @@ public class BaseAttack extends GameObject {
         if (Math.abs(offsetX) > maxRange || Math.abs(offsetY) > maxRange) {
             setAlive(false);
         }
-    }
-
-    /**
-     * Computes whether enough time has passed since the last attack.
-     * Attack speed differs between player types and can be set within Config class.
-     *
-     * @param p - target player to check
-     * @return true if player can attack, false otherwise
-     */
-    public static boolean canRangedAttack(Player p) {
-        double attackDeltaTime = (System.nanoTime() - p.getLastAttackTime()) / 1e9;
-        switch (p.getType()) {
-            case CHARMANDER:
-                return attackDeltaTime > 1.0 / Config.Character.CHARMANDER_MAXASPD;
-            case BULBASAUR:
-                return attackDeltaTime > 1.0 / Config.Character.BULBASAUR_MAXASPD;
-            case SQUIRTLE:
-                return attackDeltaTime > 1.0 / Config.Character.SQUIRTLE_MAXASPD ;
-        }
-        return false;
     }
 
     public Rectangle getBounds() {

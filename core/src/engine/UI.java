@@ -11,8 +11,8 @@ import engine.structs.Event;
 import engine.structs.Number;
 import networking.ChatClient;
 import networking.Scoreboard;
-import objects.structs.Direction;
 import objects.Player;
+import objects.structs.Direction;
 import objects.structs.State;
 
 public class UI {

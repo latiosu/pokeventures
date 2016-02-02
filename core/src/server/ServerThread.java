@@ -91,7 +91,7 @@ public class ServerThread extends BasicThread {
                         );
                         sendDataToClient(selectedPlayerPk, newPlayer.getAddress(), newPlayer.getPort());
                         sendDataToClient(new PacketChat(
-                                new Message("SERVER", newPlayer.getUsername() + " has appeared!")),
+                                        new Message("SERVER", newPlayer.getUsername() + " has appeared!")),
                                 p.getAddress(),
                                 p.getPort()
                         );
@@ -111,7 +111,7 @@ public class ServerThread extends BasicThread {
 
                 // Send welcome message to new player
                 sendDataToClient(new PacketChat(
-                        new Message("SERVER", "Welcome to Pokeventures!\n<< Chat with the Enter key >>")),
+                                new Message("SERVER", "Welcome to Pokeventures!\n<< Chat with the Enter key >>")),
                         newPlayer.getAddress(),
                         newPlayer.getPort()
                 );
@@ -203,7 +203,11 @@ public class ServerThread extends BasicThread {
     }
 
     public void sendDataToClient(Packet pk, InetAddress address, int port) {
-        DatagramPacket packet = new DatagramPacket(pk.getData(), pk.getData().length, address, port); // Send to online client
+        DatagramPacket packet = new DatagramPacket(pk.getData(),
+                pk.getData().length,
+                address,
+                port
+        );
         try {
             socket.send(packet);
         } catch (IOException e) {

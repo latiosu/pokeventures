@@ -47,12 +47,12 @@ public abstract class GameObject {
         return isAlive;
     }
 
-    public int isAliveNum() {
-        return (isAlive) ? 1 : 0;
-    }
-
     public void setAlive(boolean isAlive) {
         this.isAlive = isAlive;
+    }
+
+    public int isAliveNum() {
+        return (isAlive) ? 1 : 0;
     }
 
 }

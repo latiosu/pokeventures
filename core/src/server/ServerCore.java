@@ -13,7 +13,6 @@ import objects.structs.PlayerType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
 
 public class ServerCore extends Thread {
 
@@ -128,7 +127,7 @@ public class ServerCore extends Thread {
                     // Special scoring mechanic - earn 50% of defeated player points
                     if (p.getHp() <= 0) {
                         BasePlayer scorer = players.get(atk.getOwner().getUid());
-                        scorer.setScore(scorer.getScore() + (p.getScore()/2));
+                        scorer.setScore(scorer.getScore() + (p.getScore() / 2));
 
                         // Send event packet TO ALL PLAYERS
                         PacketEvent pk = new PacketEvent(scorer.getUid(), EventId.LEVEL_UP.getNum());

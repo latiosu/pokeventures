@@ -17,7 +17,7 @@ import java.util.List;
 
 public class WorldManager {
 
-//    static final int BLACK = Color.rgba8888(0f, 0f, 0f, 1f);
+    //    static final int BLACK = Color.rgba8888(0f, 0f, 0f, 1f);
     static final int WHITE = Color.rgba8888(1f, 1f, 1f, 1f); // Walkable Tile
     static final int RED = Color.rgba8888(1f, 0f, 0f, 1f); // Blocked Tile
     static final int GREEN = Color.rgba8888(0f, 1f, 0f, 1f); // Down-jump Tile
@@ -110,7 +110,7 @@ public class WorldManager {
      * For debugging use only.
      *
      * @return - list of tiles which players cannot pass through.
-     * */
+     */
     public List<Tile> getBlocked() {
         return blocked;
     }

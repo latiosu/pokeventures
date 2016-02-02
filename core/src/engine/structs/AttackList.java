@@ -1,7 +1,6 @@
 package engine.structs;
 
 import engine.Logger;
-import objects.Attack;
 import objects.BaseAttack;
 
 import java.util.Iterator;

@@ -2,7 +2,9 @@ package engine.structs;
 
 import objects.BasePlayer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 
 
 public class ScoreSet implements Iterable<Score> {
@@ -33,6 +35,15 @@ public class ScoreSet implements Iterable<Score> {
         return sorted;
     }
 
+    @Override
+    public Iterator<Score> iterator() {
+        return new ScoreSetIterator();
+    }
+
+    public java.util.List<Score> getScores() {
+        return scores;
+    }
+
     private class ScoreSetIterator implements Iterator<Score> {
 
         int index = 0;
@@ -48,14 +59,5 @@ public class ScoreSet implements Iterable<Score> {
             index++;
             return result;
         }
-    }
-
-    @Override
-    public Iterator<Score> iterator() {
-        return new ScoreSetIterator();
-    }
-
-    public java.util.List<Score> getScores() {
-        return scores;
     }
 }

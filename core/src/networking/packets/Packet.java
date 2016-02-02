@@ -4,8 +4,8 @@ import engine.Logger;
 
 public abstract class Packet {
 
-    protected String DL = "`";
     public byte packetId;
+    protected String DL = "`";
 
     public Packet(int packetId) {
         this.packetId = (byte) packetId;

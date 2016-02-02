@@ -51,6 +51,7 @@ public class UserList implements List<BasePlayer> {
 
     /**
      * Retrieves the player with given uid from the map of players.
+     *
      * @param uid - target player's uid
      * @return player if found, else null
      */

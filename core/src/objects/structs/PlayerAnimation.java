@@ -4,11 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import engine.AssetManager;
 import engine.Logger;
-import engine.UserInputProcessor;
 import objects.Player;
-import objects.structs.Direction;
-import objects.structs.PlayerType;
-import objects.structs.State;
 
 public class PlayerAnimation {
 

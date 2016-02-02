@@ -3,9 +3,6 @@ package engine;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.assets.loaders.SoundLoader;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -17,8 +14,8 @@ import engine.structs.AttackList;
 import engine.structs.Event;
 import engine.structs.Message;
 import engine.structs.UserList;
-import networking.packets.*;
 import networking.ClientThread;
+import networking.packets.*;
 import objects.Attack;
 import objects.BaseAttack;
 import objects.Player;
@@ -35,22 +32,19 @@ import java.util.concurrent.TimeUnit;
 
 public class ClientCore extends Game {
 
+    public boolean isOnline = false;
+    public boolean playMode = false;
+    public boolean isHost = false;
+    // Object classes
+    protected UserList players;
+    protected AttackList attacks;
+    protected List<Event> events;
     // Engine variables/constants
     private float delta = 0;
     private float debugDelta = 0;
     private float heartbeatDelta = 0;
     private int frames = 0;
     private long bootTime = System.nanoTime();
-
-    public boolean isOnline = false;
-    public boolean playMode = false;
-    public boolean isHost = false;
-
-    // Object classes
-    protected UserList players;
-    protected AttackList attacks;
-    protected List<Event> events;
-
     // Rendering classes
     private OrthographicCamera cam;
     private SpriteBatch batch;

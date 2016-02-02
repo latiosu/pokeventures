@@ -22,8 +22,8 @@ public class Player extends BasePlayer {
      * Used for adding existing players on the server to the clients game.
      * Note: Adds RENDERING components.
      */
-    public Player (long uid, float x, float y, Direction dir, PlayerType type, String username,
-                   float hp, float maxHp, boolean isAlive) {
+    public Player(long uid, float x, float y, Direction dir, PlayerType type, String username,
+                  float hp, float maxHp, boolean isAlive) {
         super(uid, x, y, dir, username, type, hp, maxHp, isAlive);
         this.healthBar = new HealthBar(this);
         this.anim = new PlayerAnimation(this, type);
@@ -34,7 +34,7 @@ public class Player extends BasePlayer {
      * Used for adding client's own player to game.
      * Note: Adds RENDERING components
      */
-    public Player (PlayerType type, String username) {
+    public Player(PlayerType type, String username) {
         super(new Date().getTime(), username, type);
         this.healthBar = new HealthBar(this);
         this.anim = new PlayerAnimation(this, type);

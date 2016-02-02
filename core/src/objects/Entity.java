@@ -8,7 +8,7 @@ public abstract class Entity extends GameObject {
     // TODO: Check if boolean isHit is used
     protected PlayerType type;
     protected boolean isNewState;
-//    protected boolean isHit;
+    //    protected boolean isHit;
     protected State state;
 
     protected Entity(PlayerType type) {

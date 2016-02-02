@@ -71,6 +71,6 @@ public class PacketAttack extends Packet {
     }
 
     public boolean isAlive() {
-        return alive==1;
+        return alive == 1;
     }
 }

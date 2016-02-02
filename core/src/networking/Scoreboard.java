@@ -1,20 +1,16 @@
 package networking;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import engine.ClientCore;
 import engine.Config;
 import engine.UI;
-import engine.structs.Message;
 import engine.structs.Score;
 import engine.structs.ScoreSet;
-import engine.structs.TimeComparator;
 import objects.BasePlayer;
 
-import java.text.Format;
-import java.util.*;
+import java.util.List;
 
 public class Scoreboard {
 

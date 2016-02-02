@@ -25,7 +25,7 @@ public class PacketPlayerState extends Packet {
     }
 
     public PacketPlayerState(long uid, String username, float hp, float maxHp,
-                      int state, int dir, int ptype, int score) {
+                             int state, int dir, int ptype, int score) {
         super(PacketType.PLAYER_STATE.getId());
         this.uid = uid;
         this.username = username;

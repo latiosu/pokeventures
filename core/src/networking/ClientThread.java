@@ -5,12 +5,10 @@ import engine.Config;
 import engine.Logger;
 import engine.structs.Message;
 import engine.structs.Score;
-import engine.structs.ScoreSet;
 import networking.packets.*;
 import objects.BasePlayer;
 import objects.Player;
 import objects.structs.Direction;
-import objects.structs.EventId;
 import objects.structs.PlayerType;
 
 import java.io.IOException;
@@ -125,7 +123,7 @@ public class ClientThread extends BasicThread {
             case SCORES:
                 PacketScores ps = new PacketScores(data);
 
-                for(Score s : ps.getScores()) {
+                for (Score s : ps.getScores()) {
                     BasePlayer bp = clientCore.getPlayers().get(s.uid);
                     if (bp != null) {
                         bp.setScore(s.score);
