@@ -3,7 +3,7 @@
 Use the arrows keys to run around and space to defend yourself! Now, be on your best behaviour.
 
 ## Game Download
-[PokeVentures v0.8](https://www.dropbox.com/s/vaazpyy6nanzdtt/pokeventures-0.8.jar?dl=0)
+[Pokeventures](http://pokeventures.coderic.net/deploys/pokeventures-stable.jar)
 
 ## Screenshot
 <img src = "http://puu.sh/mT42a/1c86089418.png">
