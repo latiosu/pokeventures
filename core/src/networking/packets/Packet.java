@@ -45,7 +45,9 @@ public abstract class Packet {
         ATTACK(4),
         PLAYER_STATE(5),
         CHAT(6),
-        HEARTBEAT(7);
+        HEARTBEAT(7),
+        EVENT(8),
+        SCORES(9);
 
         private int packetId;
 

@@ -29,7 +29,7 @@ public enum State {
                 return ATK_RANGED;
             default:
                 Logger.log(Logger.Level.ERROR,
-                        "State not found (%s)\n",
+                        "State number not found (%s)\n",
                         i);
                 return null;
         }

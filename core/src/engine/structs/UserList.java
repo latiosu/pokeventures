@@ -49,6 +49,11 @@ public class UserList implements List<BasePlayer> {
         return list.get(i);
     }
 
+    /**
+     * Retrieves the player with given uid from the map of players.
+     * @param uid - target player's uid
+     * @return player if found, else null
+     */
     @Override
     public BasePlayer get(long uid) {
         return map.get(uid);

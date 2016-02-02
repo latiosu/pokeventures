@@ -12,10 +12,22 @@ public class Config {
     public static String ASSETS_PATH = "";
 
     public static class Engine {
-        public static final String VERSION = "Pre-alpha v0.80: Cool battle stuff!";
+        public static final String VERSION = "Pre-alpha v0.80: OMG BATTLES!";
         public static final float CLIENT_UPDATE_RATE = 1 / 15f;
         public static final float SERVER_UPDATE_RATE = 1 / 40f;
         public static final int DEBUG_LOG_RATE = 3; // Rate of which stats are logged to console (seconds)
+        public static final float SCORE_UPDATE_RATE = 1f; // Seconds scores every second
+        public static final int MAX_USERNAME_LENGTH = 11;
+
+        // Chat
+        public static final int MAX_CHAT_ROWS = 6;
+        public static final int MESSAGES_INIT = 200;
+        public static final int MAX_MSG_LENGTH = 100;
+        public static final String DATE_FORMAT = "h:mm:ss a";
+        public static final String DATE_FORMAT_CHAT = "h:mm a";
+
+        // Scoreboard
+        public static final int MAX_SCORE_ROWS = 8;
     }
 
     public static class World {
@@ -47,14 +59,6 @@ public class Config {
         public static final float CAM_MIN_Y = (VIEWPORT_HEIGHT / 2f);
         public static final float CAM_MAX_X = AssetManager.level.getWidth() - (VIEWPORT_WIDTH / 2f);
         public static final float CAM_MAX_Y = AssetManager.level.getHeight() - (VIEWPORT_HEIGHT / 2f);
-    }
-
-    public static class Chat {
-        public static final int MAX_CHAT_ROWS = 6;
-        public static final int MESSAGES_INIT = 200;
-        public static final int MAX_MSG_LENGTH = 100;
-        public static final String DATE_FORMAT = "h:mm:ss a";
-        public static final String DATE_FORMAT_CHAT = "h:mm a";
     }
 
     public static class Character {

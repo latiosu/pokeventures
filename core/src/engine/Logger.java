@@ -15,7 +15,7 @@ public class Logger {
         }
     }
 
-    private static SimpleDateFormat sdf = new SimpleDateFormat(Config.Chat.DATE_FORMAT);
+    private static SimpleDateFormat sdf = new SimpleDateFormat(Config.Engine.DATE_FORMAT);
 
     public static void log(Level level, String string) {
         log(level, string, "");

@@ -59,6 +59,7 @@ public class ClientCore extends Game {
 
     // Engine classes
     private WorldManager world;
+    private EventManager eventManager;
     private UI ui;
 
     // Networking classes
@@ -76,6 +77,7 @@ public class ClientCore extends Game {
         cam = new OrthographicCamera(Config.Camera.VIEWPORT_WIDTH, Config.Camera.VIEWPORT_HEIGHT);
         ui = new UI(this);
         world = new WorldManager();
+        eventManager = new EventManager();
 
         // Start networking
         startNetworking();
@@ -486,6 +488,10 @@ public class ClientCore extends Game {
 
     public void addEvent(Event e) {
         events.add(e);
+    }
+
+    public EventManager getEventManager() {
+        return eventManager;
     }
 
     public synchronized UserList getPlayers() {

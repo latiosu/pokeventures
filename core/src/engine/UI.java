@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import engine.structs.Event;
 import engine.structs.Number;
 import networking.ChatClient;
+import networking.Scoreboard;
 import objects.structs.Direction;
 import objects.Player;
 import objects.structs.State;
@@ -22,6 +23,7 @@ public class UI {
     private String text = ""; /* Possibly used for keyboard input */
     private boolean hasFocus = false;
     private ChatClient cc;
+    private Scoreboard sb;
     private Image setupBG;
 
     public UI(ClientCore clientCore) {
@@ -50,7 +52,7 @@ public class UI {
 
         // Request username dialog
         final TextField field = new TextField("", skin, "plain");
-        field.setMaxLength(15);
+        field.setMaxLength(Config.Engine.MAX_USERNAME_LENGTH);
         field.setWidth(150);
         field.setAlignment(Align.center);
 
@@ -58,6 +60,7 @@ public class UI {
             protected void result(Object object) {
                 setText(field.getText());
                 cc = new ChatClient(clientCore); // Instantiate Chat client
+                sb = new Scoreboard(clientCore); // Instantiate Scoreboard
                 clientCore.initMainPlayer(sanitizeText(text)); // Define main player for client
                 setFocus(false);
 
@@ -118,6 +121,7 @@ public class UI {
                         mp.setAlive(true);
                         mp.setDirection(Direction.DOWN);
                         mp.setState(State.IDLE);
+                        mp.setScore(0);
 
                         // Ignore initial attack
                         UserInputProcessor.attackKeys[1] = false;
@@ -133,6 +137,10 @@ public class UI {
 
     public ChatClient getChatClient() {
         return cc;
+    }
+
+    public Scoreboard getScoreboard() {
+        return sb;
     }
 
     private String sanitizeText(String input) {

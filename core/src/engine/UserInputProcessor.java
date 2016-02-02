@@ -52,14 +52,15 @@ public class UserInputProcessor implements InputProcessor {
             selectedType = PlayerType.CHARMANDER;
             clientCore.getPlayers().getMainPlayer().getAnim().updateAnim();
         }
-        if (keycode == Input.Keys.NUM_2) {
-            selectedType = PlayerType.BULBASAUR;
-            clientCore.getPlayers().getMainPlayer().getAnim().updateAnim();
-        }
-        if (keycode == Input.Keys.NUM_3) {
-            selectedType = PlayerType.SQUIRTLE;
-            clientCore.getPlayers().getMainPlayer().getAnim().updateAnim();
-        }
+        // Disabled until implemented
+//        if (keycode == Input.Keys.NUM_2) {
+//            selectedType = PlayerType.BULBASAUR;
+//            clientCore.getPlayers().getMainPlayer().getAnim().updateAnim();
+//        }
+//        if (keycode == Input.Keys.NUM_3) {
+//            selectedType = PlayerType.SQUIRTLE;
+//            clientCore.getPlayers().getMainPlayer().getAnim().updateAnim();
+//        }
 
         // Chat
         if (keycode == Input.Keys.ENTER) {

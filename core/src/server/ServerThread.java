@@ -111,10 +111,7 @@ public class ServerThread extends BasicThread {
 
                 // Send welcome message to new player
                 sendDataToClient(new PacketChat(
-                                new Message("SERVER", String.format(
-                                        "Welcome to Pokeventures!\n<< Chat with the Enter key >>",
-                                        core.getPlayers().size())
-                                )),
+                        new Message("SERVER", "Welcome to Pokeventures!\n<< Chat with the Enter key >>")),
                         newPlayer.getAddress(),
                         newPlayer.getPort()
                 );
@@ -125,8 +122,8 @@ public class ServerThread extends BasicThread {
                 BasePlayer dcPlayer = core.getPlayers().remove(dp.getUid());
 
                 // Notify all other players
-                sendDataToAllClients(dp);
-                sendDataToAllClients(new PacketChat(
+                sendDataToAllOtherClients(dp.getUid(), dp);
+                sendDataToAllOtherClients(dp.getUid(), new PacketChat(
                         new Message("SERVER", dcPlayer.getUsername() + " has fled."))
                 );
 
@@ -163,7 +160,7 @@ public class ServerThread extends BasicThread {
                             newPlayer.getType().getNum(),
                             newPlayer.isAlive()
                     );
-                    sendDataToAllClients(newPacket); // Notify all users of new POSITION DATA
+                    sendDataToAllOtherClients(mp.getUid(), newPacket); // Notify all OTHER users of new POSITION DATA
                 }
                 break;
 
@@ -195,7 +192,7 @@ public class ServerThread extends BasicThread {
                     );
                 }
                 core.getAttacks().add(ap.getId(), atk);
-                sendDataToAllClients(ap);
+                sendDataToAllClients(ap); // Notify ALL users of attack position
                 break;
 
             case HEARTBEAT:
@@ -217,6 +214,14 @@ public class ServerThread extends BasicThread {
     public void sendDataToAllClients(Packet pk) {
         for (BasePlayer p : core.getPlayers()) {
             sendDataToClient(pk, p.getAddress(), p.getPort());
+        }
+    }
+
+    public void sendDataToAllOtherClients(long uid, Packet pk) {
+        for (BasePlayer p : core.getPlayers()) {
+            if (p.getUid() != uid) {
+                sendDataToClient(pk, p.getAddress(), p.getPort());
+            }
         }
     }
 

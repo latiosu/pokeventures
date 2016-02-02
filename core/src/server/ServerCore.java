@@ -2,17 +2,12 @@ package server;
 
 import engine.Config;
 import engine.Logger;
-import engine.structs.AttackList;
-import engine.structs.Event;
-import engine.structs.Message;
-import engine.structs.UserList;
-import networking.packets.PacketAttack;
-import networking.packets.PacketChat;
-import networking.packets.PacketDisconnect;
-import networking.packets.PacketPlayerState;
+import engine.structs.*;
+import networking.packets.*;
 import objects.BaseAttack;
 import objects.BasePlayer;
 import objects.structs.Direction;
+import objects.structs.EventId;
 import objects.structs.PlayerType;
 
 import java.util.ArrayList;
@@ -24,7 +19,7 @@ public class ServerCore extends Thread {
 
     // Engine variables/constants
     public boolean isRunning = true;
-    private long delta = 0;
+    private float delta = 0;
 
     // Object classes
     private UserList players;
@@ -33,6 +28,9 @@ public class ServerCore extends Thread {
 
     // Networking classes
     private ServerThread server;
+
+    // Game variables
+    private float scoreDelta = 0;
 
     public ServerCore() {
         // Game world structures
@@ -61,13 +59,14 @@ public class ServerCore extends Thread {
     public void run() {
         while (isRunning) {
             long start = System.nanoTime();
-            if (TimeUnit.NANOSECONDS.toSeconds(delta) > Config.Engine.SERVER_UPDATE_RATE) {
+            if (delta > Config.Engine.SERVER_UPDATE_RATE) {
                 checkConnections(); // Remove AFK players before updating game state
                 updateAttacks();
                 updateEvents(delta);
-                delta -= TimeUnit.SECONDS.toNanos(1) * Config.Engine.SERVER_UPDATE_RATE;
+                updateScores(delta);
+                delta -= Config.Engine.SERVER_UPDATE_RATE;
             }
-            delta += System.nanoTime() - start;
+            delta += (System.nanoTime() - start) / 1e9f;
         }
     }
 
@@ -125,21 +124,34 @@ public class ServerCore extends Thread {
             // Check for collisions with ALL PLAYERS
             for (BasePlayer p : getPlayers()) {
                 if (atk.checkForCollision(p)) {
-                    // Send update player state TO ALL PLAYERS
+
+                    // Special scoring mechanic - earn 50% of defeated player points
+                    if (p.getHp() <= 0) {
+                        BasePlayer scorer = players.get(atk.getOwner().getUid());
+                        scorer.setScore(scorer.getScore() + (p.getScore()/2));
+
+                        // Send event packet TO ALL PLAYERS
+                        PacketEvent pk = new PacketEvent(scorer.getUid(), EventId.LEVEL_UP.getNum());
+                        server.sendDataToAllClients(pk);
+                    }
+
+                    // Send updated player state TO ALL PLAYERS
                     server.sendDataToAllClients(new PacketPlayerState(p.getUid(),
                             p.getUsername(),
                             p.getHp(),
                             p.getMaxHp(),
                             p.getState().getNum(),
                             p.getDirection().getNum(),
-                            p.getType().getNum())
-                    );
+                            p.getType().getNum(),
+                            p.getScore()
+                    ));
                     Logger.log(Logger.Level.INFO,
                             "%s was hit for %s damage (%s/%s)\n",
                             p.getUsername(),
                             atk.getDamage(),
                             p.getHp(),
-                            p.getMaxHp());
+                            p.getMaxHp()
+                    );
                 }
             }
 
@@ -163,6 +175,22 @@ public class ServerCore extends Thread {
         for (BaseAttack a : toRemove) {
             getAttacks().remove(a.getId());
         }
+    }
+
+    private void updateScores(float delta) {
+        if (scoreDelta >= Config.Engine.SCORE_UPDATE_RATE) {
+            scoreDelta -= Config.Engine.SCORE_UPDATE_RATE;
+
+            // Increment all player scores
+            for (BasePlayer p : players) {
+                p.setScore(p.getScore() + 1);
+            }
+
+            // Send out new scores to all players
+            PacketScores ps = new PacketScores(new ScoreSet(players));
+            server.sendDataToAllClients(ps);
+        }
+        scoreDelta += delta;
     }
 
     public void handlePlayerPacket(long uid, String username, float x, float y, float hp, float maxHp,

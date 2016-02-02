@@ -3,7 +3,6 @@ package networking;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import engine.Config;
@@ -32,8 +31,8 @@ public class ChatClient {
     public ChatClient(ClientCore clientCore) {
         this.clientCore = clientCore;
         this.ui = clientCore.getUI();
-        this.dateFormat = new SimpleDateFormat(Config.Chat.DATE_FORMAT_CHAT);
-        messages = new PriorityQueue<>(Config.Chat.MESSAGES_INIT, new TimeComparator());
+        this.dateFormat = new SimpleDateFormat(Config.Engine.DATE_FORMAT_CHAT);
+        messages = new PriorityQueue<>(Config.Engine.MESSAGES_INIT, new TimeComparator());
         buffer = new MessageBuffer();
 
         initUI();
@@ -53,7 +52,7 @@ public class ChatClient {
         chatField.setHeight(height);
         chatField.setBounds(x, y, width, height);
         chatField.setVisible(false);
-        chatField.setMaxLength(Config.Chat.MAX_MSG_LENGTH);
+        chatField.setMaxLength(Config.Engine.MAX_MSG_LENGTH);
         chatField.setTextFieldListener((textField, c) -> {
             String trimmed = textField.getText().trim();
             switch (c) {
@@ -87,7 +86,7 @@ public class ChatClient {
         chatArea.setY(30);
         chatArea.setWidth(width);
         chatArea.setHeight(height);
-        chatArea.setPrefRows(Config.Chat.MAX_CHAT_ROWS);
+        chatArea.setPrefRows(Config.Engine.MAX_CHAT_ROWS);
         chatArea.setDisabled(true);
         chatArea.setVisible(true);
 //        chatArea.setTouchable(Touchable.disabled); // Should this really by untouchable??
@@ -168,7 +167,7 @@ public class ChatClient {
         private Deque<String> buffer;
 
         MessageBuffer() {
-            MAX_SIZE = Config.Chat.MAX_CHAT_ROWS;
+            MAX_SIZE = Config.Engine.MAX_CHAT_ROWS;
             buffer = new ArrayDeque<>(MAX_SIZE);
         }
 

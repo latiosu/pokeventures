@@ -9,7 +9,7 @@ public class PacketPlayerState extends Packet {
     private long uid;
     private String username;
     private float hp, maxHp;
-    private int state, dir, ptype;
+    private int state, dir, ptype, score;
 
     public PacketPlayerState(byte[] data) {
         super(PacketType.PLAYER_STATE.getId());
@@ -21,10 +21,11 @@ public class PacketPlayerState extends Packet {
         this.state = Integer.parseInt(dataArray[4]);
         this.dir = Integer.parseInt(dataArray[5]);
         this.ptype = Integer.parseInt(dataArray[6]);
+        this.score = Integer.parseInt(dataArray[7]);
     }
 
     public PacketPlayerState(long uid, String username, float hp, float maxHp,
-                      int state, int dir, int ptype) {
+                      int state, int dir, int ptype, int score) {
         super(PacketType.PLAYER_STATE.getId());
         this.uid = uid;
         this.username = username;
@@ -33,6 +34,7 @@ public class PacketPlayerState extends Packet {
         this.state = state;
         this.dir = dir;
         this.ptype = ptype;
+        this.score = score;
     }
 
     @Override
@@ -45,7 +47,9 @@ public class PacketPlayerState extends Packet {
                 DL + maxHp +
                 DL + state +
                 DL + dir +
-                DL + ptype).getBytes();
+                DL + ptype +
+                DL + score
+        ).getBytes();
     }
 
     public long getUid() {
@@ -74,5 +78,9 @@ public class PacketPlayerState extends Packet {
 
     public String getUsername() {
         return username;
+    }
+
+    public int getScore() {
+        return score;
     }
 }

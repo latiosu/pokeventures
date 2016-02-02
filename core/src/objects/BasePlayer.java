@@ -10,7 +10,7 @@ import java.net.InetAddress;
 public class BasePlayer extends Entity {
 
     protected InetAddress address;
-    protected int port;
+    protected int port, score;
     protected long uid;
     protected String username;
     protected float hp, maxHp;
@@ -49,6 +49,7 @@ public class BasePlayer extends Entity {
         this.isAlive = isAlive;
         this.address = null;
         this.port = -1;
+        this.score = 0;
 
         this.lastPacketTime = System.nanoTime();
         this.lastAttackTime = 0;
@@ -125,5 +126,13 @@ public class BasePlayer extends Entity {
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 }
