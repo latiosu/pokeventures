@@ -47,12 +47,12 @@ public class UserInputProcessor implements InputProcessor {
             attackKeys[1] = true;
         }
 
-        // Change characters
-        if (keycode == Input.Keys.NUM_1) {
-            selectedType = PlayerType.CHARMANDER;
-            clientCore.getPlayers().getMainPlayer().getAnim().updateAnim();
-        }
         // Disabled until implemented
+        // Change characters
+//        if (keycode == Input.Keys.NUM_1) {
+//            selectedType = PlayerType.CHARMANDER;
+//            clientCore.getPlayers().getMainPlayer().getAnim().updateAnim();
+//        }
 //        if (keycode == Input.Keys.NUM_2) {
 //            selectedType = PlayerType.BULBASAUR;
 //            clientCore.getPlayers().getMainPlayer().getAnim().updateAnim();

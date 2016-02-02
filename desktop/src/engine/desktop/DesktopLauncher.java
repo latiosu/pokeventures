@@ -26,6 +26,9 @@ public class DesktopLauncher {
         if (list.contains("debug")) {
             Config.DEBUG = true;
         }
+        if (list.contains("offline")) {
+            Config.Networking.SERVER_IP = "localhost";
+        }
 
         // Start either client or server
         if (list.contains("server")) {

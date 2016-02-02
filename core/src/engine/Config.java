@@ -40,7 +40,7 @@ public class Config {
     public static class Networking {
         public static final int GAME_PORT = 5284; // Default: 5284
         public static final int PACKET_SIZE = 512;
-        public static final String SERVER_IP = "localhost";
+        public static String SERVER_IP = "pokeventures.coderic.net";
         public static final long HEARTBEAT_WAIT_TIME = TimeUnit.SECONDS.toNanos(5);
         public static final float HEARTBEAT_RATE = 1; // Send heartbeat each second
     }
