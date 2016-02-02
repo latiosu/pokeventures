@@ -18,7 +18,7 @@ public class DesktopLauncher {
 
         // Command-line args processing
         if (list.contains("wip")) {
-            Config.ASSETS_PATH = "assets/";
+            Config.ASSETS_PATH = "core/assets/";
         }
         if (list.contains("pack-textures")) {
             Config.PACK_TEXTURES = true;
