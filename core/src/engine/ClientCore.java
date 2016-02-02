@@ -100,7 +100,9 @@ public class ClientCore extends Game {
     @Override
     public void dispose() {
         // Send disconnect packet to server
-        client.sendDataToServer(new PacketDisconnect(getPlayers().getMainPlayer().getUid()));
+        if (getPlayers().getMainPlayer() != null) {
+            client.sendDataToServer(new PacketDisconnect(getPlayers().getMainPlayer().getUid()));
+        }
         batch.dispose();
         tex.dispose();
         ui.dispose();
