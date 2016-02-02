@@ -14,9 +14,9 @@ public class Event<T, R> {
      * Creates a timed event that will check the Predicate every so often (specified by update rate)
      * for as long as the specified duration.
      *
-     * @param duration - total time spent alive for updates in seconds
+     * @param duration   - total time spent alive for updates in seconds
      * @param updateRate - time elapsed between each update in seconds
-     * @param block - task to execute per update
+     * @param block      - task to execute per update
      */
     public Event(float duration, float updateRate, Predicate<Object> block) {
         this.isTimed = true;
@@ -34,6 +34,7 @@ public class Event<T, R> {
 
     /**
      * Creates an un-timed event that will check the Predicate every game heartbeat.
+     *
      * @param block - task to execute per heartbeat
      */
     public Event(Predicate<Object> block) {

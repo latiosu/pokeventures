@@ -3,22 +3,22 @@ package networking;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import engine.ClientCore;
 import engine.Config;
-import engine.Core;
+import engine.Logger;
 import engine.UI;
 import engine.structs.Message;
 import engine.structs.TimeComparator;
-import networking.packets.Packet03Chat;
+import networking.packets.PacketChat;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class ChatClient {
 
-    private Core core;
+    private ClientCore clientCore;
     private UI ui;
     private SimpleDateFormat dateFormat;
     private Queue<Message> messages;
@@ -27,11 +27,12 @@ public class ChatClient {
     private TextField chatField;
     private TextArea chatArea;
     private TextArea chatAreaHL;
-    public ChatClient(Core core) {
-        this.core = core;
-        this.ui = core.getUI();
-        this.dateFormat = new SimpleDateFormat(Config.DATE_FORMAT_CHAT);
-        messages = new PriorityQueue<Message>(Config.MESSAGES_INIT, new TimeComparator());
+
+    public ChatClient(ClientCore clientCore) {
+        this.clientCore = clientCore;
+        this.ui = clientCore.getUI();
+        this.dateFormat = new SimpleDateFormat(Config.Engine.DATE_FORMAT_CHAT);
+        messages = new PriorityQueue<>(Config.Engine.MESSAGES_INIT, new TimeComparator());
         buffer = new MessageBuffer();
 
         initUI();
@@ -43,7 +44,7 @@ public class ChatClient {
         chatField = new TextField("", ui.getSkin(), "chat");
         float x = 0; // (Centered)=Config.GAME_WIDTH / 4f
         float y = 0;
-        final float width = Config.VIEWPORT_WIDTH;
+        final float width = Config.Camera.VIEWPORT_WIDTH * (3f / 4f);
         float height = 30;
         chatField.setX(x);
         chatField.setY(y);
@@ -51,27 +52,24 @@ public class ChatClient {
         chatField.setHeight(height);
         chatField.setBounds(x, y, width, height);
         chatField.setVisible(false);
-        chatField.setMaxLength(Config.MAX_MSG_LENGTH);
-        chatField.setTextFieldListener(new TextField.TextFieldListener() {
-            @Override
-            public void keyTyped(TextField textField, char c) {
-                String trimmed = textField.getText().trim();
-                switch (c) {
-                    case '\r':
-                        if (trimmed.length() == 0) { // Ignore input
-                            return;
-                        }
-                        // ==== Send message to server here ====
-                        registerMsg(core.getPlayers().getMainPlayer().getUsername(), trimmed);
-                        showChat(false);
-                        break;
-                }
+        chatField.setMaxLength(Config.Engine.MAX_MSG_LENGTH);
+        chatField.setTextFieldListener((textField, c) -> {
+            String trimmed = textField.getText().trim();
+            switch (c) {
+                case '\r':
+                    if (trimmed.length() == 0) { // Ignore input
+                        return;
+                    }
+                    // ==== Send message to server here ====
+                    registerMsg(clientCore.getPlayers().getMainPlayer().getUsername(), trimmed);
+                    showChat(false);
+                    break;
             }
         });
         ui.getStage().addActor(chatField);
 
         // Text Area Highlight (On when chatting)
-        chatAreaHL = new TextArea("", ui.getSkin(), "chat-faded");
+        chatAreaHL = new TextArea("", ui.getSkin(), "default");
         chatAreaHL.setX(x);
         chatAreaHL.setY(30);
         height = 130;
@@ -79,36 +77,36 @@ public class ChatClient {
         chatAreaHL.setHeight(height);
         chatAreaHL.setDisabled(true);
         chatAreaHL.setVisible(false);
-        chatAreaHL.setTouchable(Touchable.disabled);
+//        chatAreaHL.setTouchable(Touchable.disabled);
         ui.getStage().addActor(chatAreaHL);
 
         // Text Area (Always on)
-        chatArea = new TextArea("", ui.getSkin(), "chat-very-faded");
+        chatArea = new TextArea("", ui.getSkin(), "chat");
         chatArea.setX(x);
         chatArea.setY(30);
         chatArea.setWidth(width);
         chatArea.setHeight(height);
-        chatArea.setPrefRows(Config.MAX_CHAT_ROWS);
+        chatArea.setPrefRows(Config.Engine.MAX_CHAT_ROWS);
         chatArea.setDisabled(true);
         chatArea.setVisible(true);
-        chatArea.setTouchable(Touchable.disabled); // Should this really by untouchable??
+//        chatArea.setTouchable(Touchable.disabled); // Should this really by untouchable??
         ui.getStage().addActor(chatArea);
 
         // Chat control listener
         ui.getStage().addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                if (keycode == Input.Keys.ESCAPE) {
+                if (keycode == Input.Keys.ESCAPE || (keycode == Input.Keys.ENTER && chatField.getText().isEmpty())) {
                     showChat(false);
                 }
                 return false;
             }
 
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                ui.showChat(chatField.hit(x - Config.VIEWPORT_WIDTH / 2f, y, true) != null);
-                return false;
-            }
+//            @Override
+//            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+//                ui.showChat(chatField.hit(x - Config.Camera.VIEWPORT_WIDTH / 2f, y, true) != null);
+//                return false;
+//            }
         });
     }
 
@@ -123,7 +121,7 @@ public class ChatClient {
      * the time of creation.
      */
     public void registerMsg(String username, String msg) {
-        core.registerMsg(new Packet03Chat(new Message(username, msg)));
+        clientCore.getClientThread().sendDataToServer(new PacketChat(new Message(username, msg)));
     }
 
     /**
@@ -135,10 +133,12 @@ public class ChatClient {
             if (messages.add(msg)) {
                 updateChatUI(msg);
             } else {
-                System.err.printf("Error: Failed to store message %s", msg.message);
+                Logger.log(Logger.Level.ERROR,
+                        "Failed to store message %s\n",
+                        msg.message);
             }
         } else {
-            System.err.printf("Error: Message already exists in message bank.");
+            Logger.log(Logger.Level.ERROR, "Error: Message already exists in message bank\n");
         }
     }
 
@@ -167,8 +167,8 @@ public class ChatClient {
         private Deque<String> buffer;
 
         MessageBuffer() {
-            MAX_SIZE = Config.MAX_CHAT_ROWS;
-            buffer = new ArrayDeque<String>(MAX_SIZE);
+            MAX_SIZE = Config.Engine.MAX_CHAT_ROWS;
+            buffer = new ArrayDeque<>(MAX_SIZE);
         }
 
         /**

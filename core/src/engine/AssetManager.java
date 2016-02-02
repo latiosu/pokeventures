@@ -7,9 +7,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import objects.Direction;
-import objects.PlayerType;
-import objects.State;
+import objects.structs.Direction;
+import objects.structs.PlayerType;
+import objects.structs.State;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +36,9 @@ public class AssetManager {
             case WALK:
                 animName += "walk";
                 break;
+            case JUMP:
+                animName += "jump";
+                break;
             case ATK_RANGED:
                 animName += "ranged";
                 break;
@@ -60,28 +63,34 @@ public class AssetManager {
         if (isAttack) {
             animName += "-attack";
         }
-        return animations.get(type).get(animName);
+
+        // Log error if null
+        Animation result = animations.get(type).get(animName);
+        if (result == null) {
+            Logger.log(Logger.Level.ERROR,
+                    "Animation could not be found (%s)\n",
+                    animName);
+        }
+        return result;
     }
 
     private void loadAssets() {
         // Load UI components
-        skin = new Skin(Gdx.files.internal("assets/uiskin.json"));
-        setupBG = new Texture(Gdx.files.internal("assets/setup-bg.png"));
+        skin = new Skin(Gdx.files.internal(Config.ASSETS_PATH + "uiskin.json"));
+        setupBG = new Texture(Gdx.files.internal(Config.ASSETS_PATH + "setup-bg.png"));
         // Load Fonts
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("assets/text.ttf"));
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(Config.ASSETS_PATH + "text.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 12;
         font = generator.generateFont(parameter);
         generator.dispose();
         // Load overworld
-        level = new Texture(Gdx.files.internal("assets/" + Config.MAP));
+        level = new Texture(Gdx.files.internal(Config.ASSETS_PATH + Config.World.MAP));
         // Load character animations
         for (PlayerType pt : PlayerType.values()) {
-            if (Config.USE_EXTERNAL_ANIMS) {
-                animations.put(pt, generate(new TextureAtlas(Gdx.files.internal("packed/" + pt.getName() + ".atlas"))));
-            } else {
-                animations.put(pt, generate(new TextureAtlas(Gdx.files.internal("assets/packed/" + pt.getName() + ".atlas"))));
-            }
+            animations.put(pt, generate(new TextureAtlas(Gdx.files.internal(
+                    Config.ASSETS_PATH + "packed/" + pt.getName() + ".atlas"
+            ))));
         }
     }
 
@@ -89,13 +98,13 @@ public class AssetManager {
     private Map<String, Animation> generate(TextureAtlas atlas) {
         Map<String, Animation> map = new HashMap<>();
 
-        String[] states = {"idle", "walk", "ranged", "fainted"};
+        String[] states = {"idle", "walk", "jump", "ranged", "fainted"};
         String[] dirs = {"-down", "-left", "-up", "-right"};
         String[] attacks = {"", "-attack"};
         for (String s : states) {
             for (String d : dirs) {
                 for (String a : attacks) {
-                    map.put(s + d + a, new Animation(Config.ANIM_DURATION, atlas.findRegions(s + d + a)));
+                    map.put(s + d + a, new Animation(Config.Rendering.ANIM_DURATION, atlas.findRegions(s + d + a)));
                 }
             }
         }

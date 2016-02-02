@@ -10,21 +10,23 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import engine.structs.Event;
 import engine.structs.Number;
 import networking.ChatClient;
-import objects.Direction;
+import networking.Scoreboard;
 import objects.Player;
+import objects.structs.Direction;
+import objects.structs.State;
 
 public class UI {
 
-    private Core core;
+    ClientCore clientCore;
     private Skin skin;
     private Stage stage;
     private String text = ""; /* Possibly used for keyboard input */
     private boolean hasFocus = false;
-    private ChatClient cc;
+    private Scoreboard sb;
     private Image setupBG;
 
-    public UI(Core core) {
-        this.core = core;
+    public UI(ClientCore clientCore) {
+        this.clientCore = clientCore;
         skin = AssetManager.skin;
         stage = new Stage(new ScreenViewport());
         runSetup();
@@ -41,93 +43,35 @@ public class UI {
         skin.dispose();
     }
 
-    private void initLabels() {
-        // Version label
-        Label versionNumber = new Label(Config.VERSION, skin, "default");
-        versionNumber.setName("version");
-        versionNumber.setPosition((Config.VIEWPORT_WIDTH * 2f) - versionNumber.getWidth() - 10, 5);
-        stage.addActor(versionNumber);
-
-        // Host IP label (If host)
-        if (core.isHost) {
-            Label ipAddress = new Label("Your IP: " + core.getServerThread().getIpAddress(), skin, "default");
-            ipAddress.setName("ipAddress");
-            ipAddress.setPosition((Config.VIEWPORT_WIDTH * 2f) - ipAddress.getWidth() - 10, 18);
-            stage.addActor(ipAddress);
-        }
-    }
-
-    /* Contains a start networking call */
     private void runSetup() {
         // Render setup background
         setupBG = new Image(AssetManager.setupBG);
         setupBG.setName("setup-bg");
         stage.addActor(setupBG);
 
-        // Become host dialog
-        Dialog d1 = new Dialog("", skin, "dialog") {
-            protected void result(Object object) {
-                // Determine if hosting server
-                if (core.isHost = object.toString().equals("true")) {
-                    core.startNetworking("localhost");
-                    requestUsername();
-                } else {
-                    requestServer();
-                }
-            }
-        };
-        d1.setMovable(false);
-        d1.getContentTable().pad(10, 60, 0, 60);
-        d1.getButtonTable().pad(0, 0, 20, 0);
-        d1.text("Hosting a game or joining?").button("Host", true).button("Join", false).key(Input.Keys.ENTER, true)
-                .key(Input.Keys.ESCAPE, false).show(stage);
-    }
-
-    /* Requests server IP if isHost is true */
-    public void requestServer() {
-        // Request server IP dialog
-        final TextField field = new TextField(Config.SERVER_IP, skin, "plain");
-        field.setMaxLength(15);
-        field.setWidth(150);
-        field.setAlignment(Align.center);
-        field.setSelection(0, field.getText().length());
-
-        Dialog d2 = new Dialog("", skin, "dialog") {
-            protected void result(Object object) {
-                setText(field.getText());
-                core.startNetworking(text); // Start networking connections
-                requestUsername();
-            }
-        };
-        d2.setMovable(false);
-        d2.row();
-        d2.pad(10, 60, 10, 60);
-        d2.add(field);
-        d2.text("Enter Server IP:").key(Input.Keys.ENTER, null).show(stage);
-
-        setFocus(true);
-        stage.setKeyboardFocus(field);
-    }
-
-    /* Initializes main player and game UI */
-    private void requestUsername() {
         // Request username dialog
         final TextField field = new TextField("", skin, "plain");
-        field.setMaxLength(15);
+        field.setMaxLength(Config.Engine.MAX_USERNAME_LENGTH);
         field.setWidth(150);
         field.setAlignment(Align.center);
 
         Dialog d2 = new Dialog("", skin, "dialog") {
             protected void result(Object object) {
                 setText(field.getText());
-                core.initMainPlayer(sanitizeText(text)); // Define main player for client
-                initChat(); // Instantiate Chat client
+                sb = new Scoreboard(clientCore); // Instantiate Scoreboard
+                clientCore.initMainPlayer(sanitizeText(text)); // Define main player for client
                 setFocus(false);
 
                 setupBG.addAction(Actions.fadeOut(0.4f));
 
                 // Show labels after setup
-                initLabels();
+                if (Config.DEBUG) {
+                    // Version label
+                    Label versionNumber = new Label(Config.Engine.VERSION, skin, "default");
+                    versionNumber.setName("version");
+                    versionNumber.setPosition((Config.Camera.VIEWPORT_WIDTH * 2f) - versionNumber.getWidth() - 10, 5);
+                    stage.addActor(versionNumber);
+                }
             }
         };
         d2.setMovable(false);
@@ -152,27 +96,30 @@ public class UI {
         countDown.setAlignment(Align.center);
         countDown.setFontScale(5, 5);
         countDown.setName("countdown");
-        countDown.setPosition(Config.VIEWPORT_WIDTH - (countDown.getWidth()), Config.VIEWPORT_HEIGHT * (5f / 4f));
+        countDown.setPosition(Config.Camera.VIEWPORT_WIDTH - (countDown.getWidth()), Config.Camera.VIEWPORT_HEIGHT * (5f / 4f));
         stage.addActor(countDown);
 
-        core.addEvent(new Event(5, task -> {
+        // Confirm respawn screen
+        clientCore.addEvent(new Event(5, task -> {
             count.add(-1);
             countDown.setText(count.toString());
             if (count.getValue() == 0) {
                 countDown.setText("Press SPACE to revive!");
-                core.addEvent(new Event(confirm -> {
+                clientCore.addEvent(new Event(confirm -> {
                     if (UserInputProcessor.attackKeys[1]) {
                         // Clear overlay
                         countDown.remove();
-                        setupBG.remove();
+                        setupBG.addAction(Actions.fadeOut(0.4f));
 
                         // Trigger respawn
-                        Player mp = core.getPlayers().getMainPlayer();
+                        Player mp = clientCore.getPlayers().getMainPlayer();
                         mp.setHp(mp.getMaxHp());
-                        mp.setX(Config.SPAWN_X);
-                        mp.setY(Config.SPAWN_Y);
+                        mp.setX(Config.World.SPAWN_X);
+                        mp.setY(Config.World.SPAWN_Y);
                         mp.setAlive(true);
                         mp.setDirection(Direction.DOWN);
+                        mp.setState(State.IDLE);
+                        mp.setScore(0);
 
                         // Ignore initial attack
                         UserInputProcessor.attackKeys[1] = false;
@@ -186,12 +133,8 @@ public class UI {
         }));
     }
 
-    public ChatClient getChatClient() {
-        return cc;
-    }
-
-    private void initChat() {
-        cc = new ChatClient(core); // Instantiate Chat client
+    public Scoreboard getScoreboard() {
+        return sb;
     }
 
     private String sanitizeText(String input) {
@@ -219,7 +162,4 @@ public class UI {
         return hasFocus;
     }
 
-    public void showChat(boolean b) {
-        cc.showChat(b);
-    }
 }

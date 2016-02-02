@@ -46,6 +46,13 @@ walk-down
   orig: 11, 16
   offset: 0, 0
   index: 1
+jump-down
+  rotate: false
+  xy: 464, 3
+  size: 11, 16
+  orig: 11, 16
+  offset: 0, 0
+  index: 2
 idle-left
   rotate: false
   xy: 84, 3
@@ -53,6 +60,13 @@ idle-left
   orig: 18, 16
   offset: 0, 0
   index: 0
+jump-left
+  rotate: false
+  xy: 84, 3
+  size: 18, 16
+  orig: 18, 16
+  offset: 0, 0
+  index: 2
 walk-left
   rotate: false
   xy: 84, 3
@@ -88,6 +102,62 @@ walk-up
   orig: 11, 17
   offset: 0, 0
   index: 0
+jump-down
+  rotate: false
+  xy: 477, 3
+  size: 11, 16
+  orig: 11, 16
+  offset: 0, 0
+  index: 0
+jump-down
+  rotate: false
+  xy: 477, 3
+  size: 11, 16
+  orig: 11, 16
+  offset: 0, 0
+  index: 3
+jump-down
+  rotate: false
+  xy: 477, 3
+  size: 11, 16
+  orig: 11, 16
+  offset: 0, 0
+  index: 1
+walk-down
+  rotate: false
+  xy: 477, 3
+  size: 11, 16
+  orig: 11, 16
+  offset: 0, 0
+  index: 0
+jump-left
+  rotate: false
+  xy: 2, 3
+  size: 19, 16
+  orig: 19, 16
+  offset: 0, 0
+  index: 0
+jump-left
+  rotate: false
+  xy: 2, 3
+  size: 19, 16
+  orig: 19, 16
+  offset: 0, 0
+  index: 1
+walk-left
+  rotate: false
+  xy: 2, 3
+  size: 19, 16
+  orig: 19, 16
+  offset: 0, 0
+  index: 0
+jump-left
+  rotate: false
+  xy: 2, 3
+  size: 19, 16
+  orig: 19, 16
+  offset: 0, 0
+  index: 3
 ranged-down-attack
   rotate: false
   xy: 124, 3
@@ -200,20 +270,6 @@ ranged-up-attack
   orig: 16, 16
   offset: 0, 0
   index: 3
-walk-down
-  rotate: false
-  xy: 477, 3
-  size: 11, 16
-  orig: 11, 16
-  offset: 0, 0
-  index: 0
-walk-left
-  rotate: false
-  xy: 2, 3
-  size: 19, 16
-  orig: 19, 16
-  offset: 0, 0
-  index: 0
 walk-right
   rotate: false
   xy: 23, 3

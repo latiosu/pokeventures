@@ -2,54 +2,60 @@ package objects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
 import engine.AssetManager;
 import engine.Config;
+import engine.Logger;
+import engine.components.HealthBar;
+import objects.structs.Direction;
+import objects.structs.PlayerAnimation;
+import objects.structs.PlayerType;
 
-public class Player extends Entity {
+import java.util.Date;
 
-    private long uid;
+public class Player extends BasePlayer {
+
     private PlayerAnimation anim;
-    private String username;
     private float usernameWidth;
-    private float hp;
-    private float maxHp;
-    private long lastAttackTime;
-    private boolean isAlive;
+    private HealthBar healthBar;
 
-    public Player(long uid, PlayerType type, String username) {
-        super(type);
-        this.uid = uid;
+    /**
+     * Used for adding existing players on the server to the clients game.
+     * Note: Adds RENDERING components.
+     */
+    public Player(long uid, float x, float y, Direction dir, PlayerType type, String username,
+                  float hp, float maxHp, boolean isAlive) {
+        super(uid, x, y, dir, username, type, hp, maxHp, isAlive);
+        this.healthBar = new HealthBar(this);
         this.anim = new PlayerAnimation(this, type);
-        this.username = username;
         this.usernameWidth = AssetManager.font.getBounds(username).width;
-        this.hp = Config.PLAYER_HP;
-        this.maxHp = Config.PLAYER_HP;
-        this.lastAttackTime = 0;
-        this.isAlive = true;
+    }
+
+    /**
+     * Used for adding client's own player to game.
+     * Note: Adds RENDERING components
+     */
+    public Player(PlayerType type, String username) {
+        super(new Date().getTime(), username, type);
+        this.healthBar = new HealthBar(this);
+        this.anim = new PlayerAnimation(this, type);
+        this.usernameWidth = AssetManager.font.getBounds(username).width;
     }
 
     /* Note: Using a player list for rendering */
     public void render(float delta, SpriteBatch batch) {
         try {
+            // Render sprite
             batch.draw(getFrame(delta), getRenderX(), getRenderY());
-            AssetManager.font.draw(batch, username, getNameX(), getNameY());
+            // Render username
+            AssetManager.font.draw(batch, this.getUsername(), this.getNameX(), this.getNameY());
+            // Render resource bars
+            healthBar.draw(batch, 0);
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.err.printf("Error: Animation not found - %s %s\n", state.name(), direction.name());
+            Logger.log(Logger.Level.ERROR,
+                    "Animation not found - %s %s\n",
+                    getState().name(),
+                    direction.name());
         }
-    }
-
-    public void updateDamage(Attack atk) {
-        if (isAlive()) {
-            setHp(getHp() - atk.getDamage());
-            if (getHp() <= 0) {
-                this.setAlive(false);
-            }
-        }
-    }
-
-    public Rectangle getBounds() {
-        return new Rectangle(x, y, Config.CHAR_COLL_WIDTH, Config.CHAR_COLL_HEIGHT);
     }
 
     /**
@@ -60,7 +66,7 @@ public class Player extends Entity {
         switch (direction) {
             case LEFT:
             case RIGHT:
-                return x - Config.RENDER_OFFSET_X;
+                return x - Config.Rendering.RENDER_OFFSET_X;
             default:
                 return x;
         }
@@ -79,7 +85,7 @@ public class Player extends Entity {
      * automatically adjusted based on username length to appear center-justified.
      */
     public float getNameX() {
-        return x - (usernameWidth / 2f - (Config.CHAR_WIDTH / 2f));
+        return x - (usernameWidth / 2f - (Config.Character.CHAR_WIDTH / 2f));
     }
 
     /**
@@ -87,7 +93,7 @@ public class Player extends Entity {
      * automatically adjusted based on username length to appear center-justified.
      */
     public float getNameY() {
-        return y + (Config.CHAR_HEIGHT + Config.FONT_HEIGHT) + Config.USERNAME_PADDING_Y;
+        return y + (Config.Character.CHAR_HEIGHT + Config.Rendering.FONT_HEIGHT) + Config.Rendering.USERNAME_PADDING_Y;
     }
 
     public TextureRegion getFrame(float delta) {
@@ -98,43 +104,10 @@ public class Player extends Entity {
         return anim;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public long getUID() {
-        return uid;
-    }
-
-    public float getHp() {
-        return hp;
-    }
-
-    public void setHp(float hp) {
-        this.hp = hp;
-    }
-
-    public float getMaxHp() {
-        return maxHp;
-    }
-
-    public void setMaxHp(float maxHp) {
-        this.maxHp = maxHp;
-    }
-
-    public long getLastAttackTime() {
-        return lastAttackTime;
-    }
-
-    public void updateLastAttackTime() {
-        this.lastAttackTime = System.nanoTime();
-    }
-
+    /**
+     * Note: Will return false if HP is zero.
+     */
     public boolean isAlive() {
-        return isAlive;
-    }
-
-    public void setAlive(boolean alive) {
-        isAlive = alive;
+        return !(hp <= 0 || !isAlive);
     }
 }
