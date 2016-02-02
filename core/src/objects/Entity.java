@@ -1,15 +1,20 @@
 package objects;
 
+import objects.structs.PlayerType;
+import objects.structs.State;
+
 public abstract class Entity extends GameObject {
 
+    // TODO: Check if boolean isHit is used
     protected PlayerType type;
-    protected boolean isHit, isNewState;
+    protected boolean isNewState;
+    //    protected boolean isHit;
     protected State state;
 
     protected Entity(PlayerType type) {
         super();
         this.type = type;
-        this.isHit = false;
+//        this.isHit = false;
         this.state = State.IDLE;
     }
 
@@ -22,13 +27,13 @@ public abstract class Entity extends GameObject {
         this.type = type;
     }
 
-    public boolean isHit() {
-        return isHit;
-    }
-
-    public void setHit(boolean isHit) {
-        this.isHit = isHit;
-    }
+//    public boolean isHit() {
+//        return isHit;
+//    }
+//
+//    public void setHit(boolean isHit) {
+//        this.isHit = isHit;
+//    }
 
     public State getState() {
         return state;

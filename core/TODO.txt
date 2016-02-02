@@ -6,23 +6,19 @@
 MED - Add projectiles (fireball/watergun/razorleaf)
         + Projectiles should not be able to hit recently connected players
 MED - Add combat system:
-        + Players should be able to perform melee attacks while moving (currently cannot)
         + Players should be able to fire a projectile in their current direction (server handles collision?)
         + Players should have an energy bar for attacks (cooldown system)
         = Idea: Attacks have elements and can destroy projectiles of the weaker element
 MED - Add chat bubble system
-MED - Add event messages to chat window (include player connections/disconnections)
-MED - Smooth out player movement (smaller walk steps)
 MED - Add sound management system
 
 LOW - Add mob system with AI controlled by server thread
-LOW - Add timeout-based disconnects (no packets received for 5-10 seconds)
 LOW - Interpolate other player positions (if isMoving, then increment pos by 1 or 2 in their direction)
 LOW - Add documentation to majority of code
 LOW - Update character size when window size changes
 LOW - For each packet the server receives (contains x, y), use a quad tree to determine which players to send update packets to
 LOW - Change packets to store timeslices (multiple changes in one packet)
-LOW - Add elevation system to maps (will reverse a new level system)
+LOW - Add elevation system to maps (will require a new level system)
 
 
 
@@ -30,9 +26,6 @@ LOW - Add elevation system to maps (will reverse a new level system)
             BUGS
     ====================
 * Rendering of left-directed animations should be offset to appear as thought the character is moving
-
-
-
 
     ====================
             DONE
@@ -58,12 +51,15 @@ MED - Implement character change
 MED - Implement player direction and animation in packets
 MED - Add focus system for input handling via UI and game
 MED - Fix username clashes
+MED - Add event messages to chat window (include player connections/disconnections)
+MED - Smooth out player movement (smaller walk steps)
 
 LOW - Adjust player collision bounds for consistency and smoothness
 LOW - Update ServerThread to use UserList data structure for storing Players
 LOW - Standardise packet transfer types to integer
 LOW - Add readme.md to git repository
 LOW - Sanitize username input
+LOW - Add timeout-based disconnects (no packets received for 5-10 seconds)
 
     =====================
             FIXED

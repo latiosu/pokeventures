@@ -1,9 +1,12 @@
 package objects;
 
+import objects.structs.Direction;
+
 public abstract class GameObject {
 
     protected float x, y;
     protected Direction direction;
+    protected boolean isAlive;
 
     protected GameObject() {
         this(Direction.DOWN, 0, 0);
@@ -39,4 +42,17 @@ public abstract class GameObject {
     public void setDirection(Direction direction) {
         this.direction = direction;
     }
+
+    public boolean isAlive() {
+        return isAlive;
+    }
+
+    public void setAlive(boolean isAlive) {
+        this.isAlive = isAlive;
+    }
+
+    public int isAliveNum() {
+        return (isAlive) ? 1 : 0;
+    }
+
 }

@@ -1,120 +1,156 @@
 package networking;
 
+import engine.ClientCore;
 import engine.Config;
-import engine.Core;
+import engine.Logger;
 import engine.structs.Message;
+import engine.structs.Score;
 import networking.packets.*;
-import objects.Direction;
+import objects.BasePlayer;
 import objects.Player;
-import objects.PlayerOnline;
-import objects.PlayerType;
+import objects.structs.Direction;
+import objects.structs.PlayerType;
 
 import java.io.IOException;
 import java.net.*;
 
-public class ClientThread extends Thread {
+public class ClientThread extends BasicThread {
 
     private InetAddress address;
-    private DatagramSocket socket;
-    private Core core;
+    private ClientCore clientCore;
 
-    public ClientThread(Core core, String ip) {
-        this.core = core;
+    public ClientThread(ClientCore clientCore, String ip) {
+        this.clientCore = clientCore;
         try {
-            this.socket = new DatagramSocket();
-            this.address = InetAddress.getByName(ip);
-        } catch (SocketException e) {
-            e.printStackTrace();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
+            socket = new DatagramSocket();
+            address = InetAddress.getByName(ip);
+        } catch (UnknownHostException | SocketException e) {
+            Logger.log(Logger.Level.ERROR,
+                    "Couldn't resolve server address (%s)\n",
+                    Config.Networking.SERVER_IP);
         }
     }
 
-    @Override
-    public void run() {
-        while (true) {
-            byte[] data = new byte[Config.PACKET_SIZE];
-            DatagramPacket packet = new DatagramPacket(data, data.length);
-            try {
-                socket.receive(packet); // Warning: will wait indefinitely
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            this.parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
-        }
-    }
-
-    private void parsePacket(byte[] data, InetAddress address, int port) {
+    protected void parsePacket(byte[] data, InetAddress address, int port) {
         String message = new String(data).trim();
         Packet.PacketType type = Packet.lookupPacket(message.substring(0, 2));
         switch (type) {
             default:
+
             case INVALID:
                 break;
-            case LOGIN:
-                handleLogin(new Packet00Login(data), address, port);
+
+            case CLIENT_LOGIN:
+                PacketClientLogin lp = new PacketClientLogin(data);
+                Player player = new Player(lp.getUid(),
+                        lp.getX(),
+                        lp.getY(),
+                        Direction.getDir(lp.getDir()),
+                        PlayerType.getType(lp.getType()),
+                        lp.getUsername(),
+                        lp.getHp(),
+                        lp.getMaxHp(),
+                        lp.isAlive());
+                clientCore.getPlayers().add(lp.getUid(), player);
                 break;
+
             case DISCONNECT:
-                handleDisconnect(new Packet01Disconnect(data));
+                PacketDisconnect dp = new PacketDisconnect(data);
+                int index = 0;
+                for (BasePlayer p : clientCore.getPlayers()) {
+                    if (p.getUid() == dp.getUid()) {
+                        break;
+                    }
+                    index++;
+                }
+                clientCore.getPlayers().remove(index);
                 break;
+
             case MOVE:
-                handleMove(new Packet02Move(data));
+                PacketMove mp = new PacketMove(data);
+                clientCore.handlePlayerPacket(mp.getUid(),
+                        mp.getUsername(),
+                        mp.getX(),
+                        mp.getY(),
+                        mp.getHp(),
+                        mp.getMaxHp(),
+                        mp.getState(),
+                        mp.getDir(),
+                        mp.getType());
                 break;
+
             case CHAT:
-                handleChat(new Packet03Chat(data));
+                PacketChat cp = new PacketChat(data);
+                clientCore.storeMsg(new Message(cp.getTime(), cp.getUsername(), cp.getMessage()));
                 break;
+
             case ATTACK:
-                handleAttack(new Packet04Attack(data));
+                PacketAttack ap = new PacketAttack(data);
+                clientCore.handleAttackPacket(ap.getId(),
+                        ap.getUid(),
+                        ap.getDir(),
+                        ap.getX(),
+                        ap.getY(),
+                        ap.isAlive());
+                break;
+
+            case PLAYER_STATE:
+                PacketPlayerState psp = new PacketPlayerState(data);
+                Player p = (Player) clientCore.getPlayers().get(psp.getUid());
+                p.setHp(psp.getHp());
+                p.setMaxHp(psp.getMaxHp());
+                p.setState(psp.getState());
+                p.setDirection(psp.getDir());
+                p.setType(psp.getType());
+                p.setScore(psp.getScore());
+                break;
+
+            case EVENT:
+                PacketEvent pe = new PacketEvent(data);
+                switch (pe.getEventId()) {
+                    case LEVEL_UP:
+                    case HEALTH_PICKUP:
+                        clientCore.getEventManager().startEvent(
+                                pe.getEventId(),
+                                clientCore.getPlayers().get(pe.getUid())
+                        );
+                        break;
+                    default:
+                        Logger.log(Logger.Level.ERROR,
+                                "EventId not recognised (%s)\n",
+                                pe.getEventId());
+                }
+                break;
+
+            case SCORES:
+                PacketScores ps = new PacketScores(data);
+
+                for (Score s : ps.getScores()) {
+                    BasePlayer bp = clientCore.getPlayers().get(s.uid);
+                    if (bp != null) {
+                        bp.setScore(s.score);
+                    }
+                }
+
+                // Update scoreboard text now
+                clientCore.getUI().getScoreboard().updateScoreboardUI(ps.getScores());
                 break;
         }
     }
 
-    private void handleLogin(Packet00Login pk, InetAddress address, int port) {
-        PlayerOnline player = new PlayerOnline(pk.getUID(), pk.getX(), pk.getY(),
-                Direction.getDir(pk.getDir()), PlayerType.getType(pk.getType()),
-                pk.getUsername(), address, port);
-
-        core.getPlayers().add(pk.getUID(), player);
-    }
-
-    /* Assumes player exists in Core.players list */
-    private void handleDisconnect(Packet01Disconnect pk) {
-        int index = 0;
-        for (Player p : core.getPlayers()) {
-            if (p.getUID() == pk.getUID()) {
-                break;
-            }
-            index++;
-        }
-        core.getPlayers().remove(index);
-    }
-
-    private void handleMove(Packet02Move pk) {
-        core.updatePlayer(pk.getUID(), pk.getUsername(), pk.getX(), pk.getY(),
-                pk.getState(), pk.getDir(), pk.getType());
-    }
-
-    /**
-     * Note: DOES NOT REPLY TO SERVER
-     */
-    private void handleChat(Packet03Chat pk) {
-        core.storeMsg(new Message(pk.getTime(), pk.getUsername(), pk.getMessage()));
-    }
-
-    private void handleAttack(Packet04Attack pk) {
-        core.updateAttack(pk.getId(), pk.getUid(), pk.getPtype(), pk.getDir(), pk.getX(), pk.getY(),
-                pk.getAtkType(), pk.isAlive());
-    }
-
-    /**
-     * Sends given data to the server.
-     */
-    public void sendData(byte[] data) {
-        DatagramPacket packet = new DatagramPacket(data, data.length, address, Config.GAME_PORT);
+    public void sendDataToServer(Packet pk) {
+        DatagramPacket packet = new DatagramPacket(pk.getData(), pk.getData().length, address, Config.Networking.GAME_PORT);
         try {
-            socket.send(packet);
+            if (isConnected()) {
+                socket.send(packet);
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.log(Logger.Level.ERROR,
+                    "Couldn't send packet to server (IOException)\n");
         }
+    }
+
+    public boolean isConnected() {
+        return !(socket == null || address == null);
     }
 }

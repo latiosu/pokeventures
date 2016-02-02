@@ -59,7 +59,7 @@ walk-up
   size: 11, 15
   orig: 11, 15
   offset: 0, 0
-  index: 1
+  index: 0
 walk-down
   rotate: false
   xy: 96, 2
@@ -87,4 +87,4 @@ walk-up
   size: 11, 15
   orig: 11, 15
   offset: 0, 0
-  index: 0
+  index: 1
