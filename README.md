@@ -1,8 +1,8 @@
 # PokeVentures
 
-Use the arrows keys to run around and space to defend yourself! Now, be on your best behaviour.
+Use the **arrows keys** to run around and **space** to attack! You'll be good won't you?
 
-**Play:** [Pokeventures.jar](http://pokeventures.coderic.net/deploys/pokeventures-stable.jar)
+###**Play here: [Pokeventures.jar](http://pokeventures.coderic.net/deploys/pokeventures-stable.jar)**
 
 ## Screenshot
 <img src = "http://puu.sh/mT42a/1c86089418.png">
