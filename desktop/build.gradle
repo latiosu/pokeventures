@@ -20,8 +20,6 @@ task dist(type: Jar) {
     from {configurations.compile.collect {zipTree(it)}}
     from files(project.assetsDir);
 
-    buildDir = '../dist'
-
     manifest {
         attributes 'Main-Class': project.mainClassName
     }
