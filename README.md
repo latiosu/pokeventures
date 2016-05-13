@@ -1,6 +1,6 @@
 # PokeVentures
 
-Use the **arrows keys** to run around and **space** to attack! You'll be good won't you?
+Use the **arrows keys** to run around and **space** to attack!
 
 ###**Play here: [Pokeventures.jar](http://pokeventures.coderic.net/deploys/pokeventures-stable.jar)**
 
