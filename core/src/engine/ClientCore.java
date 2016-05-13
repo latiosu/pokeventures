@@ -59,6 +59,7 @@ public class ClientCore extends Game {
     private EventManager eventManager;
     private UI ui;
     private ChatClient cc;
+    private AudioManager audio;
 
     // Networking classes
     private ClientThread client;
@@ -76,6 +77,10 @@ public class ClientCore extends Game {
         ui = new UI(this);
         world = new WorldManager();
         eventManager = new EventManager();
+
+        // Load Audio
+        audio = new AudioManager();
+
         cc = new ChatClient(this); // Instantiate Chat client
 
 
@@ -276,6 +281,9 @@ public class ClientCore extends Game {
         PacketServerLogin pk = new PacketServerLogin(p.getUid(), p.getUsername(), p.getType().getNum());
         client.sendDataToServer(pk); // Send packet to server to sync main player
         playMode = true;
+
+        // TODO: Play BGM
+        audio.getBgm().play();
     }
 
     private void updateCamera() {
@@ -322,6 +330,8 @@ public class ClientCore extends Game {
                 client.sendDataToServer(pk);
 
                 ui.triggerRespawnScreen();
+                // TODO: Play faint sound
+                audio.playSound(AudioManager.SFX.FAINT);
             }
 
             // Ignore player input
@@ -346,6 +356,9 @@ public class ClientCore extends Game {
                             "This jump movement has not been implemented yet (%s)\n",
                             mp.getDirection());
             }
+
+            // TODO: Play wall hop sound
+//            audio.playSound(AudioManager.SFX.WALL_HOP);
 
             // Ignore player input
             return;
@@ -377,6 +390,9 @@ public class ClientCore extends Game {
                         atk.getY(),
                         atk.isAliveNum());
                 client.sendDataToServer(pk);
+
+                // TODO: Play attack sound
+                audio.playSound(AudioManager.SFX.FIRE_ATTACK);
             }
         }
 
@@ -423,6 +439,10 @@ public class ClientCore extends Game {
 
         // Handle collision for main player
         Tile collidedTile = getWorldManager().handleCollision(mp);
+        if (collidedTile != null) {
+            // TODO: Play wall bump sound
+//            audio.playSound(AudioManager.SFX.WALL_BUMP);
+        }
 
         // Send movement packet with freshly updated main player data
         PacketMove pk = new PacketMove(mp.getUid(),
@@ -474,6 +494,9 @@ public class ClientCore extends Game {
             // Store attack if not registered
             atk = new Attack(id, (Player) getPlayers().get(uid), dir, x, y);
             attacks.add(id, atk);
+
+            // TODO: Play attack sound
+            audio.playSound(AudioManager.SFX.FIRE_ATTACK, getPlayers().getMainPlayer(), (Player) getPlayers().get(uid));
         }
     }
 
@@ -483,6 +506,8 @@ public class ClientCore extends Game {
      */
     public void storeMsg(Message msg) {
         ui.clientCore.getChatClient().storeMsg(msg);
+        // TODO: Play chat sound
+        audio.playSound(AudioManager.SFX.CHAT);
     }
 
     public UI getUI() {
@@ -503,6 +528,18 @@ public class ClientCore extends Game {
 
     public EventManager getEventManager() {
         return eventManager;
+    }
+
+    public void addPlayer(long uid, Player player) {
+        getPlayers().add(uid, player);
+        // TODO: Play connect sound
+        audio.playSound(AudioManager.SFX.CONNECT);
+    }
+
+    public void dropPlayer(int index) {
+        getPlayers().remove(index);
+        // TODO: Play disconnect sound
+        audio.playSound(AudioManager.SFX.DISCONNECT);
     }
 
     public synchronized UserList getPlayers() {

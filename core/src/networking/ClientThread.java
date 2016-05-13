@@ -51,7 +51,7 @@ public class ClientThread extends BasicThread {
                         lp.getHp(),
                         lp.getMaxHp(),
                         lp.isAlive());
-                clientCore.getPlayers().add(lp.getUid(), player);
+                clientCore.addPlayer(lp.getUid(), player);
                 break;
 
             case DISCONNECT:
@@ -63,7 +63,7 @@ public class ClientThread extends BasicThread {
                     }
                     index++;
                 }
-                clientCore.getPlayers().remove(index);
+                clientCore.dropPlayer(index);
                 break;
 
             case MOVE:
