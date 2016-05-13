@@ -484,6 +484,7 @@ public class ClientCore extends Game {
             // Update attack if registered
             if (!atk.isAlive() || !isAlive) { // Remove if not alive
                 getAttacks().remove(id);
+                audio.playSound(AudioManager.SFX.FIRE_HIT, getPlayers().getMainPlayer(), (Player) getPlayers().get(uid));
             } else {
                 atk.setX(x);
                 atk.setY(y);
