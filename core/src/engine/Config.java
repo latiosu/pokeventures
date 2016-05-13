@@ -12,7 +12,7 @@ public class Config {
     public static String ASSETS_PATH = "";
 
     public static class Engine {
-        public static final String VERSION = "Pre-alpha v0.80: OMG BATTLES!";
+        public static final String VERSION = "Pre-alpha v1.0: Fun times";
         public static final float CLIENT_UPDATE_RATE = 1 / 15f;
         public static final float SERVER_UPDATE_RATE = 1 / 40f;
         public static final int DEBUG_LOG_RATE = 3; // Rate of which stats are logged to console (seconds)
