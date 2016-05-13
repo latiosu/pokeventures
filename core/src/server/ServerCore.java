@@ -128,6 +128,7 @@ public class ServerCore extends Thread {
                     if (p.getHp() <= 0) {
                         BasePlayer scorer = players.get(atk.getOwner().getUid());
                         scorer.setScore(scorer.getScore() + (p.getScore() / 2));
+                        p.setScore(0); // Reset player score
 
                         // Send event packet TO ALL PLAYERS
                         PacketEvent pk = new PacketEvent(scorer.getUid(), EventId.LEVEL_UP.getNum());
