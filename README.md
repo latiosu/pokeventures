@@ -2,10 +2,7 @@
 
 Use the **arrows keys** to run around and **space** to attack!
 
-###**Play here: [Pokeventures.jar](http://pokeventures.coderic.net/deploys/pokeventures-stable.jar)**
-
-## Screenshot
-<img src = "http://puu.sh/mT42a/1c86089418.png">
+![pokeventures](https://user-images.githubusercontent.com/7020503/104527717-7cc07d80-5659-11eb-885b-55a2ce51495b.png)
 
 ### Tech Used
 * [Gradle](http://gradle.org/)
